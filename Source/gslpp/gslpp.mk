@@ -50,7 +50,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -121,6 +121,14 @@ $(IntermediateDirectory)/Combination_combination$(DependSuffix): Combination/com
 $(IntermediateDirectory)/Combination_combination$(PreprocessSuffix): Combination/combination.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Combination_combination$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Combination/combination.cpp"
 
+$(IntermediateDirectory)/blas_blas1$(ObjectSuffix): blas/blas1.cpp $(IntermediateDirectory)/blas_blas1$(DependSuffix)
+	$(CompilerName) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/blas/blas1.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/blas_blas1$(DependSuffix): blas/blas1.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/blas_blas1$(ObjectSuffix) -MF$(IntermediateDirectory)/blas_blas1$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/blas/blas1.cpp"
+
+$(IntermediateDirectory)/blas_blas1$(PreprocessSuffix): blas/blas1.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/blas_blas1$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/blas/blas1.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -145,6 +153,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/Combination_combination$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/Combination_combination$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/blas_blas1$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/blas_blas1$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 
 
