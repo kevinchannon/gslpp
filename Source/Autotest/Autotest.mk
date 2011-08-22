@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=21/08/11
+Date                   :=22/08/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -50,7 +50,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/complextestsuite$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -121,6 +121,14 @@ $(IntermediateDirectory)/combinationtestsuite$(DependSuffix): combinationtestsui
 $(IntermediateDirectory)/combinationtestsuite$(PreprocessSuffix): combinationtestsuite.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/combinationtestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/combinationtestsuite.cpp"
 
+$(IntermediateDirectory)/complextestsuite$(ObjectSuffix): complextestsuite.cpp $(IntermediateDirectory)/complextestsuite$(DependSuffix)
+	$(CompilerName) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/complextestsuite$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/complextestsuite$(DependSuffix): complextestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/complextestsuite$(ObjectSuffix) -MF$(IntermediateDirectory)/complextestsuite$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp"
+
+$(IntermediateDirectory)/complextestsuite$(PreprocessSuffix): complextestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/complextestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -145,6 +153,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/combinationtestsuite$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/combinationtestsuite$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/complextestsuite$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/complextestsuite$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/complextestsuite$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 
 

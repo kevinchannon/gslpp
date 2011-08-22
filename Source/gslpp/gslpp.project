@@ -121,4 +121,8 @@
     <File Name="blas/blas1.cpp"/>
     <File Name="blas/blas1.h"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="Complex">
+    <File Name="Complex/complex.cpp"/>
+    <File Name="Complex/complex.h"/>
+  </VirtualDirectory>
 </CodeLite_Project>

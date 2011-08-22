@@ -1,11 +1,17 @@
 #pragma once
 
+#include "macros.h"
+
 #include <cstddef>
 
-namespace gsl{
+////////////////////////////////////////////////////////////
+
+BEGIN_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
 
 template< typename T >
-class gsl_base
+class gsl_base_ptr
 {
 public:
 
@@ -31,9 +37,9 @@ public:
 
 protected:
 
-    gsl_base() : M_pGSLData( NULL ){}
-    gsl_base( T* original ) : M_pGSLData( original ){}
-    ~gsl_base(){}
+    gsl_base_ptr() : M_pGSLData( NULL ){}
+    gsl_base_ptr( T* original ) : M_pGSLData( original ){}
+    ~gsl_base_ptr(){}
 
     /// Set the value of the underlying GSL struct
     ///
@@ -49,4 +55,39 @@ protected:
 
 };
 
-}
+////////////////////////////////////////////////////////////
+
+template< typename T >
+class gsl_base
+{
+public:
+	
+	/// Get a reference to the underlying object
+	///
+	/// Will not throw, will no return NULL
+	T& ref(){	return M_GSLData;	}
+	
+	/// Get a const reference to the underlying object
+	///
+	/// Will not throw, will no return NULL
+	const T& const_ref() const {	return M_GSLData;	}
+	
+	/// Get a pointer to the underlying object
+	///
+	/// Will not throw, will not return NULL
+	T* ptr(){	return const_cast< T* >( const_ptr() );	}
+	
+	/// Get a const pointer to the underlying object
+	///
+	/// Will not throw, will not return NULL
+	const T* const_ptr() const {	return &M_GSLData;	}
+	
+protected:
+	T M_GSLData;
+};
+
+////////////////////////////////////////////////////////////
+
+END_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////

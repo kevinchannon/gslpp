@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Session Name="/home/kevin/.codelite/Solutions/gsl++/Source/gsl++.workspace">
-  <int Value="0" Name="m_selectedTab"/>
+  <int Value="1" Name="m_selectedTab"/>
   <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gsl++.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
@@ -10,9 +10,21 @@
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Vector/vector.h" Name="FileName"/>
+      <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.h" Name="FileName"/>
+      <int Value="26" Name="FirstVisibleLine"/>
+      <int Value="92" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Common/gslstructbase.h" Name="FileName"/>
       <int Value="0" Name="FirstVisibleLine"/>
       <int Value="0" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp" Name="FileName"/>
+      <int Value="6" Name="FirstVisibleLine"/>
+      <int Value="23" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
   </TabInfoArray>

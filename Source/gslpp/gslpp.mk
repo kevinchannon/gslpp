@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=21/08/11
+Date                   :=22/08/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -50,7 +50,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -129,6 +129,14 @@ $(IntermediateDirectory)/blas_blas1$(DependSuffix): blas/blas1.cpp
 $(IntermediateDirectory)/blas_blas1$(PreprocessSuffix): blas/blas1.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/blas_blas1$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/blas/blas1.cpp"
 
+$(IntermediateDirectory)/Complex_complex$(ObjectSuffix): Complex/complex.cpp $(IntermediateDirectory)/Complex_complex$(DependSuffix)
+	$(CompilerName) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/Complex_complex$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Complex_complex$(DependSuffix): Complex/complex.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Complex_complex$(ObjectSuffix) -MF$(IntermediateDirectory)/Complex_complex$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp"
+
+$(IntermediateDirectory)/Complex_complex$(PreprocessSuffix): Complex/complex.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -156,6 +164,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/blas_blas1$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/blas_blas1$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/Complex_complex$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 
 

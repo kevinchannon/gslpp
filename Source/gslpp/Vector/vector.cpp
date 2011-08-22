@@ -53,13 +53,13 @@ void realVector::M_guaranteed_reserve( size_type n )
 ////////////////////////////////////////////////////////////
 
 realVector::realVector() :
-	gsl_base( NULL ), M_pStart(0), M_pFinish(0), M_pEnd_of_storage(0), M_bIsRowVector(false)
+	gsl_base_ptr( NULL ), M_pStart(0), M_pFinish(0), M_pEnd_of_storage(0), M_bIsRowVector(false)
 {}
 
 ////////////////////////////////////////////////////////////
 
 realVector::realVector( size_type n, bool isColVector ) throw ( std::bad_alloc ) :
-    gsl_base( gsl_vector_alloc( atLeastOne( n ) ) ), M_bIsRowVector(!isColVector)
+    gsl_base_ptr( gsl_vector_alloc( atLeastOne( n ) ) ), M_bIsRowVector(!isColVector)
 {
     if ( isNull() ) throw std::bad_alloc();
 
@@ -71,7 +71,7 @@ realVector::realVector( size_type n, bool isColVector ) throw ( std::bad_alloc )
 ////////////////////////////////////////////////////////////
 
 realVector::realVector( size_type n, real value, bool isColVector ) throw ( std::bad_alloc ) :
-    gsl_base( gsl_vector_alloc( atLeastOne( n ) ) ), M_bIsRowVector(!isColVector)
+    gsl_base_ptr( gsl_vector_alloc( atLeastOne( n ) ) ), M_bIsRowVector(!isColVector)
 {
     if ( isNull() ) throw std::bad_alloc();
 
@@ -85,7 +85,7 @@ realVector::realVector( size_type n, real value, bool isColVector ) throw ( std:
 ////////////////////////////////////////////////////////////
 
 realVector::realVector( size_type n, real* array, bool isColVector ) throw ( std::bad_alloc ) :
-    gsl_base( gsl_vector_alloc( atLeastOne( n ) ) ), M_bIsRowVector(!isColVector)
+    gsl_base_ptr( gsl_vector_alloc( atLeastOne( n ) ) ), M_bIsRowVector(!isColVector)
 {
     if ( isNull() ) throw std::bad_alloc();
 
@@ -99,7 +99,7 @@ realVector::realVector( size_type n, real* array, bool isColVector ) throw ( std
 ////////////////////////////////////////////////////////////
 
 realVector::realVector( const realVector &right ) throw ( std::bad_alloc ) :
-    gsl_base( gsl_vector_alloc( atLeastOne( right.capacity() ) ) ), M_bIsRowVector( right.M_bIsRowVector )
+    gsl_base_ptr( gsl_vector_alloc( atLeastOne( right.capacity() ) ) ), M_bIsRowVector( right.M_bIsRowVector )
 {
     if ( isNull() )    throw std::bad_alloc();
 
@@ -131,7 +131,7 @@ realVector::realVector( gsl_vector* pGSLVec, bool isColVector ) throw ( std::bad
 ////////////////////////////////////////////////////////////
 
 realVector::realVector( const std::vector< real >& original, bool isColVector ) throw ( std::bad_alloc )  :
-    gsl_base( gsl_vector_alloc( atLeastOne( original.capacity() ) ) ), M_bIsRowVector(!isColVector)
+    gsl_base_ptr( gsl_vector_alloc( atLeastOne( original.capacity() ) ) ), M_bIsRowVector(!isColVector)
 {
     if ( isNull() )    throw std::bad_alloc();
 

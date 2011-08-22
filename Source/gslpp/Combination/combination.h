@@ -22,7 +22,7 @@ namespace gsl{
         combination_uninitialised() : std::runtime_error("Combination illegally used uninitialised"){}
     };
 
-    class combination : public gsl_base< gsl_combination >
+    class combination : public gsl_base_ptr< gsl_combination >
     {
     public:
 
@@ -42,7 +42,7 @@ namespace gsl{
 
         combination() : M_bIsInitialised(false), M_pStart(NULL), M_pFinish(NULL){}
         combination( size_type n, size_type k, initial_state state = initialised ) throw ( std::bad_alloc ) :
-            gsl_base(state == combination::uninitialised ? gsl_combination_alloc(n,k) : gsl_combination_calloc(n,k)),
+            gsl_base_ptr(state == combination::uninitialised ? gsl_combination_alloc(n,k) : gsl_combination_calloc(n,k)),
 			M_bIsInitialised( false ), M_pStart(NULL), M_pFinish(NULL)
         {
             if ( ptr() == NULL )    throw std::bad_alloc();

@@ -15,11 +15,13 @@
     <File Name="sorttestsuite.h"/>
     <File Name="vectortestsuite.cpp"/>
     <File Name="vectortestsuite.h"/>
-    <File Name="globals.h"/>
     <File Name="matrixtestsuite.h"/>
     <File Name="matrixtestsuite.cpp"/>
     <File Name="combinationtestsuite.h"/>
     <File Name="combinationtestsuite.cpp"/>
+    <File Name="complextestsuite.h"/>
+    <File Name="complextestsuite.cpp"/>
+    <File Name="globals.h"/>
   </VirtualDirectory>
   <Dependencies Name="Debug">
     <Project Name="gslpp"/>

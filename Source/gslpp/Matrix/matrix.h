@@ -25,7 +25,7 @@ class matrix_size_mismatch : public std::runtime_error
 	matrix_size_mismatch() : std::runtime_error("matrix sizes are mismatched"){}
 };
 
-class realMatrix : public gsl::gsl_base< gsl_matrix > {
+class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	
 	public:
 	
@@ -52,11 +52,11 @@ class realMatrix : public gsl::gsl_base< gsl_matrix > {
 	typedef M_matrix_element_type element_type;
 
 	/// Default constructor
-	realMatrix() : gsl_base(NULL), M_pStart(NULL), M_pFinish(NULL), M_uRows(0), M_uCols(0) {}
+	realMatrix() : gsl_base_ptr(NULL), M_pStart(NULL), M_pFinish(NULL), M_uRows(0), M_uCols(0) {}
 	
 	/// Construct an empty matrix of a given size
 	realMatrix( size_type r, size_type c ) throw ( std::bad_alloc ) :
-		gsl_base( gsl_matrix_alloc( (r < 1 ? 1 : r ), (c < 1 ? 1 : c) ) )
+		gsl_base_ptr( gsl_matrix_alloc( (r < 1 ? 1 : r ), (c < 1 ? 1 : c) ) )
 	{
 		if ( isNull() )
 			throw std::bad_alloc();
@@ -66,7 +66,7 @@ class realMatrix : public gsl::gsl_base< gsl_matrix > {
 	
 	/// Construct a matrix of a given size with each element set to the given value
 	realMatrix( size_type r, size_type c, const value_type& x ) throw ( std::bad_alloc ) :
-	gsl_base( gsl_matrix_alloc( (r < 1 ? 1 : r ), (c < 1 ? 1 : c) ) )
+	gsl_base_ptr( gsl_matrix_alloc( (r < 1 ? 1 : r ), (c < 1 ? 1 : c) ) )
 	{
 		if ( isNull() )
 			throw std::bad_alloc();

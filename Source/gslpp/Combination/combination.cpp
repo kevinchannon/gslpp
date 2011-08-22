@@ -5,7 +5,7 @@ namespace gsl{
 ////////////////////////////////////////////////////////////
 
 combination::combination( const combination& original ) throw( std::bad_alloc ) :
-	gsl_base(gsl_combination_alloc( original.n(), original.k() )), M_bIsInitialised( false ), 
+	gsl_base_ptr(gsl_combination_alloc( original.n(), original.k() )), M_bIsInitialised( false ), 
 	M_pStart(NULL), M_pFinish(NULL)
 {
 	if ( isNull() )

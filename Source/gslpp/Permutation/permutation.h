@@ -21,7 +21,7 @@ namespace gsl{
         permutation_uninitialised() : std::runtime_error("Permutation illegally used uninitialised"){}
     };
 
-    class permutation : public gsl_base< gsl_permutation >
+    class permutation : public gsl_base_ptr< gsl_permutation >
     {
     public:
 
@@ -41,7 +41,7 @@ namespace gsl{
 
         permutation(){}
         permutation( size_type n, permutation::initial_state state = uninitialised ) throw ( std::bad_alloc ) :
-            gsl_base(state == permutation::uninitialised ? gsl_permutation_alloc(n) : gsl_permutation_calloc(n))
+            gsl_base_ptr(state == permutation::uninitialised ? gsl_permutation_alloc(n) : gsl_permutation_calloc(n))
         {
             if ( ptr() == NULL )    throw std::bad_alloc();
         }

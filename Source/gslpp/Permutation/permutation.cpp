@@ -7,7 +7,7 @@ namespace gsl{
 ////////////////////////////////////////////////////////////
 
 permutation::permutation( const permutation& original ) throw( std::bad_alloc ) :
-    gsl_base( original.isNull() ? NULL : gsl_permutation_alloc( original.size() ))
+    gsl_base_ptr( original.isNull() ? NULL : gsl_permutation_alloc( original.size() ))
 {
     if ( isNull() && original.hasValue() )
         throw std::bad_alloc();

@@ -26,7 +26,7 @@ class vector_size_mismatch : public std::runtime_error
     vector_size_mismatch() : std::runtime_error("vector sizes are unequal"){}
 };
 
-class realVector : public gsl_base< gsl_vector >
+class realVector : public gsl_base_ptr< gsl_vector >
 {
 public :
 
