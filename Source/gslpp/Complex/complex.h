@@ -40,6 +40,12 @@ public:
 		M_GSLData.dat[1] = z.y();
 	}
 	
+	/// Copy from a gsl_complex struct
+	complex( const gsl_complex& z ){
+		this->ref().dat[0] = z.dat[0];
+		this->ref().dat[1] = z.dat[1];
+	}
+	
 	/// type-cast to real
 	operator real(){	return this->abs();	}
 	
@@ -98,7 +104,162 @@ public:
 	/// Get the natural log of the magnitude, Allows accurate evaluation of ln|z| when
 	/// |z| is close to unity, where a naive evaluation would lead to loss of precision
 	inline real log_abs() const{	return gsl_complex_logabs( this->const_ref() );	}
+	
+	/// Get the complex conjugate
+	inline gsl::complex conj() const{	return gsl_complex_conjugate( this->const_ref() );	}
+	
+	/// Overloaded unitary operators
+	gsl::complex& operator+=( const gsl::complex& right ){
+		this->x() += right.x();
+		this->y() += right.y();
+		
+		return *this;
+	}
+	gsl::complex& operator+=( real X ){
+		this->x() += X;
+		return *this;
+	}
+	
+	gsl::complex& operator-=( const gsl::complex& right ){
+		this->x() -= right.x();
+		this->y() -= right.y();
+		
+		return *this;
+	}
+	gsl::complex& operator-=( real X ){
+		this->x() -= X;
+		return *this;
+	}
+	
+	gsl::complex& operator*=( const gsl::complex& right ){
+		this->x() *= right.x();
+		this->y() *= right.y();
+		
+		return *this;
+	}
+	gsl::complex& operator*=( real X ){
+		this->x() *= X;
+		return *this;
+	}
+	
+	gsl::complex& operator/=( const gsl::complex& right ){
+		this->x() /= right.x();
+		this->y() /= right.y();
+		
+		return *this;
+	}
+	gsl::complex& operator/=( real X ){
+		this->x() /= X;
+		return *this;
+	}
 };
+
+////////////////////////////////////////////////////////////
+
+bool operator==( const gsl::complex& left, const gsl::complex& right )
+{
+	if ( left.x() != right.x() )
+		return false;
+	if ( left.y() != right.y() )
+		return false;
+		
+	return true;
+}
+
+////////////////////////////////////////////////////////////
+
+inline bool operator!=( const gsl::complex& left, const gsl::complex& right )
+{
+	return !( left == right );
+}
+
+////////////////////////////////////////////////////////////
+
+inline bool operator<( const gsl::complex& left, const gsl::complex& right )
+{
+	return left.abs() < right.abs();
+}
+
+////////////////////////////////////////////////////////////
+
+inline bool operator<=( const gsl::complex& left, const gsl::complex& right )
+{
+	return left.abs() <= right.abs();
+}
+
+////////////////////////////////////////////////////////////
+
+inline bool operator>( const gsl::complex& left, const gsl::complex& right )
+{
+	return left.abs() > right.abs();
+}
+
+////////////////////////////////////////////////////////////
+
+inline bool operator>=( const gsl::complex& left, const gsl::complex& right )
+{
+	return left.abs() >= right.abs();
+}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator+( const gsl::complex& left, const gsl::complex& right )
+{	return gsl_complex_add( left.const_ref(), right.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator+( real left, const gsl::complex& right )
+{	return gsl_complex_add_real( right.const_ref(), left );			}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator+( const gsl::complex& left, real right )
+{	return gsl_complex_add_real( left.const_ref(), right );			}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator-( const gsl::complex& left, const gsl::complex& right )
+{	return gsl_complex_sub( left.const_ref(), right.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator-( real left, const gsl::complex& right )
+{	return gsl_complex_negative( gsl_complex_sub_real( right.const_ref(), left ) );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator-( const gsl::complex& left, real right )
+{	return gsl_complex_sub_real( left.const_ref(), right );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator*( const gsl::complex& left, const gsl::complex& right )
+{	return gsl_complex_mul( left.const_ref(), right.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator*( real left, const gsl::complex& right )
+{	return gsl_complex_mul_real( right.const_ref(), left );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator*( const gsl::complex& left, real right )
+{	return gsl_complex_mul_real( left.const_ref(), right );			}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator/( const gsl::complex& left, const gsl::complex& right )
+{	return gsl_complex_div( left.const_ref(), right.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator/( real left, const gsl::complex& right )
+{	return gsl_complex_inverse( gsl_complex_div_real( right.const_ref(), left ) );	}
+
+////////////////////////////////////////////////////////////
+
+inline gsl::complex operator/( const gsl::complex& left, real right )
+{	return gsl_complex_div_real( left.const_ref(), right );			}
 
 ////////////////////////////////////////////////////////////
 

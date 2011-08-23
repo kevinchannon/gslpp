@@ -65,22 +65,22 @@ public:
 	/// Get a reference to the underlying object
 	///
 	/// Will not throw, will no return NULL
-	T& ref(){	return M_GSLData;	}
+	inline T& ref(){	return M_GSLData;	}
 	
 	/// Get a const reference to the underlying object
 	///
 	/// Will not throw, will no return NULL
-	const T& const_ref() const {	return M_GSLData;	}
+	inline const T& const_ref() const {	return M_GSLData;	}
 	
 	/// Get a pointer to the underlying object
 	///
 	/// Will not throw, will not return NULL
-	T* ptr(){	return const_cast< T* >( const_ptr() );	}
+	inline T* ptr(){	return const_cast< T* >( const_ptr() );	}
 	
 	/// Get a const pointer to the underlying object
 	///
 	/// Will not throw, will not return NULL
-	const T* const_ptr() const {	return &M_GSLData;	}
+	inline const T* const_ptr() const {	return &M_GSLData;	}
 	
 protected:
 	T M_GSLData;
