@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Session Name="/home/kevin/.codelite/Solutions/gsl++/Source/gsl++.workspace">
-  <int Value="6" Name="m_selectedTab"/>
+  <int Value="1" Name="m_selectedTab"/>
   <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gsl++.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
@@ -11,37 +11,31 @@
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.h" Name="FileName"/>
-      <int Value="36" Name="FirstVisibleLine"/>
-      <int Value="37" Name="CurrentLine"/>
+      <int Value="244" Name="FirstVisibleLine"/>
+      <int Value="187" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Common/gslstructbase.h" Name="FileName"/>
-      <int Value="60" Name="FirstVisibleLine"/>
-      <int Value="87" Name="CurrentLine"/>
+      <int Value="61" Name="FirstVisibleLine"/>
+      <int Value="82" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="21" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Common/number.h" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="76" Name="CurrentLine"/>
+      <int Value="4" Name="FirstVisibleLine"/>
+      <int Value="22" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.h" Name="FileName"/>
-      <int Value="2" Name="FirstVisibleLine"/>
+      <int Value="1" Name="FirstVisibleLine"/>
       <int Value="23" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp" Name="FileName"/>
-      <int Value="44" Name="FirstVisibleLine"/>
+      <int Value="43" Name="FirstVisibleLine"/>
       <int Value="50" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
