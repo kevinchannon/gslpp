@@ -132,24 +132,26 @@ public:
 	}
 	
 	gsl::complex& operator*=( const gsl::complex& right ){
-		this->x() *= right.x();
-		this->y() *= right.y();
+		gsl::complex temp( gsl_complex_mul(this->const_ref(), right.const_ref()) );
+		*this = temp;
 		
 		return *this;
 	}
 	gsl::complex& operator*=( real X ){
 		this->x() *= X;
+		this->y() *= X;
 		return *this;
 	}
 	
 	gsl::complex& operator/=( const gsl::complex& right ){
-		this->x() /= right.x();
-		this->y() /= right.y();
+		gsl::complex temp( gsl_complex_div(this->const_ref(), right.const_ref()) );
+		*this = temp;
 		
 		return *this;
 	}
 	gsl::complex& operator/=( real X ){
 		this->x() /= X;
+		this->y() /= X;
 		return *this;
 	}
 };

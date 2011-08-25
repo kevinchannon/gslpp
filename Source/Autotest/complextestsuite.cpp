@@ -127,12 +127,53 @@ void ComplexTestSuite::Arithmetic()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z3.y(), 1e-14 );
 	
 	z3 *= z2;
-	z_x = z_x*c - z_y*d;
-	z_y = z_x*d + z_y*c;
+	real z_x_1 = z_x*c - z_y*d;
+	real z_y_1 = z_x*d + z_y*c;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x_1, z3.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y_1, z3.y(), 1e-14 );
+	
+	z3 /= z2;
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x, z3.x(), 1e-14 );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z3.y(), 1e-14 );
 	
 	// complex - real arithmetic
+	gsl::complex z4 = z3 + c;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x + c, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
+	
+	z4 = z3 - d;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x - d, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
+	
+	z4 = z3 * b;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x * b, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y * b, z4.y(), 1e-14 );
+	
+	z4 = z3 / a;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x / a, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y / a, z4.y(), 1e-14 );
+	
+	z4 += a;
+	z_x += a;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
+	
+	z4 -= d;
+	z_x -= d;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
+	
+	z4 *= b;
+	z_x *= b;
+	z_y *= b;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
+	
+	z4 /= c;
+	z_x /= c;
+	z_y /= c;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x, z4.x(), 1e-14 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
 }
 
 ////////////////////////////////////////////////////////////
