@@ -124,5 +124,7 @@
   <VirtualDirectory Name="Complex">
     <File Name="Complex/complex.cpp"/>
     <File Name="Complex/complex.h"/>
+    <File Name="Complex/complexmath.h"/>
+    <File Name="Complex/complexmath.cpp"/>
   </VirtualDirectory>
 </CodeLite_Project>

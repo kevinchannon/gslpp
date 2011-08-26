@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=25/08/11
+Date                   :=26/08/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -50,7 +50,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) $(IntermediateDirectory)/Complex_complexmath$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -137,6 +137,14 @@ $(IntermediateDirectory)/Complex_complex$(DependSuffix): Complex/complex.cpp
 $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix): Complex/complex.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp"
 
+$(IntermediateDirectory)/Complex_complexmath$(ObjectSuffix): Complex/complexmath.cpp $(IntermediateDirectory)/Complex_complexmath$(DependSuffix)
+	$(CompilerName) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complexmath.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/Complex_complexmath$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Complex_complexmath$(DependSuffix): Complex/complexmath.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Complex_complexmath$(ObjectSuffix) -MF$(IntermediateDirectory)/Complex_complexmath$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complexmath.cpp"
+
+$(IntermediateDirectory)/Complex_complexmath$(PreprocessSuffix): Complex/complexmath.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Complex_complexmath$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complexmath.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -167,6 +175,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/Complex_complex$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/Complex_complexmath$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/Complex_complexmath$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/Complex_complexmath$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 
 

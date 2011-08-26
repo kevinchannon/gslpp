@@ -1,5 +1,7 @@
 #include "complextestsuite.h"
 
+#include <cmath>
+
 #include "gslpp/Common/number.h"
 #include "gslpp/Complex/complex.h"
 
@@ -174,6 +176,23 @@ void ComplexTestSuite::Arithmetic()
 	z_y /= c;
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_x, z4.x(), 1e-14 );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( z_y, z4.y(), 1e-14 );
+}
+
+////////////////////////////////////////////////////////////
+
+void ComplexTestSuite::ElementaryFunctions()
+{
+	real rTolerance = 1e-14;
+	
+	real a = 1;
+	real b = 2;
+	gsl::complex z(a,b);
+	
+	real r = std::srqt( a*a + b*b );
+	real q = std::atan( b / a );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( std::sqrt(r), std::sqrt( z.abs(), rTolerance );
+//	1.272019649514069   +  i* 0.7861513777574233
 }
 
 ////////////////////////////////////////////////////////////

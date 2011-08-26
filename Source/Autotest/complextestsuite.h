@@ -14,6 +14,7 @@ class ComplexTestSuite : public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST ( Properties );
 	CPPUNIT_TEST ( Equality );
 	CPPUNIT_TEST ( Arithmetic );
+	CPPUNIT_TEST ( ElementaryFunctions );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -26,4 +27,5 @@ protected:
 	void Properties();
 	void Equality();
 	void Arithmetic();
+	void ElementaryFunctions();
 };
