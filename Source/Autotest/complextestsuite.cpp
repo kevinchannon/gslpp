@@ -216,6 +216,24 @@ void ComplexTestSuite::ElementaryFunctions()
 	
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( std::pow( z3.abs(), c), z4.abs(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( q4, z4.arg(), rTolerance );
+	
+	// Exponentials
+	gsl::complex z5 = gsl::exp( z4 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.12334173203738, z5.x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0710310274678569, z5.y(), rTolerance );
+	
+	gsl::complex z6 = gsl::log( z1 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.80471895621705, z6.x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.10714871779409, z6.y(), rTolerance );
+	CPPUNIT_ASSERT( z6 == gsl::ln( z1 ) );
+	
+	gsl::complex z7 = gsl::log10( z2 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.349485002168009, z7.x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.201359598136687, z7.y(), rTolerance );
+	
+	gsl::complex z8 = gsl::log_b( z4, z5 );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -11.4955609428967, z8.x(), 100*rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 10.2805834567583, z8.y(), rTolerance );
 }
 
 ////////////////////////////////////////////////////////////
