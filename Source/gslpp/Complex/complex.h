@@ -265,6 +265,46 @@ inline gsl::complex operator/( const gsl::complex& left, real right )
 
 ////////////////////////////////////////////////////////////
 
+/// Get the square-root of a complex number, the branch cut is the negative real axis,
+/// the result always lies in the right half of the complex plane
+inline gsl::complex sqrt( const gsl::complex& z )
+{	return gsl_complex_sqrt( z.const_ref() );	}
+
+/// Get the complex sqare-root of a real number, x may be negative
+inline gsl::complex sqrt( real x )
+{	return gsl_complex_sqrt_real( x );	}
+
+/// Get z^a, where both z & a cam be complex.  Computed as exp(log(z)*a)
+inline gsl::complex pow( const gsl::complex& z, const gsl::complex& a )
+{	return gsl_complex_pow( z.const_ref(), a.const_ref() );		}
+
+/// Get z^a, where z is complex and a is real
+inline gsl::complex pow(const gsl::complex& z, real a )
+{	return gsl_complex_pow_real( z.const_ref(), a );	}
+
+/// Get the complex exponential of the complex number z
+inline gsl::complex exp( const gsl::complex& z )
+{	return gsl_complex_exp( z.const_ref() );		}
+
+/// Get the complex natural logarithm of the complex number, z
+inline gsl::complex log( const gsl::complex& z)
+{	return gsl_complex_log( z.const_ref() );		}
+
+/// Wrapper for log( const gsl::complex& )
+inline gsl::complex ln( const gsl::complex& z)
+{	return gsl_complex_log( z.const_ref() );		}
+
+/// Get the complex log_10 of a complex number, z
+inline gsl::complex log10( const gsl::complex& z )
+{	return gsl_complex_log10( z.const_ref() );		}
+
+/// Get the complex base-b logarithm of the complex number z
+/// Computed as log(z)/log(b)
+inline gsl::complex log_b( const gsl::complex& z, const gsl::complex& b )
+{	return gsl_complex_log_b( z.const_ref(), b.const_ref() );		}
+
+////////////////////////////////////////////////////////////
+
 END_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////

@@ -186,13 +186,36 @@ void ComplexTestSuite::ElementaryFunctions()
 	
 	real a = 1;
 	real b = 2;
-	gsl::complex z(a,b);
+	gsl::complex z1(a,b);
 	
-	real r = std::srqt( a*a + b*b );
+	// Power functions
+	real r = std::sqrt( a*a + b*b );
 	real q = std::atan( b / a );
 	
-	CPPUNIT_ASSERT_DOUBLES_EQUAL( std::sqrt(r), std::sqrt( z.abs(), rTolerance );
-//	1.272019649514069   +  i* 0.7861513777574233
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( std::sqrt(r), gsl::sqrt(z1).abs(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.5*q, gsl::sqrt(z1).arg(), rTolerance );
+	
+	real c = -4;
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( std::sqrt( fabs(c) ), gsl::sqrt( c ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0, gsl::sqrt( c ).x(), rTolerance );
+	
+	gsl::complex z2(b,a);
+	gsl::complex z3 = gsl::pow( z1, z2 );
+	
+	real r3 = std::exp( z2.x()*std::log( z1.abs() ) - z1.arg()*z2.y() );
+	real q3 = z1.arg()*z2.x() + z2.y()*std::log( z1.abs() );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( r3, z3.abs(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( q3, z3.arg(), rTolerance );
+	
+	gsl::complex z4 = gsl::pow( z3, c );
+	real q4 = z3.arg()*c;
+	// unwind the argument, so that it's -pi < x <= pi
+	const real pi = 3.14159265358979323846;
+	q4 = q4 - pi * static_cast< int >( q4 / (pi) ) + pi; 
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( std::pow( z3.abs(), c), z4.abs(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( q4, z4.arg(), rTolerance );
 }
 
 ////////////////////////////////////////////////////////////
