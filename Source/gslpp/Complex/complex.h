@@ -69,22 +69,22 @@ public:
 	}
 	
 	/// Get the real component
-	inline const real& x() const{	return GSL_REAL( this->const_ref() );	}
+	__INLINE const real& x() const{	return GSL_REAL( this->const_ref() );	}
 	
 	/// Set the real component by assignment
-	inline real& x(){	return GSL_REAL( this->ref() );	}
+	__INLINE real& x(){	return GSL_REAL( this->ref() );	}
 	
 	/// Set the real component
-	inline void x( real X ){ 	this->x() = X;	}
+	__INLINE void x( real X ){ 	this->x() = X;	}
 	
 	/// Get the imaginary component
-	inline const real& y() const{	return GSL_IMAG( this->const_ref() );	}
+	__INLINE const real& y() const{	return GSL_IMAG( this->const_ref() );	}
 	
 	/// Set the imaginary component by assignment
-	inline real& y(){	return GSL_IMAG( this->ref() );	}
+	__INLINE real& y(){	return GSL_IMAG( this->ref() );	}
 	
 	/// Set the imaginary component
-	inline void y( real Y ){	this->y() = Y;	}
+	__INLINE void y( real Y ){	this->y() = Y;	}
 	
 	/// Set the magnitude, keeps the argument the same
 	void abs( real R );
@@ -93,20 +93,20 @@ public:
 	void arg( real Q );
 	
 	/// Get the magnitude, |z|
-	inline real abs() const{	return gsl_complex_abs( this->const_ref() );	}
+	__INLINE real abs() const{	return gsl_complex_abs( this->const_ref() );	}
 	
 	/// Get the argument
-	inline real arg() const{	return gsl_complex_arg( this->const_ref() );	}
+	__INLINE real arg() const{	return gsl_complex_arg( this->const_ref() );	}
 	
 	/// Get the square of the magnitude, |z|^2
-	inline real abs2() const{	return gsl_complex_abs2( this->const_ref() );	}
+	__INLINE real abs2() const{	return gsl_complex_abs2( this->const_ref() );	}
 	
 	/// Get the natural log of the magnitude, Allows accurate evaluation of ln|z| when
 	/// |z| is close to unity, where a naive evaluation would lead to loss of precision
-	inline real log_abs() const{	return gsl_complex_logabs( this->const_ref() );	}
+	__INLINE real log_abs() const{	return gsl_complex_logabs( this->const_ref() );	}
 	
 	/// Get the complex conjugate
-	inline gsl::complex conj() const{	return gsl_complex_conjugate( this->const_ref() );	}
+	__INLINE gsl::complex conj() const{	return gsl_complex_conjugate( this->const_ref() );	}
 	
 	/// Overloaded unitary operators
 	gsl::complex& operator+=( const gsl::complex& right ){
@@ -170,140 +170,219 @@ bool operator==( const gsl::complex& left, const gsl::complex& right )
 
 ////////////////////////////////////////////////////////////
 
-inline bool operator!=( const gsl::complex& left, const gsl::complex& right )
+__INLINE bool operator!=( const gsl::complex& left, const gsl::complex& right )
 {
 	return !( left == right );
 }
 
 ////////////////////////////////////////////////////////////
 
-inline bool operator<( const gsl::complex& left, const gsl::complex& right )
+__INLINE bool operator<( const gsl::complex& left, const gsl::complex& right )
 {
 	return left.abs() < right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-inline bool operator<=( const gsl::complex& left, const gsl::complex& right )
+__INLINE bool operator<=( const gsl::complex& left, const gsl::complex& right )
 {
 	return left.abs() <= right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-inline bool operator>( const gsl::complex& left, const gsl::complex& right )
+__INLINE bool operator>( const gsl::complex& left, const gsl::complex& right )
 {
 	return left.abs() > right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-inline bool operator>=( const gsl::complex& left, const gsl::complex& right )
+__INLINE bool operator>=( const gsl::complex& left, const gsl::complex& right )
 {
 	return left.abs() >= right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator+( const gsl::complex& left, const gsl::complex& right )
+__INLINE gsl::complex operator+( const gsl::complex& left, const gsl::complex& right )
 {	return gsl_complex_add( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator+( real left, const gsl::complex& right )
+__INLINE gsl::complex operator+( real left, const gsl::complex& right )
 {	return gsl_complex_add_real( right.const_ref(), left );			}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator+( const gsl::complex& left, real right )
+__INLINE gsl::complex operator+( const gsl::complex& left, real right )
 {	return gsl_complex_add_real( left.const_ref(), right );			}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator-( const gsl::complex& left, const gsl::complex& right )
+__INLINE gsl::complex operator-( const gsl::complex& left, const gsl::complex& right )
 {	return gsl_complex_sub( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator-( real left, const gsl::complex& right )
+__INLINE gsl::complex operator-( real left, const gsl::complex& right )
 {	return gsl_complex_negative( gsl_complex_sub_real( right.const_ref(), left ) );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator-( const gsl::complex& left, real right )
+__INLINE gsl::complex operator-( const gsl::complex& left, real right )
 {	return gsl_complex_sub_real( left.const_ref(), right );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator*( const gsl::complex& left, const gsl::complex& right )
+__INLINE gsl::complex operator*( const gsl::complex& left, const gsl::complex& right )
 {	return gsl_complex_mul( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator*( real left, const gsl::complex& right )
+__INLINE gsl::complex operator*( real left, const gsl::complex& right )
 {	return gsl_complex_mul_real( right.const_ref(), left );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator*( const gsl::complex& left, real right )
+__INLINE gsl::complex operator*( const gsl::complex& left, real right )
 {	return gsl_complex_mul_real( left.const_ref(), right );			}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator/( const gsl::complex& left, const gsl::complex& right )
+__INLINE gsl::complex operator/( const gsl::complex& left, const gsl::complex& right )
 {	return gsl_complex_div( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator/( real left, const gsl::complex& right )
+__INLINE gsl::complex operator/( real left, const gsl::complex& right )
 {	return gsl_complex_inverse( gsl_complex_div_real( right.const_ref(), left ) );	}
 
 ////////////////////////////////////////////////////////////
 
-inline gsl::complex operator/( const gsl::complex& left, real right )
+__INLINE gsl::complex operator/( const gsl::complex& left, real right )
 {	return gsl_complex_div_real( left.const_ref(), right );			}
 
+////////////////////////////////////////////////////////////
+/// Elementary functions
 ////////////////////////////////////////////////////////////
 
 /// Get the square-root of a complex number, the branch cut is the negative real axis,
 /// the result always lies in the right half of the complex plane
-inline gsl::complex sqrt( const gsl::complex& z )
+__INLINE gsl::complex sqrt( const gsl::complex& z )
 {	return gsl_complex_sqrt( z.const_ref() );	}
 
 /// Get the complex sqare-root of a real number, x may be negative
-inline gsl::complex sqrt( real x )
+__INLINE gsl::complex sqrt( real x )
 {	return gsl_complex_sqrt_real( x );	}
 
 /// Get z^a, where both z & a cam be complex.  Computed as exp(log(z)*a)
-inline gsl::complex pow( const gsl::complex& z, const gsl::complex& a )
+__INLINE gsl::complex pow( const gsl::complex& z, const gsl::complex& a )
 {	return gsl_complex_pow( z.const_ref(), a.const_ref() );		}
 
 /// Get z^a, where z is complex and a is real
-inline gsl::complex pow(const gsl::complex& z, real a )
+__INLINE gsl::complex pow(const gsl::complex& z, real a )
 {	return gsl_complex_pow_real( z.const_ref(), a );	}
 
 /// Get the complex exponential of the complex number z
-inline gsl::complex exp( const gsl::complex& z )
+__INLINE gsl::complex exp( const gsl::complex& z )
 {	return gsl_complex_exp( z.const_ref() );		}
 
 /// Get the complex natural logarithm of the complex number, z
-inline gsl::complex log( const gsl::complex& z)
+__INLINE gsl::complex log( const gsl::complex& z)
 {	return gsl_complex_log( z.const_ref() );		}
 
 /// Wrapper for log( const gsl::complex& )
-inline gsl::complex ln( const gsl::complex& z)
+__INLINE gsl::complex ln( const gsl::complex& z)
 {	return gsl_complex_log( z.const_ref() );		}
 
 /// Get the complex log_10 of a complex number, z
-inline gsl::complex log10( const gsl::complex& z )
+__INLINE gsl::complex log10( const gsl::complex& z )
 {	return gsl_complex_log10( z.const_ref() );		}
 
 /// Get the complex base-b logarithm of the complex number z
 /// Computed as log(z)/log(b)
-inline gsl::complex log_b( const gsl::complex& z, const gsl::complex& b )
+__INLINE gsl::complex log_b( const gsl::complex& z, const gsl::complex& b )
 {	return gsl_complex_log_b( z.const_ref(), b.const_ref() );		}
 
 ////////////////////////////////////////////////////////////
+/// Trigonometric functions
+////////////////////////////////////////////////////////////
+
+/// Return the complex sine of the complex number z.
+__INLINE gsl::complex sin( const gsl::complex& z )
+{	return gsl_complex_sin( z.const_ref() );	}
+
+/// Return the complex cosine of the complex number z.
+__INLINE gsl::complex cos( const gsl::complex& z )
+{	return gsl_complex_cos( z.const_ref() );	}
+
+/// Return the complex tangent of the complex number z.
+__INLINE gsl::complex tan( const gsl::complex& z )
+{	return gsl_complex_tan( z.const_ref() );	}
+
+/// Return the complex secant of the complex number z.
+__INLINE gsl::complex sec( const gsl::complex& z )
+{	return gsl_complex_sec( z.const_ref() );	}
+
+/// Return the complex cosecant of the complex number z.
+__INLINE gsl::complex csc( const gsl::complex& z )
+{	return gsl_complex_csc( z.const_ref() );	}
+
+/// Return the complex cotangent of the complex number z.
+__INLINE gsl::complex cot( const gsl::complex& z )
+{	return gsl_complex_cot( z.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+/// Inverse Trigonometric functions
+////////////////////////////////////////////////////////////
+
+/// Returns the complex arc-sine of the complex number, z. The branch-cuts are on the
+/// real axis, less than -1 and greater than 1.
+__INLINE gsl::complex asin( const gsl::complex& z )
+{	return gsl_complex_arcsin( z.const_ref() );		}
+
+/// Returns the complex arc-sine of the real number, x. For -1 <= x <= 1, returns a zero
+/// imaginary component and a real component in the range [-pi/2, pi/2]. For x > 1,
+/// asin(x) = pi/2 - iy, y is a positive, real number. For x < -1, asin(x) = -pi/2 + iy.
+__INLINE gsl::complex asin( real x )
+{	return gsl_complex_arcsin_real( x );		}
+
+/// Returns the complex arc-cosine of the complex number, z. The branch-cuts are on the
+/// real axis, less than -1 and greater than 1.
+__INLINE gsl::complex acos( const gsl::complex& z )
+{	return gsl_complex_arccos( z.const_ref() );		}
+
+/// Returns the complex arc-cosine of the real number, x. For -1 <= x <= 1, returns a zero
+/// imaginary component and a real component in the range [0, pi]. For x > 1,
+/// asin(x) = pi - iy, y is a positive, real number. For x < -1, asin(x) = iy.
+__INLINE gsl::complex acos( real x )
+{	return gsl_complex_arccos_real( x );		}
+
+/// Returns the complex arc-tangent of the complex number z. Branch cuts are on the
+/// imaginary axis, below -i and above i.
+__INLINE gsl::complex atan( const gsl::complex& z )
+{	return gsl_complex_arctan( z.const_ref() );	}
+
+/// Returns the complex arc-secant of the complex number z.
+__INLINE gsl::complex asec( const gsl::complex& z )
+{	return gsl_complex_arcsec( z.const_ref() );	}
+
+/// Return the complex src-secant of the real number x
+__INLINE gsl::complex asec( real x )
+{	return gsl_complex_arcsec_real( x );	}	
+
+/// Returns the complex arc-cosecant of the complex number z.
+__INLINE gsl::complex acsc( const gsl::complex& z )
+{	return gsl_complex_arccsc( z.const_ref() );	}
+
+/// Return the complex src-cosecant of the real number x
+__INLINE gsl::complex acsc( real x )
+{	return gsl_complex_arccsc_real( x );	}	
+
+/// Returns the complex arc-cotangent of the complex number z.
+__INLINE gsl::complex acot( const gsl::complex& z )
+{	return gsl_complex_arccot( z.const_ref() );	}
 
 END_GSL_NAMESPACE
 

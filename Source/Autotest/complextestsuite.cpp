@@ -238,3 +238,26 @@ void ComplexTestSuite::ElementaryFunctions()
 
 ////////////////////////////////////////////////////////////
 
+void ComplexTestSuite::TrigonometricFunctions()
+{
+	real rTolerance = 1e-14;
+	
+	gsl::complex z(1,2);
+	
+	// These numbers are taken from the results: this is a regression test
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.16577851321617, gsl::sin( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.95960104142161, gsl::sin( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.03272300701967, gsl::cos( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -3.0518977991518, gsl::cos( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0338128260798967, gsl::tan( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.01479361614663, gsl::tan( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.151176298265577, gsl::sec( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.226973675393722, gsl::sec( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.228375065599687, gsl::csc( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.141363021612408, gsl::csc( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0327977555337526, gsl::cot( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.984329226458191, gsl::cot( z ).y(), rTolerance );
+}
+
+////////////////////////////////////////////////////////////
+

@@ -69,16 +69,16 @@ public :
     const_reference operator()(int index) const;
 
     /// GSL-style Functions
-    inline value_type max() const{ return gsl_vector_max( this->const_ptr() );    }
-    inline value_type min() const{ return gsl_vector_min( this->const_ptr() );    }
+    __INLINE value_type max() const{ return gsl_vector_max( this->const_ptr() );    }
+    __INLINE value_type min() const{ return gsl_vector_min( this->const_ptr() );    }
     std::pair< real, real > minmax() const;
-    inline size_type max_element() const{ return gsl_vector_max_index( this->const_ptr() );  }
-    inline size_type min_element() const{ return gsl_vector_min_index( this->const_ptr() );  }
+    __INLINE size_type max_element() const{ return gsl_vector_max_index( this->const_ptr() );  }
+    __INLINE size_type min_element() const{ return gsl_vector_min_index( this->const_ptr() );  }
     std::pair< size_type, size_type > minmax_element() const;
 
     void swapElements( size_type index1, size_type index2);
 
-    inline difference_type stride() const { return static_cast< difference_type >( this->const_ptr()->stride );   }
+    __INLINE difference_type stride() const { return static_cast< difference_type >( this->const_ptr()->stride );   }
 //    void set_stride( difference_type s );
 
     void zero();
@@ -88,38 +88,38 @@ public :
     /// STL-style functions
 
     // Iterators
-    inline iterator begin(){  return const_cast< iterator >( cbegin() );  }
-    inline iterator end(){ return const_cast< iterator >( cend() ); }
-    inline iterator rbegin(){  return const_cast< iterator >( crbegin() );  }
-    inline iterator rend(){ return const_cast< iterator >( crend() ); }
-    inline const_iterator cbegin() const {  return static_cast< const_iterator >( M_pStart );  }
-    inline const_iterator cend() const {  return static_cast< const_iterator >( M_pFinish );  }
-    inline const_iterator crbegin() const {  return static_cast< const_iterator >( M_pFinish - 1 );  }
-    inline const_iterator crend() const { return static_cast< const_iterator >( M_pStart - 1 );  }
+    __INLINE iterator begin(){  return const_cast< iterator >( cbegin() );  }
+    __INLINE iterator end(){ return const_cast< iterator >( cend() ); }
+    __INLINE iterator rbegin(){  return const_cast< iterator >( crbegin() );  }
+    __INLINE iterator rend(){ return const_cast< iterator >( crend() ); }
+    __INLINE const_iterator cbegin() const {  return static_cast< const_iterator >( M_pStart );  }
+    __INLINE const_iterator cend() const {  return static_cast< const_iterator >( M_pFinish );  }
+    __INLINE const_iterator crbegin() const {  return static_cast< const_iterator >( M_pFinish - 1 );  }
+    __INLINE const_iterator crend() const { return static_cast< const_iterator >( M_pStart - 1 );  }
 
     // Capacity
-    inline size_type size() const { return M_pFinish - M_pStart; }
+    __INLINE size_type size() const { return M_pFinish - M_pStart; }
     void resize(const size_type length);
     void resize(const size_type length, const real value);
-    inline bool empty() const{ return M_pFinish == M_pStart; }
-    inline size_type capacity() const{    return M_pEnd_of_storage - M_pStart;  }
+    __INLINE bool empty() const{ return M_pFinish == M_pStart; }
+    __INLINE size_type capacity() const{    return M_pEnd_of_storage - M_pStart;  }
     void reserve( size_type ) throw (std::bad_alloc );
 
     // Element access
-    inline reference operator[](size_type index){  return *( M_pStart + index );   }
-    inline const_reference operator[](size_type index) const{  return *( M_pStart + index );  }
+    __INLINE reference operator[](size_type index){  return *( M_pStart + index );   }
+    __INLINE const_reference operator[](size_type index) const{  return *( M_pStart + index );  }
     const_reference at( size_type index) const throw ( std::out_of_range, vector_uninitialised );
     reference at( size_type index) throw ( std::out_of_range, vector_uninitialised );
-    inline reference front(){   return *begin();  }
-    inline reference back(){    return *( end() - 1);    }
-    inline const_reference front() const {   return *cbegin();  }
-    inline const_reference back() const {    return *( cend() - 1);    }
+    __INLINE reference front(){   return *begin();  }
+    __INLINE reference back(){    return *( end() - 1);    }
+    __INLINE const_reference front() const {   return *cbegin();  }
+    __INLINE const_reference back() const {    return *( cend() - 1);    }
 
     // Modifiers
     void assign( size_type n, const_reference value );
     void assign( const_iterator start, const_iterator finish );
     void swap(gsl::realVector& otherVector);
-    inline void clear(){    M_pFinish = M_pStart;    }
+    __INLINE void clear(){    M_pFinish = M_pStart;    }
     void push_back( value_type value );
     value_type pop_back();
     void erase( size_type n );
@@ -128,10 +128,10 @@ public :
     void insert ( iterator position, iterator first, iterator last );
 
     /// Misc convenience functions
-    inline bool isRowVector() const{   return M_bIsRowVector;  }
-    inline void setRowVector(bool bIsRowVec = true ){         M_bIsRowVector = bIsRowVec; }
-    inline bool isColVector() const{   return !M_bIsRowVector; }
-    inline void setColVector(bool bIsColVec = true ){         M_bIsRowVector = !bIsColVec; }
+    __INLINE bool isRowVector() const{   return M_bIsRowVector;  }
+    __INLINE void setRowVector(bool bIsRowVec = true ){         M_bIsRowVector = bIsRowVec; }
+    __INLINE bool isColVector() const{   return !M_bIsRowVector; }
+    __INLINE void setColVector(bool bIsColVec = true ){         M_bIsRowVector = !bIsColVec; }
 
     iterator toArray() const throw ( std::bad_alloc );
 
@@ -147,14 +147,14 @@ private :
 
     void M_guaranteed_reserve( size_type n );
     void M_realloc( size_type length ) throw ( std::bad_alloc) ;
-    inline void M_range_check( size_type n ) const throw ( std::out_of_range )
+    __INLINE void M_range_check( size_type n ) const throw ( std::out_of_range )
     {
         if ( n >= size() )
             throw std::out_of_range( "vector index out-of-range" );
     }
 };
 
- inline void swap( gsl::realVector& a, gsl::realVector& b)
+ __INLINE void swap( gsl::realVector& a, gsl::realVector& b)
  {
 	  a.swap( b );
  }
@@ -164,7 +164,7 @@ END_GSL_NAMESPACE
 std::ostream &operator<<(std::ostream &os, const gsl::realVector &right);
 
 bool operator==(const gsl::realVector& left, const gsl::realVector &right);
-inline bool operator!=(const gsl::realVector& left, const gsl::realVector &right){    return !(left == right);   }
+__INLINE bool operator!=(const gsl::realVector& left, const gsl::realVector &right){    return !(left == right);   }
 
 const gsl::realVector operator+(const gsl::realVector& left, const gsl::realVector &right);
 const gsl::realVector operator-(const gsl::realVector& left, const gsl::realVector &right);
