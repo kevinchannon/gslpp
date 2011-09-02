@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace gsl{
+BEGIN_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////
 
@@ -208,4 +208,4 @@ const permutation operator*( const permutation& left, const permutation& right )
 
 ////////////////////////////////////////////////////////////
 
-}
+END_GSL_NAMESPACE

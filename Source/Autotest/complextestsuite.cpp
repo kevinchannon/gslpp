@@ -257,6 +257,33 @@ void ComplexTestSuite::TrigonometricFunctions()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.141363021612408, gsl::csc( z ).y(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.0327977555337526, gsl::cot( z ).x(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.984329226458191, gsl::cot( z ).y(), rTolerance );
+	
+	// Inverse functions
+	real rLessThanOne = 0.6;
+	real rGreaterThanOne = 4.5;
+	real rLessThanMinusOne = -3.2;
+	const real pi = 3.14159265358979323846;
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.427078586392476, gsl::asin( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.528570919481, gsl::asin( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.643501108793284, gsl::asin( rLessThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::asin( rLessThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pi / 2, gsl::asin( rGreaterThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -2.18464379160511, gsl::asin( rGreaterThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( - pi / 2, gsl::asin( rLessThanMinusOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.83093800692692, gsl::asin( rLessThanMinusOne ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.14371774040242, gsl::acos( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.528570919481, gsl::acos( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.927295218001612, gsl::acos( rLessThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::acos( rLessThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::acos( rGreaterThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.18464379160511, gsl::acos( rGreaterThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pi, gsl::acos( rLessThanMinusOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.83093800692692, gsl::acos( rLessThanMinusOne ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.33897252229449, gsl::atan( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.402359478108525, gsl::atan( z ).y(), rTolerance );
 }
 
 ////////////////////////////////////////////////////////////

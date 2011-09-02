@@ -354,8 +354,8 @@ __INLINE gsl::complex acos( const gsl::complex& z )
 {	return gsl_complex_arccos( z.const_ref() );		}
 
 /// Returns the complex arc-cosine of the real number, x. For -1 <= x <= 1, returns a zero
-/// imaginary component and a real component in the range [0, pi]. For x > 1,
-/// asin(x) = pi - iy, y is a positive, real number. For x < -1, asin(x) = iy.
+/// imaginary component and a real component in the range [0, pi]. For x < -1,
+/// acos(x) = pi - iy, y is a positive, real number. For x > 1, acos(x) = iy.
 __INLINE gsl::complex acos( real x )
 {	return gsl_complex_arccos_real( x );		}
 

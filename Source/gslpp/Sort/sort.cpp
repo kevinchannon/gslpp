@@ -7,7 +7,8 @@
 #include <gsl/gsl_sort_vector.h>
 #include <gsl/gsl_permutation.h>
 
-namespace gsl{
+BEGIN_GSL_NAMESPACE
+
     void sort( gsl::realVector& v )
     {   gsl_sort_vector( v.ptr() ); }
 
@@ -43,4 +44,5 @@ namespace gsl{
 
     void sortLargest(size_t *permutation, size_t numberOfElements, const real *src, size_t srcLength, size_t stride )
     {   gsl_sort_largest_index( permutation, numberOfElements, src, srcLength, stride );    }
-}
+
+END_GSL_NAMESPACE
