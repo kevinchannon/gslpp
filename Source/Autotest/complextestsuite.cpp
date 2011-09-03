@@ -240,11 +240,11 @@ void ComplexTestSuite::ElementaryFunctions()
 
 void ComplexTestSuite::TrigonometricFunctions()
 {
+	// The numbers in this test are taken from the results: this is a regression test
 	real rTolerance = 1e-14;
 	
 	gsl::complex z(1,2);
 	
-	// These numbers are taken from the results: this is a regression test
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 3.16577851321617, gsl::sin( z ).x(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.95960104142161, gsl::sin( z ).y(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.03272300701967, gsl::cos( z ).x(), rTolerance );
@@ -284,6 +284,86 @@ void ComplexTestSuite::TrigonometricFunctions()
 	
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.33897252229449, gsl::atan( z ).x(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.402359478108525, gsl::atan( z ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.38447827268708, gsl::asec( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.396568230112329, gsl::asec( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::asec( rLessThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.09861228866811, gsl::asec( rLessThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.34670323449353, gsl::asec( rGreaterThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::asec( rGreaterThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.88862003072278, gsl::asec( rLessThanMinusOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::asec( rLessThanMinusOne ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.228375065599687, gsl::csc( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.396568230112329, gsl::acsc( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.5707963267949, gsl::acsc( rLessThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.09861228866811, gsl::acsc( rLessThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.224093092301371, gsl::acsc( rGreaterThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::acsc( rGreaterThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.317823703927881, gsl::acsc( rLessThanMinusOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::acsc( rLessThanMinusOne ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.231823804500403, gsl::acot( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.402359478108525, gsl::acot( z ).y(), rTolerance );
+}
+
+////////////////////////////////////////////////////////////
+
+void ComplexTestSuite::HyperbolicFunctions()
+{
+	// The numbers in this test are taken from the results: this is a regression test
+	real rTolerance = 1e-14;
+	
+	gsl::complex z(1,2);
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.489056259041294, gsl::sinh( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.40311925062204, gsl::sinh( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.64214812471552, gsl::cosh( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.06860742138278, gsl::cosh( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.16673625724092, gsl::tanh( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.243458201185725, gsl::tanh( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.41314934426694, gsl::sech( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.687527438655479, gsl::sech( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.221500930850509, gsl::csch( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.6354937992539, gsl::csch( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.821329797493852, gsl::coth( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.171383612909185, gsl::coth( z ).y(), rTolerance );
+	
+	// Inverse functions
+	real rLessThanOne = 0.6;
+	real rGreaterThanOne = 4.5;
+	real rLessThanMinusOne = -3.2;
+	const real pi = 3.14159265358979323846;
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.46935174436819, gsl::asinh( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.06344002357775, gsl::asinh( z ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.528570919481, gsl::acosh( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.14371774040242, gsl::acosh( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::acosh( rLessThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.927295218001612, gsl::acosh( rLessThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 2.18464379160511, gsl::acosh( rGreaterThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::acosh( rGreaterThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.83093800692692, gsl::acosh( rLessThanMinusOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( pi, gsl::acosh( rLessThanMinusOne ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.173286795139986, gsl::atanh( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.17809724509617, gsl::atanh( z ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.693147180559945, gsl::atanh( rLessThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( realZero, gsl::atanh( rLessThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.225992561871529, gsl::atanh( rGreaterThanOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.5707963267949, gsl::atanh( rGreaterThanOne ).y(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.323313582462526, gsl::atanh( rLessThanMinusOne ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.5707963267949, gsl::atanh( rLessThanMinusOne ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.396568230112329, gsl::asech( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -1.38447827268708, gsl::asech( z ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.221500930850509, gsl::csch( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.401586391667806, gsl::acsch( z ).y(), rTolerance );
+	
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.173286795139986, gsl::acoth( z ).x(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.392699081698724, gsl::acoth( z ).y(), rTolerance );
 }
 
 ////////////////////////////////////////////////////////////

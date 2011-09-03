@@ -368,7 +368,7 @@ __INLINE gsl::complex atan( const gsl::complex& z )
 __INLINE gsl::complex asec( const gsl::complex& z )
 {	return gsl_complex_arcsec( z.const_ref() );	}
 
-/// Return the complex src-secant of the real number x
+/// Return the complex arc-secant of the real number x
 __INLINE gsl::complex asec( real x )
 {	return gsl_complex_arcsec_real( x );	}	
 
@@ -383,6 +383,75 @@ __INLINE gsl::complex acsc( real x )
 /// Returns the complex arc-cotangent of the complex number z.
 __INLINE gsl::complex acot( const gsl::complex& z )
 {	return gsl_complex_arccot( z.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+/// Hyperbolic functions
+////////////////////////////////////////////////////////////
+
+/// Returns the complex hyperbolic sine of the complex number z
+__INLINE gsl::complex sinh( const gsl::complex& z )
+{	return gsl_complex_sinh( z.const_ref() );	}
+
+/// Returns the complex hyperbolic cosine of the complex number z
+__INLINE gsl::complex cosh( const gsl::complex& z )
+{	return gsl_complex_cosh( z.const_ref() );	}
+
+/// Returns the complex hyperbolic tangent of the complex number z
+__INLINE gsl::complex tanh( const gsl::complex& z )
+{	return gsl_complex_tanh( z.const_ref() );	}
+
+/// Returns the complex hyperbolic secant of the complex number z
+__INLINE gsl::complex sech( const gsl::complex& z )
+{	return gsl_complex_sech( z.const_ref() );	}
+
+/// Returns the complex hyperbolic co-secant of the complex number z
+__INLINE gsl::complex csch( const gsl::complex& z )
+{	return gsl_complex_csch( z.const_ref() );	}
+
+/// Returns the complex hyperbolic co-tangent of the complex number z
+__INLINE gsl::complex coth( const gsl::complex& z )
+{	return gsl_complex_coth( z.const_ref() );	}
+
+////////////////////////////////////////////////////////////
+/// Inverse hyperbolic functions
+////////////////////////////////////////////////////////////
+
+/// Returns the complex hyperbolic arc-sine of the complex number, z.
+/// The branch-cuts are on the imaginary axis, less than -i and greater than i.
+__INLINE gsl::complex asinh( const gsl::complex& z )
+{	return gsl_complex_arcsinh( z.const_ref() );		}
+
+/// Returns the complex hyperbolic arc-cosine of the complex number, z.
+/// The branch-cuts are on theh real axis, less than 1. Note that in this case,
+/// we use the negative square-root formula in 4.6.21 of Abramowitz & Stegun, giving
+/// acosh(z) = log(z - sqrt(z^2 - 1))
+__INLINE gsl::complex acosh( const gsl::complex& z )
+{	return gsl_complex_arccosh( z.const_ref() );		}
+
+/// Returns the complex hyperbolic arc-cosine of the real number, x.
+__INLINE gsl::complex acosh( real x )
+{	return gsl_complex_arccosh_real( x );		}
+
+/// Returns the complex hyperbolic arc-tangent of the complex number z.
+/// Branch cuts are on the real axis, less than -1 and greater than 1
+__INLINE gsl::complex atanh( const gsl::complex& z )
+{	return gsl_complex_arctanh( z.const_ref() );	}
+
+/// Returns the complex hyperbolic arc-tangent of the real number x
+__INLINE gsl::complex atanh( real x )
+{	return gsl_complex_arctanh_real( x );	}	
+
+/// Returns the complex hyperbolic arc-secant of the complex number z.
+__INLINE gsl::complex asech( const gsl::complex& z )
+{	return gsl_complex_arcsech( z.const_ref() );	}
+
+/// Returns the complex hyperbolic arc-cosecant of the complex number z.
+__INLINE gsl::complex acsch( const gsl::complex& z )
+{	return gsl_complex_arccsch( z.const_ref() );	}
+
+/// Returns the complex hyperbolic arc-cotangent of the complex number z.
+__INLINE gsl::complex acoth( const gsl::complex& z )
+{	return gsl_complex_arccoth( z.const_ref() );	}
 
 END_GSL_NAMESPACE
 

@@ -16,6 +16,7 @@ class ComplexTestSuite : public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST ( Arithmetic );
 	CPPUNIT_TEST ( ElementaryFunctions );
 	CPPUNIT_TEST ( TrigonometricFunctions );
+	CPPUNIT_TEST ( HyperbolicFunctions );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -30,4 +31,5 @@ protected:
 	void Arithmetic();
 	void ElementaryFunctions();
 	void TrigonometricFunctions();
+	void HyperbolicFunctions();
 };
