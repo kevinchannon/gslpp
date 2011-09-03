@@ -9,6 +9,12 @@
 #include <gsl/gsl_complex.h>
 #include <gsl/gsl_complex_math.h>
 
+#ifdef GSLPP_IMAG_J
+	#define IMAG_SYMB "j"
+#else
+	#define IMAG_SYMB "i"
+#endif
+
 ////////////////////////////////////////////////////////////
 
 BEGIN_GSL_NAMESPACE
@@ -453,6 +459,12 @@ __INLINE gsl::complex acsch( const gsl::complex& z )
 __INLINE gsl::complex acoth( const gsl::complex& z )
 {	return gsl_complex_arccoth( z.const_ref() );	}
 
+////////////////////////////////////////////////////////////
+
 END_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
+
+std::ostream &operator<<(std::ostream &os, const gsl::complex& z);
 
 ////////////////////////////////////////////////////////////

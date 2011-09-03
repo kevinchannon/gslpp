@@ -27,3 +27,27 @@ void complex::arg( real rQ )
 END_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////
+
+std::ostream &operator<<(std::ostream &os, const gsl::complex& z)
+{
+	if ( z.x() == 0 && z.y() == 0 ) {
+		os << 0;
+	}
+	else {
+		real x = z.x();
+		real y = z.y();
+		if ( x != 0 )
+			os << x;
+		if ( x != 0 && y != 0 )
+			os << ( y > 0 ? " + " : " - " );
+		if ( y != 0 ){
+			if ( x == 0 )
+				os << ( y > 0 ? "" : "-");
+			os << (y > 0 ? y : -y ) << IMAG_SYMB;
+		}
+	}
+		
+	return os;
+}
+
+////////////////////////////////////////////////////////////

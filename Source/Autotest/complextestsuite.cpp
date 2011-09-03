@@ -1,6 +1,9 @@
 #include "complextestsuite.h"
 
 #include <cmath>
+#include <cstring>
+#include <string>
+#include <sstream>
 
 #include "gslpp/Common/number.h"
 #include "gslpp/Complex/complex.h"
@@ -364,6 +367,51 @@ void ComplexTestSuite::HyperbolicFunctions()
 	
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.173286795139986, gsl::acoth( z ).x(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( -0.392699081698724, gsl::acoth( z ).y(), rTolerance );
+}
+
+////////////////////////////////////////////////////////////
+
+void ComplexTestSuite::IO()
+{
+	gsl::complex z1(1,2);
+	std::string s1("1 + 2");
+	s1 += IMAG_SYMB;
+	std::stringstream ss1;
+	ss1 << z1;
+	CPPUNIT_ASSERT(s1 == ss1.str());
+	
+	gsl::complex z2(1,-2);
+	std::string s2("1 - 2");
+	s2 += IMAG_SYMB;
+	std::stringstream ss2;
+	ss2 << z2;
+	CPPUNIT_ASSERT(s2 == ss2.str());
+	
+	gsl::complex z3(0,2);
+	std::string s3("2");
+	s3 += IMAG_SYMB;
+	std::stringstream ss3;
+	ss3 << z3;
+	CPPUNIT_ASSERT(s3 == ss3.str());
+	
+	gsl::complex z4(0,-3);
+	std::string s4("-3");
+	s4 += IMAG_SYMB;
+	std::stringstream ss4;
+	ss4 << z4;
+	CPPUNIT_ASSERT(s4 == ss4.str());
+	
+	gsl::complex z5(1,0);
+	std::string s5("1");
+	std::stringstream ss5;
+	ss5 << z5;
+	CPPUNIT_ASSERT(s5 == ss5.str());
+	
+	gsl::complex z6(0,0);
+	std::string s6("0");
+	std::stringstream ss6;
+	ss6 << z6;
+	CPPUNIT_ASSERT(s6 == ss6.str());	
 }
 
 ////////////////////////////////////////////////////////////
