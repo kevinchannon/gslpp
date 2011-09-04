@@ -15,15 +15,20 @@ const real NaN = GSL_NAN;
 const real realPlusInf = GSL_POSINF;
 const real realMinusInf = GSL_NEGINF;
 
-inline bool IsEmpty( real x ){	return gsl_isnan(x);	}
-inline bool IsNaN( real x ){	return gsl_isnan(x);	}
-inline bool IsFinite( real x){	return gsl_finite(x);	}
+inline bool is_empty( real x ){	return gsl_isnan(x);	}
+inline bool is_nan( real x ){	return gsl_isnan(x);	}
+inline bool is_finite( real x){	return gsl_finite(x);	}
 
 ////////////////////////////////////////////////////////////
 
 BEGIN_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////
+
+enum sign_type{
+	positive = 1,
+	negative = -1
+};
 
 /// Base of natural logarithm
 const real e = M_E;
@@ -75,6 +80,36 @@ const real ln_pi = M_LNPI;
 
 /// Euler's constant
 const real euler = M_EULER;
+
+////////////////////////////////////////////////////////////
+
+class floating_point{
+	real M_rFraction;
+	int M_iExponent;
+	
+	public:
+	floating_point() : M_rFraction(0), M_iExponent(0) {}
+	floating_point( real m, int e ) : M_rFraction(m), M_iExponent(e) {}
+	floating_point( real x ){
+		M_rFraction = gsl_frexp( x, &M_iExponent );
+	}
+	
+	operator real(){ return gsl_ldexp( M_rFraction, M_iExponent );	}
+	gsl::floating_point& operator=( const gsl::floating_point& right ){
+		if ( this != &right ){
+			this->M_iExponent = right.e();
+			this->M_rFraction = right.f();
+		}
+		
+		return *this;
+	}
+	
+	__INLINE gsl::sign_type sign() const{	return M_rFraction < 0 ? gsl::negative : gsl::positive;	}
+	__INLINE real& f(){	return M_rFraction;	}
+	__INLINE const real& f() const {	return M_rFraction;	}
+	__INLINE int& e(){	return M_iExponent;	}
+	__INLINE const int& e() const{		return M_iExponent;	}
+};
 
 ////////////////////////////////////////////////////////////
 

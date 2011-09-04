@@ -288,11 +288,11 @@ realMatrix::value_type realMatrix::min() const throw ( matrix_uninitialised )
 	
 	// Get to the first non-empty value
 	real rMin = realEmpty;
-	while ( IsEmpty( rMin ) )	rMin = *it++;
+	while ( is_empty( rMin ) )	rMin = *it++;
 	
 	while ( it != this->cend() ){
 		real rCurrent = *it++;
-		if ( ! IsEmpty( rCurrent ) )
+		if ( ! is_empty( rCurrent ) )
 			rMin = rCurrent < rMin ? rCurrent : rMin;
 	}
 	
@@ -310,11 +310,11 @@ realMatrix::value_type realMatrix::max() const throw ( matrix_uninitialised )
 	
 	// Get to the first non-empty value
 	real rMax = realEmpty;
-	while ( IsEmpty( rMax ) )	rMax = *it++;
+	while ( is_empty( rMax ) )	rMax = *it++;
 	
 	while ( it != this->cend() ){
 		real rCurrent = *it++;
-		if ( ! IsEmpty( rCurrent ) )
+		if ( ! is_empty( rCurrent ) )
 			rMax = rCurrent > rMax ? rCurrent : rMax;
 	}
 	
@@ -340,7 +340,7 @@ realMatrix::element_type realMatrix::min_element() const throw ( matrix_uninitia
 	// Get to the first non-empty value
 	real rMin = realEmpty;
 	size_type i = 0;
-	while ( IsEmpty( rMin ) ){
+	while ( is_empty( rMin ) ){
 		rMin = *it++;
 		++i;
 	}
@@ -349,7 +349,7 @@ realMatrix::element_type realMatrix::min_element() const throw ( matrix_uninitia
 	size_type iMinIndex = i;
 	while ( it != this->cend() ){
 		real rCurrent = *it++;
-		if ( ! IsEmpty( rCurrent ) ){
+		if ( ! is_empty( rCurrent ) ){
 			if ( rCurrent < rMin ){
 				rMin = rCurrent;
 				iMinIndex = i;
@@ -373,7 +373,7 @@ realMatrix::element_type realMatrix::max_element() const throw ( matrix_uninitia
 	// Get to the first non-empty value
 	real rMax = realEmpty;
 	size_type i = 0;
-	while ( IsEmpty( rMax ) ){
+	while ( is_empty( rMax ) ){
 		rMax = *it++;
 		++i;
 	}
@@ -382,7 +382,7 @@ realMatrix::element_type realMatrix::max_element() const throw ( matrix_uninitia
 	size_type iMaxIndex = i;
 	while ( it != this->cend() ){
 		real rCurrent = *it++;
-		if ( ! IsEmpty( rCurrent ) ){
+		if ( ! is_empty( rCurrent ) ){
 			if ( rCurrent > rMax ){
 				rMax = rCurrent;
 				iMaxIndex = i;
@@ -441,7 +441,7 @@ bool operator==( const gsl::realMatrix& left, const gsl::realMatrix::value_type&
 	gsl::realMatrix::const_iterator it = left.cbegin();
 	while ( it != left.cend() ){
 		real rValue = *it++;
-		if ( IsEmpty( rValue ) || rValue != x )
+		if ( is_empty( rValue ) || rValue != x )
 			return false;
 	}
 	
@@ -480,7 +480,7 @@ bool operator<( const gsl::realMatrix& left, const gsl::realMatrix::value_type& 
 	gsl::realMatrix::const_iterator it = left.cbegin();
 	while ( it != left.cend() ){
 		real rValue = *it++;
-		if ( IsEmpty( rValue ) || rValue >= x )
+		if ( is_empty( rValue ) || rValue >= x )
 			return false;
 	}
 	
@@ -504,7 +504,7 @@ bool operator>( const gsl::realMatrix& left, const gsl::realMatrix::value_type& 
 	gsl::realMatrix::const_iterator it = left.cbegin();
 	while ( it != left.cend() ){
 		real rValue = *it++;
-		if ( IsEmpty( rValue ) || rValue <= x )
+		if ( is_empty( rValue ) || rValue <= x )
 			return false;
 	}
 	
@@ -529,7 +529,7 @@ bool operator<=( const gsl::realMatrix& left, const gsl::realMatrix::value_type&
 	gsl::realMatrix::const_iterator it = left.cbegin();
 	while ( it != left.cend() ){
 		real rValue = *it++;
-		if ( IsEmpty( rValue ) || rValue > x )
+		if ( is_empty( rValue ) || rValue > x )
 			return false;
 	}
 	
@@ -553,7 +553,7 @@ bool operator>=( const gsl::realMatrix& left, const gsl::realMatrix::value_type&
 	gsl::realMatrix::const_iterator it = left.cbegin();
 	while ( it != left.cend() ){
 		real rValue = *it++;
-		if ( IsEmpty( rValue ) || rValue < x )
+		if ( is_empty( rValue ) || rValue < x )
 			return false;
 	}
 	
