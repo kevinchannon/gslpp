@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=04/09/11
+Date                   :=05/09/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -38,7 +38,7 @@ PreprocessOnlySwitch   :=-E
 ObjectsFileList        :="/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/gslpp.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=mkdir -p
-CmpOptions             := -g -pedantic -Wall  -DGSLPP_INLINE $(Preprocessors)
+CmpOptions             := -g -pedantic -Wall  -DGSLPP_INLINE -std=gnu++0x $(Preprocessors)
 C_CmpOptions           := -g -pedantic -Wall $(Preprocessors)
 LinkOptions            :=  
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch)/usr/local/include $(IncludeSwitch)/usr/include 
@@ -52,7 +52,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/Vector_vector$(ObjectSuffix) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -141,6 +141,14 @@ $(IntermediateDirectory)/Complex_complex$(DependSuffix): Complex/complex.cpp
 $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix): Complex/complex.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Complex/complex.cpp"
 
+$(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix): Polynomial/polynomial.cpp $(IntermediateDirectory)/Polynomial_polynomial$(DependSuffix)
+	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Polynomial/polynomial.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Polynomial_polynomial$(DependSuffix): Polynomial/polynomial.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) -MF$(IntermediateDirectory)/Polynomial_polynomial$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Polynomial/polynomial.cpp"
+
+$(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix): Polynomial/polynomial.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Polynomial/polynomial.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -171,6 +179,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/Complex_complex$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/Complex_complex$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/Polynomial_polynomial$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) "/home/kevin/.codelite/Solutions/gsl++/Source/.build-debug/gslpp"
 

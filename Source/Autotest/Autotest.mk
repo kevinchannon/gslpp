@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=04/09/11
+Date                   :=05/09/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -52,7 +52,8 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/complextestsuite$(ObjectSuffix) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/complextestsuite$(ObjectSuffix) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) $(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) \
+	
 
 ##
 ## Main Build Targets 
@@ -145,6 +146,22 @@ $(IntermediateDirectory)/mathfunctionstestsuite$(DependSuffix): mathfunctionstes
 $(IntermediateDirectory)/mathfunctionstestsuite$(PreprocessSuffix): mathfunctionstestsuite.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/mathfunctionstestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/mathfunctionstestsuite.cpp"
 
+$(IntermediateDirectory)/blocktestsuite$(ObjectSuffix): blocktestsuite.cpp $(IntermediateDirectory)/blocktestsuite$(DependSuffix)
+	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/blocktestsuite.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/blocktestsuite$(DependSuffix): blocktestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) -MF$(IntermediateDirectory)/blocktestsuite$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/blocktestsuite.cpp"
+
+$(IntermediateDirectory)/blocktestsuite$(PreprocessSuffix): blocktestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/blocktestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/blocktestsuite.cpp"
+
+$(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix): polynomialtestsuite.cpp $(IntermediateDirectory)/polynomialtestsuite$(DependSuffix)
+	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/polynomialtestsuite.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/polynomialtestsuite$(DependSuffix): polynomialtestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) -MF$(IntermediateDirectory)/polynomialtestsuite$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/polynomialtestsuite.cpp"
+
+$(IntermediateDirectory)/polynomialtestsuite$(PreprocessSuffix): polynomialtestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/polynomialtestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/polynomialtestsuite.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -175,6 +192,12 @@ clean:
 	$(RM) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/mathfunctionstestsuite$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/mathfunctionstestsuite$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/blocktestsuite$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/blocktestsuite$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/blocktestsuite$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/polynomialtestsuite$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/polynomialtestsuite$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) "/home/kevin/.codelite/Solutions/gsl++/Source/.build-debug/Autotest"
 
