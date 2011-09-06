@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <complex>
 
 #include "../Common/macros.h"
 #include "../Common/number.h"
@@ -12,6 +11,8 @@
 ////////////////////////////////////////////////////////////
 
 BEGIN_GSL_NAMESPACE
+
+class complex;
 
 ////////////////////////////////////////////////////////////
 
@@ -29,7 +30,8 @@ public:
 		if ( M_pGSLData == NULL && N != 0 )
 			throw std::bad_alloc();
 	}
-	
+
+#ifndef GSLPP_NO_CPP0X	
 	template< typename... Args >
 	polynomial( real x, Args... args ) throw ( std::bad_alloc ){
 		M_add_coefficients( x, args... );
@@ -39,6 +41,8 @@ public:
 		if ( M_pGSLData == NULL )
 			throw std::bad_alloc();
 	}
+#endif	// GSLPP_NO_CPP0X
+
 	~polynomial(){
 		if ( M_paRoots != NULL )
 			delete[] M_paRoots;
@@ -47,6 +51,8 @@ public:
 	__INLINE size_type order() const {	return M_vCoeffs.size() - 1;	}	
 
 private:
+
+#ifndef GSLPP_NO_CPP0X
 	template< typename T, typename... Args >
 	void M_add_coefficients( T v, Args... args ){
 		M_vCoeffs.push_back( v );
@@ -61,10 +67,11 @@ private:
 	
 	template< typename T >
 	void M_add_coeff( T v ){	M_vCoeffs.push_back(v);	}
-
+#endif	// GSLPP_NO_CPP0X
+	
 /// Variables
 	std::vector< real > M_vCoeffs;
-	real* M_paRoots;
+	gsl::complex* M_paRoots;
 	bool M_bRootsKnown;
 };
 

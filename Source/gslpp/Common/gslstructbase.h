@@ -88,6 +88,50 @@ protected:
 
 ////////////////////////////////////////////////////////////
 
+template< typename T >
+class from_STL_container{
+public:
+	typedef typename T::iterator 		iterator;
+	typedef typename T::const_iterator	const_iterator;
+	typedef typename T::reference		reference;
+    typedef typename T::const_reference	const_reference;
+    typedef typename T::pointer			pointer;
+    typedef typename T::const_pointer	const_pointer;
+    typedef typename T::value_type		value_type;
+    typedef typename T::size_type		size_type;
+    typedef typename T::difference_type	difference_type;
+	
+	__INLINE iterator begin(){				return M_STLData.begin();	}
+	__INLINE const_iterator cbegin() const{	return M_STLData.cbegin();	}
+	__INLINE iterator end(){				return M_STLData.end();		}
+	__INLINE const_iterator cend() const{	return M_STLData.cend();	}
+	
+	__INLINE size_type size() const{		return M_STLData.size();	}
+	__INLINE bool empty() const{			return M_STLData.empty();	}
+	__INLINE size_type max_size() const{	return M_STLData.max_size();	}
+	
+	__INLINE iterator insert ( iterator position, const value_type& x )
+		{	return M_STLData.insert(position, x);	}
+		
+    __INLINE void insert ( iterator position, size_type n, const value_type& x )
+		{	return M_STLData.insert( position, n, x );	}
+		
+	template <class InputIterator>
+    __INLINE void insert ( iterator position, InputIterator first, InputIterator last )
+		{	return M_STLData.insert( position, first, last );	}
+	
+	__INLINE iterator erase ( iterator position ){	return M_STLData.erase( position );	}
+	__INLINE iterator erase ( iterator first, iterator last ){	return M_STLData.erase(first, last);	}
+	
+	__INLINE void swap( T& other){	M_STLData.swap( other );	}
+	__INLINE void clear(){			M_STLData.clear();			}
+	
+private:
+	T M_STLData;
+};
+
+////////////////////////////////////////////////////////////
+
 END_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////
