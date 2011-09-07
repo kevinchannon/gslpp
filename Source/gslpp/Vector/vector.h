@@ -26,6 +26,47 @@ class vector_size_mismatch : public std::runtime_error
     vector_size_mismatch() : std::runtime_error("vector sizes are unequal"){}
 };
 
+template< typename T >
+class vector : public from_STL_container< std::vector< T > >
+{	
+public:
+
+	/// A striding iterator can be used to traverse a vector with an arbitary
+	/// step-size
+	template < size_t stride = 1 >
+	class M_striding_iterator : public std::iterator_traits< T >
+	{
+		iterator M_myPosition;
+	public:
+		M_striding_iterator( const iterator& original ) : M_myPosition( original ){}
+		M_striding_iterator& operator=( const iterator& original ){
+			if ( this != &original )
+				M_myPosition = original;
+			return *this;
+		}
+		
+		M_striding_iterator& operator++(){
+			M_myPosition += stride;
+			return M_myPosition;
+		}
+		
+		const M_striding_iterator& operator++() const {
+			M_myPosition += stride;
+			return M_myPosition;
+		}
+		
+		M_striding_iterator& operator--(){
+			M_myPosition -= stride;
+			return M_myPosition;
+		}
+		
+		const M_striding_iterator& operator--() const {
+			M_myPosition -= stride;
+			return M_myPosition;
+		}
+	};	
+};
+
 class realVector : public gsl_base_ptr< gsl_vector >
 {
 public :

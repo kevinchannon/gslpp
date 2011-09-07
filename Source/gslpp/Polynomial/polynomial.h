@@ -21,10 +21,10 @@ class polynomial : public gsl_base_ptr< gsl_poly_complex_workspace >
 public:
 	typedef size_t size_type;
 	
-	polynomial() : gsl_base_ptr(0),M_paRoots(0), M_bRootsKnown(false){}
+	polynomial() : gsl_base_ptr(0), M_bRootsKnown(false){}
 	polynomial( size_type N) throw ( std::bad_alloc ) :
 		gsl_base_ptr( N > 0 ? gsl_poly_complex_workspace_alloc(N) : 0 ),
-		M_paRoots(0),
+//		M_paRoots(0),
 		M_bRootsKnown(false)
 	{
 		if ( M_pGSLData == NULL && N != 0 )
@@ -35,7 +35,7 @@ public:
 	template< typename... Args >
 	polynomial( real x, Args... args ) throw ( std::bad_alloc ){
 		M_add_coefficients( x, args... );
-		M_paRoots = new real[ 2*order() ];
+//		M_paRoots = new real[ 2*order() ];
 		M_bRootsKnown = false;
 		M_pGSLData = gsl_poly_complex_workspace_alloc( order() + 1 );
 		if ( M_pGSLData == NULL )
@@ -44,8 +44,8 @@ public:
 #endif	// GSLPP_NO_CPP0X
 
 	~polynomial(){
-		if ( M_paRoots != NULL )
-			delete[] M_paRoots;
+//		if ( M_paRoots != NULL )
+//			delete[] M_paRoots;
 	}
 	
 	__INLINE size_type order() const {	return M_vCoeffs.size() - 1;	}	
@@ -71,7 +71,7 @@ private:
 	
 /// Variables
 	std::vector< real > M_vCoeffs;
-	gsl::complex* M_paRoots;
+//	gsl::complex* M_paRoots;
 	bool M_bRootsKnown;
 };
 
