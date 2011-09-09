@@ -23,6 +23,8 @@ void VectorTestSuite::tearDown(){}
 
 void VectorTestSuite::VectorsAreEqual()
 {
+	gsl::vector< real > v(5);
+	
     const int iVectorSize = 10;
 
     gsl::realVector vec_1( iVectorSize );

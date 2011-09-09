@@ -12,7 +12,11 @@
 #include "../Common/number.h"
 #include "../Common/exceptions.h"
 
+////////////////////////////////////////////////////////////
+
 BEGIN_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
 
 class vector_uninitialised : public std::runtime_error
 {
@@ -20,52 +24,119 @@ class vector_uninitialised : public std::runtime_error
     vector_uninitialised() : std::runtime_error("vector used before initialisation"){}
 };
 
+////////////////////////////////////////////////////////////
+
 class vector_size_mismatch : public std::runtime_error
 {
     public:
     vector_size_mismatch() : std::runtime_error("vector sizes are unequal"){}
 };
 
+////////////////////////////////////////////////////////////
+
+/// Main gsl_vector type template
+template< typename T >
+struct gsl_vector_type
+{
+};
+
+/// Template specialisations for actual gsl_vector types
+template<>
+struct gsl_vector_type< real >
+{
+	typedef gsl_vector type;
+};
+
+template<>
+struct gsl_vector_type< char >
+{
+	typedef gsl_vector_char type;
+};
+
+template<>
+struct gsl_vector_type< float >
+{
+	typedef gsl_vector_float type;
+};
+
+template<>
+struct gsl_vector_type< int >
+{
+	typedef gsl_vector_float type;
+};
+
+template<>
+struct gsl_vector_type< long >
+{
+	typedef gsl_vector_float type;
+};
+
+template<>
+struct gsl_vector_type< long double >
+{
+	typedef gsl_vector_float type;
+};
+
+template<>
+struct gsl_vector_type< short >
+{
+	typedef gsl_vector_short type;
+};
+
+template<>
+struct gsl_vector_type< unsigned char >
+{
+	typedef gsl_vector_float type;
+};
+
+template<>
+struct gsl_vector_type< unsigned short >
+{
+	typedef gsl_vector_ushort type;
+};
+
+template<>
+struct gsl_vector_type< unsigned int >
+{
+	typedef gsl_vector_uint type;
+};
+
+template<>
+struct gsl_vector_type< unsigned long >
+{
+	typedef gsl_vector_float type;
+};
+
+////////////////////////////////////////////////////////////
+
 template< typename T >
 class vector : public from_STL_container< std::vector< T > >
-{	
+{
 public:
-
-	/// A striding iterator can be used to traverse a vector with an arbitary
-	/// step-size
-	template < size_t stride = 1 >
-	class M_striding_iterator : public std::iterator_traits< T >
+	typedef typename gsl_vector_type< T >::type gsl_vec_t;
+	
+	/// Default constructor
+	vector(){}
+	
+	/// Construct with a given length
+    vector( size_t length, bool isColVector = true ) throw ( std::bad_alloc ) : M_bIsColVector( isColVector )
 	{
-		iterator M_myPosition;
-	public:
-		M_striding_iterator( const iterator& original ) : M_myPosition( original ){}
-		M_striding_iterator& operator=( const iterator& original ){
-			if ( this != &original )
-				M_myPosition = original;
-			return *this;
-		}
-		
-		M_striding_iterator& operator++(){
-			M_myPosition += stride;
-			return M_myPosition;
-		}
-		
-		const M_striding_iterator& operator++() const {
-			M_myPosition += stride;
-			return M_myPosition;
-		}
-		
-		M_striding_iterator& operator--(){
-			M_myPosition -= stride;
-			return M_myPosition;
-		}
-		
-		const M_striding_iterator& operator--() const {
-			M_myPosition -= stride;
-			return M_myPosition;
-		}
-	};	
+		this->M_STLData.resize( length );
+	}
+	
+    vector( size_t length, T defaultElementValue, bool isColVector = true ) throw ( std::bad_alloc );
+    vector( size_t length, T* array, bool isColVector = true  ) throw ( std::bad_alloc );
+    vector( const gsl::vector< T >& original ) throw ( std::bad_alloc );
+    vector( gsl_vec_t* original, bool isColVector = true ) throw ( std::bad_alloc );
+    vector( const std::vector< T >& original, bool isColVector = true ) throw ( std::bad_alloc );
+    ~vector(){}
+	
+private:
+	
+	bool M_bIsColVector;
 };
+
+////////////////////////////////////////////////////////////
 
 class realVector : public gsl_base_ptr< gsl_vector >
 {
@@ -195,20 +266,32 @@ private :
     }
 };
 
+////////////////////////////////////////////////////////////
+
  __INLINE void swap( gsl::realVector& a, gsl::realVector& b)
  {
 	  a.swap( b );
  }
 
+////////////////////////////////////////////////////////////
+
 END_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
 
 std::ostream &operator<<(std::ostream &os, const gsl::realVector &right);
 
+////////////////////////////////////////////////////////////
+
 bool operator==(const gsl::realVector& left, const gsl::realVector &right);
-__INLINE bool operator!=(const gsl::realVector& left, const gsl::realVector &right){    return !(left == right);   }
+__INLINE bool operator!=(const gsl::realVector& left, const gsl::realVector &right){    return !(left == right); 	}
+
+////////////////////////////////////////////////////////////
 
 const gsl::realVector operator+(const gsl::realVector& left, const gsl::realVector &right);
 const gsl::realVector operator-(const gsl::realVector& left, const gsl::realVector &right);
+
+////////////////////////////////////////////////////////////
 
 // Element-wise multiply
 const gsl::realVector operator%(const gsl::realVector& left, const gsl::realVector &right);
@@ -218,3 +301,5 @@ real operator*(const gsl::realVector& left, const gsl::realVector &right);
 
 // Vector product
 //const gsl::matrix operator^(const gsl::vector& left, const gsl::vector &right) const;
+
+////////////////////////////////////////////////////////////

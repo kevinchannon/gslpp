@@ -108,7 +108,7 @@ public:
 	
 	__INLINE size_type size() const{		return M_STLData.size();	}
 	__INLINE bool empty() const{			return M_STLData.empty();	}
-	__INLINE size_type max_size() const{	return M_STLData.max_size();	}
+	__INLINE size_type max_size() const{	return M_STLData.max_size();}
 	
 	__INLINE iterator insert ( iterator position, const value_type& x )
 		{	return M_STLData.insert(position, x);	}
@@ -126,7 +126,8 @@ public:
 	__INLINE void swap( T& other){	M_STLData.swap( other );	}
 	__INLINE void clear(){			M_STLData.clear();			}
 	
-private:
+protected:
+	~from_STL_container(){}
 	T M_STLData;
 };
 
