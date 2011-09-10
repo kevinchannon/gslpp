@@ -7,6 +7,8 @@
 #include "gslpp/Vector/vector.h"
 #include "gslpp/Common/exceptions.h"
 
+#include <gsl/gsl_vector.h>
+
 ////////////////////////////////////////////////////////////
 
 CPPUNIT_TEST_SUITE_REGISTRATION( VectorTestSuite );
@@ -21,14 +23,43 @@ void VectorTestSuite::tearDown(){}
 
 ////////////////////////////////////////////////////////////
 
+void VectorTestSuite::Initialise()
+{
+	const unsigned ciSize = 100;
+	gsl::vector< real > vr1;
+	CPPUNIT_ASSERT( vr1.size() == 0 );
+	
+	gsl::vector< real > vr2( ciSize );
+	CPPUNIT_ASSERT( vr2.size() == ciSize );
+	
+	gsl::vector< int >  vi1( ciSize );
+	CPPUNIT_ASSERT( vi1.size() == ciSize );
+	
+	gsl::vector< char > vch1( ciSize, 'a' );
+	CPPUNIT_ASSERT( vch1.size() == ciSize );
+	for ( gsl::vector< char >::const_iterator it = vch1.cbegin(); it != vch1.cend(); ++it )
+		CPPUNIT_ASSERT( *it == 'a' );
+	
+	gsl_vector* gsl_vec1 = gsl_vector_alloc( ciSize );
+	gsl::vector< real > vr3( gsl_vec1 );
+	CPPUNIT_ASSERT( vr3.size() == ciSize );
+	
+	std::vector< unsigned > std_vec1( ciSize );
+	gsl::vector< unsigned > vu1( std_vec1 );
+	CPPUNIT_ASSERT( vu1.size() == ciSize );	
+	
+	gsl::vector< int > vi2( vi1 );
+	CPPUNIT_ASSERT( vr3.size() == vi1.size() );
+}
+
+////////////////////////////////////////////////////////////
+
 void VectorTestSuite::VectorsAreEqual()
 {
-	gsl::vector< real > v(5);
-	
     const int iVectorSize = 10;
 
-    gsl::realVector vec_1( iVectorSize );
-    gsl::realVector vec_2( iVectorSize );
+    gsl::vector< real > vec_1( iVectorSize );
+    gsl::vector< real > vec_2( iVectorSize );
 
     for ( size_t i = 0; i < vec_1.size(); ++i ){
         vec_1[i] = i;
@@ -37,7 +68,8 @@ void VectorTestSuite::VectorsAreEqual()
 
     CPPUNIT_ASSERT( vec_1 == vec_2 );
 
-    vec_2 *= vec_1;
+    vec_2 = 4.5;
+	vec_1 += 6;
 
     CPPUNIT_ASSERT( vec_1 != vec_2 );
 }

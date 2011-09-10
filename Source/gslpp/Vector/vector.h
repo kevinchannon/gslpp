@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <iterator>
+#include <algorithm>
 #include <vector>
 
 #include <gsl/gsl_vector.h>
@@ -115,26 +116,228 @@ class vector : public from_STL_container< std::vector< T > >
 public:
 	typedef typename gsl_vector_type< T >::type gsl_vec_t;
 	
+	typedef typename from_STL_container< std::vector< T > >::iterator 		iterator;
+	typedef typename from_STL_container< std::vector< T > >::const_iterator	const_iterator;
+	typedef typename from_STL_container< std::vector< T > >::reference		reference;
+    typedef typename from_STL_container< std::vector< T > >::const_reference	const_reference;
+    typedef typename from_STL_container< std::vector< T > >::pointer			pointer;
+    typedef typename from_STL_container< std::vector< T > >::const_pointer	const_pointer;
+    typedef typename from_STL_container< std::vector< T > >::value_type		value_type;
+    typedef typename from_STL_container< std::vector< T > >::size_type		size_type;
+    typedef typename from_STL_container< std::vector< T > >::difference_type	difference_type;
+	
 	/// Default constructor
-	vector(){}
+	vector() :	M_bIsColVector(true) {}
 	
 	/// Construct with a given length
-    vector( size_t length, bool isColVector = true ) throw ( std::bad_alloc ) : M_bIsColVector( isColVector )
+    vector( size_type length, bool isColVector = true ) throw ( std::bad_alloc ) :	M_bIsColVector( isColVector )
 	{
 		this->M_STLData.resize( length );
 	}
 	
-    vector( size_t length, T defaultElementValue, bool isColVector = true ) throw ( std::bad_alloc );
-    vector( size_t length, T* array, bool isColVector = true  ) throw ( std::bad_alloc );
-    vector( const gsl::vector< T >& original ) throw ( std::bad_alloc );
-    vector( gsl_vec_t* original, bool isColVector = true ) throw ( std::bad_alloc );
-    vector( const std::vector< T >& original, bool isColVector = true ) throw ( std::bad_alloc );
+	/// Construct with a given length and fill with a given value
+    vector( size_type length, T defaultElementValue, bool isColVector = true ) throw ( std::bad_alloc ) :
+	M_bIsColVector( isColVector )
+	{
+		this->M_STLData.resize( length );
+		std::fill( this->M_STLData.begin(), this->M_STLData.end(), defaultElementValue );
+	}
+	
+	/// Construct from a C-style array with a given length
+    vector( size_type length, T* array, bool isColVector = true  ) throw ( std::bad_alloc ) :
+	M_bIsColVector( isColVector )
+	{
+		this->M_STLData.resize( length );
+		std::copy( array, array + length, this->M_STLData.begin() );
+	}
+	
+	/// Copy constructor
+    vector( const gsl::vector< T >& original ) throw ( std::bad_alloc ) :
+	M_bIsColVector( original.is_col_vector() )
+	{
+		this->M_STLData.resize( original.size() );
+		std::copy( original.cbegin(), original.cend(), this->M_STLData.begin() );
+	}
+	
+	/// Construct from a gsl_vector (or any of the gsl_vector_xxx family, e.g. gsl_vector_char )
+    vector( gsl_vec_t* original, bool isColVector = true ) throw ( std::bad_alloc ) :
+	M_bIsColVector( isColVector )
+	{
+		if ( original == NULL )
+			throw gsl::vector_uninitialised();
+			
+		this->M_STLData.resize( original->size );
+		std::copy( original->data, original->data + original->size, this->M_STLData.begin() );
+	}
+	
+	/// Construct from an std::vector
+    vector( const std::vector< T >& original, bool isColVector = true ) throw ( std::bad_alloc ) :
+	M_bIsColVector( isColVector )
+	{
+		this->M_STLData = original;
+	}
     ~vector(){}
+	
+	/// Check if the vector is a column vector
+	__INLINE bool  is_col_vector() const {	return   M_bIsColVector;	}
+	
+	/// Check if the vector is a row vector
+	__INLINE bool  is_row_vector() const {	return ! M_bIsColVector;	}
+	
+	/// Set the vector to column vector
+	__INLINE void set_col_vector(){	M_bIsColVector = true;	}
+	
+	/// Set the vector to row vector
+	__INLINE void set_row_vector(){	M_bIsColVector = false;	}
+	
+	/// Copy assignment operator
+    __INLINE gsl::vector< T >& operator=(const gsl::vector< T > &right)
+	{
+		this->M_STLData = right.M_STLData;
+		this->M_bIsColVector = right.M_bIsColVector;
+		return *this;
+	}
+	
+	/// Value assignment operator
+    __INLINE gsl::vector< T >& operator=( const value_type x )
+	{
+		std::fill( this->M_STLData.begin(), this->M_STLData.end(), x );
+		return *this;
+	}
+	
+	/// std::vector assignment operator
+	__INLINE gsl::vector< T >& operator=( const std::vector< T >& right )
+	{
+		this->M_STLData = right;
+		return *this;
+	}
+	
+	/// Over-loaded unitary arithmetic operators
+	gsl::vector< T >& operator+=(const gsl::vector< T >& right) throw ( vector_size_mismatch );
+    gsl::vector< T >& operator+=( const value_type right);
+    gsl::vector< T >& operator-=(const gsl::vector< T >& right) throw ( vector_size_mismatch );
+    gsl::vector< T >& operator-=( const value_type right);
+    gsl::vector< T >& operator*=(const gsl::vector< T >& right) throw ( vector_size_mismatch );
+    gsl::vector< T >& operator*=( const value_type right);
+    gsl::vector< T >& operator/=(const gsl::vector< T >& right) throw ( vector_size_mismatch );
+    gsl::vector< T >& operator/=( const value_type right);
+
+	/// Boolean equal
+	__INLINE bool operator==( const gsl::vector< T >& right )
+	{
+		return this->M_STLData == right.M_STLData && this->M_bIsColVector == right.M_bIsColVector;
+	} 
+
+	/// Boolean not equal
+	__INLINE bool operator!=( const gsl::vector< T >& right )
+	{    return !( *this == right ); 	}
+	
+	/// Unchecked accessor
+	__INLINE reference operator[]( size_type i ){	return this->M_STLData[i];	}
+	__INLINE const_reference operator[]( size_type i ) const {	return this->M_STLData[i];	}
+	
+	/// Iterators
+    __INLINE iterator begin(){  return this->M_STLData.begin();  }
+    __INLINE iterator end(){ return this->M_STLData.end(); }
+    __INLINE iterator rbegin(){  return this->M_STLData.rbegin();  }
+    __INLINE iterator rend(){ return this->M_STLData.rend(); }
+    __INLINE const_iterator begin() const {  return this->M_STLData.begin();  }
+    __INLINE const_iterator end() const{ return this->M_STLData.end(); }
+    __INLINE const_iterator rbegin() const{  return this->M_STLData.rbegin();  }
+    __INLINE const_iterator rend() const{ return this->M_STLData.rend(); }
+    __INLINE const_iterator cbegin() const {  return this->M_STLData.begin();  }
+    __INLINE const_iterator cend() const {  return this->M_STLData.end();  }
+    __INLINE const_iterator crbegin() const {  return this->M_STLData.rbegin();  }
+    __INLINE const_iterator crend() const { return this->M_STLData.rend();  }
 	
 private:
 	
 	bool M_bIsColVector;
 };
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+gsl::vector< T >& gsl::vector< T >::operator+=(const gsl::vector< T >& right) throw ( vector_size_mismatch )
+{
+    if( this->size() != right.size() )
+        throw vector_size_mismatch();
+	
+	std::transform(this->begin(), this->end(), right.begin(), this->begin(), std::plus< T >() );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+__INLINE gsl::vector< T >& gsl::vector< T >::operator+=( const value_type right)
+{
+	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::plus< T >(), right) );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+gsl::vector< T >& gsl::vector< T>::operator-=(const gsl::vector< T >& right) throw ( vector_size_mismatch )
+{
+    if( this->size() != right.size() )
+        throw vector_size_mismatch();
+	
+	std::transform(this->begin(), this->end(), right.begin(), this->begin(), std::minus< T >() );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+__INLINE gsl::vector< T >& gsl::vector< T>::operator-=( const value_type right)
+{
+	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::minus< T >(), right) );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+gsl::vector< T >& gsl::vector< T>::operator*=(const gsl::vector< T >& right) throw ( vector_size_mismatch )
+{
+	if( this->size() != right.size() )
+        throw vector_size_mismatch();
+	
+	std::transform(this->begin(), this->end(), right.begin(), this->begin(), std::multiplies< T >() );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+__INLINE gsl::vector< T >& gsl::vector< T>::operator*=( const value_type right)
+{
+	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::multiplies< T >(), right) );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+gsl::vector< T >& gsl::vector< T>::operator/=(const gsl::vector< T >& right) throw ( vector_size_mismatch )
+{
+	if( this->size() != right.size() )
+        throw vector_size_mismatch();
+	
+	std::transform(this->begin(), this->end(), right.begin(), this->begin(), std::divides< T >() );
+	return *this;
+}
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+__INLINE gsl::vector< T >& gsl::vector< T>::operator/=( const value_type right)
+{
+	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::divides< T >(), right) );
+	return *this;
+}
 
 ////////////////////////////////////////////////////////////
 
@@ -283,8 +486,10 @@ std::ostream &operator<<(std::ostream &os, const gsl::realVector &right);
 
 ////////////////////////////////////////////////////////////
 
-bool operator==(const gsl::realVector& left, const gsl::realVector &right);
-__INLINE bool operator!=(const gsl::realVector& left, const gsl::realVector &right){    return !(left == right); 	}
+bool operator==( const gsl::realVector& left, const gsl::realVector& right );
+
+__INLINE bool operator!=( const gsl::realVector& left, const gsl::realVector& right )
+{    return !( left == right ); 	}
 
 ////////////////////////////////////////////////////////////
 

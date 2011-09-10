@@ -9,8 +9,8 @@ class VectorTestSuite : public CPPUNIT_NS::TestFixture
 {
     CPPUNIT_TEST_SUITE ( VectorTestSuite );
 
+	CPPUNIT_TEST( Initialise );
     CPPUNIT_TEST( VectorsAreEqual );
-
     CPPUNIT_TEST( AddVector );
     CPPUNIT_TEST( SubtractVector );
     CPPUNIT_TEST( AddConstant );
@@ -35,6 +35,7 @@ public:
     void tearDown();
 
 protected:
+	void Initialise();
     void VectorsAreEqual();
     void AddVector();
     void SubtractVector();
