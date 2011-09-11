@@ -14,11 +14,14 @@ namespace permute{
 	void array( const size_t *p, real *data, size_t n, size_t stride = 1 ) throw ( null_pointer_dereference );
 	void arrayInverse( const size_t *p, real *data, size_t n, size_t stride = 1 ) throw ( null_pointer_dereference );
 
-	void vector( const permutation& p, gsl::realVector& v ) throw (gsl::size_mismatch, gsl::permutation_uninitialised, gsl::vector_uninitialised );
-	void vectorInverse( const permutation& p, gsl::realVector& v ) throw (gsl::size_mismatch, gsl::permutation_uninitialised, gsl::vector_uninitialised );
+	template< typename T >
+	void vector( const permutation& p, gsl::vector< T >& v ) throw (gsl::size_mismatch, gsl::permutation_uninitialised, gsl::vector_uninitialised );
+	template< typename T >
+	void vectorInverse( const permutation& p, gsl::vector< T >& v ) throw (gsl::size_mismatch, gsl::permutation_uninitialised, gsl::vector_uninitialised );
 }
 
 END_GSL_NAMESPACE
 
-const gsl::realVector operator*( const gsl::permutation& p, const gsl::realVector& v)
+template< typename T >
+const gsl::vector< T > operator*( const gsl::permutation& p, const gsl::vector< T >& v)
 throw (gsl::size_mismatch, gsl::permutation_uninitialised, gsl::vector_uninitialised );

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "macros.h"
+
 #include <stdexcept>
 
-namespace gsl{
+BEGIN_GSL_NAMESPACE
 
     class null_pointer_dereference : public std::runtime_error{
         public:
@@ -23,4 +25,5 @@ namespace gsl{
         public:
         size_mismatch() : std::runtime_error("Elements must be of equal size"){}
     };
-}
+
+END_GSL_NAMESPACE

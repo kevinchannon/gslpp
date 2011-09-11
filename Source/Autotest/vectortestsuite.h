@@ -22,7 +22,6 @@ class VectorTestSuite : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST( MaxAndMin );
     CPPUNIT_TEST( Swap );
     CPPUNIT_TEST( Basis );
-    CPPUNIT_TEST( IsNull );
     CPPUNIT_TEST( STLCompatibility );
     CPPUNIT_TEST( Squeeze );
     CPPUNIT_TEST( AccessorsAndMutators );
@@ -48,7 +47,6 @@ protected:
     void MaxAndMin();
     void Swap();
     void Basis();
-    void IsNull();
     void STLCompatibility();
     void Squeeze();
     void AccessorsAndMutators();

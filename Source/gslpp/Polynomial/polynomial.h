@@ -48,7 +48,7 @@ public:
 //			delete[] M_paRoots;
 	}
 	
-	__INLINE size_type order() const {	return M_vCoeffs.size() - 1;	}	
+	INLINE size_type order() const {	return M_vCoeffs.size() - 1;	}	
 
 private:
 

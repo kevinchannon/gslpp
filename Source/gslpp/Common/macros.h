@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef GSLPP_INLINE
-#define __INLINE inline
+#define INLINE inline
 #else
-#define __INLINE
+#define INLINE
 #endif 
 
 #define BEGIN_GSL_NAMESPACE namespace gsl{

@@ -58,7 +58,7 @@ public:
 	~combination();
 	
 	/// Initialise or re-set the combination to the first in the range
-	__INLINE void set_first() throw ( combination_uninitialised )
+	INLINE void set_first() throw ( combination_uninitialised )
 	{
 		if ( isNull() )	throw combination_uninitialised();
 		
@@ -66,7 +66,7 @@ public:
 	}
 	
 	/// Initialise or re-set the combination to the first in the range
-	__INLINE void set_last() throw ( combination_uninitialised )
+	INLINE void set_last() throw ( combination_uninitialised )
 	{
 		if ( isNull() )	throw combination_uninitialised();
 		
@@ -85,17 +85,17 @@ public:
 	///
 	/// Will not throw
 	bool operator==( const gsl::combination& right ) const;
-	__INLINE bool operator!=( const gsl::combination& right ) const{	return !( *this == right );		}
+	INLINE bool operator!=( const gsl::combination& right ) const{	return !( *this == right );		}
 
 	/// Access elements of the combination without range-checking
 	///
 	/// Will not throw, no range checking so may display undefined behaviour if index is out-of-range
-	__INLINE const_reference operator[](size_type index) const{  return *( this->cbegin() + index );   }
+	INLINE const_reference operator[](size_type index) const{  return *( this->cbegin() + index );   }
 
 	/// Access elements of the combination without range checking, but with cyclic boundary conditions
 	///
 	/// will not throw
-	__INLINE const_reference operator()(int index)
+	INLINE const_reference operator()(int index)
 	{	
 		int K = static_cast< int >( this->k() );
 		return *( this->begin() + ((index % K + K) % K) );
@@ -107,12 +107,12 @@ public:
 	/// Get the number of elements in the complete set of the combination
 	///
 	/// Will not throw, returns 0 if uninitialised
-	__INLINE size_type n() const{    return ( hasValue() ? const_ptr()->n : 0 ); }
+	INLINE size_type n() const{    return ( hasValue() ? const_ptr()->n : 0 ); }
 
 	/// Get the selection size of the combination
 	///
 	/// Will not throw, returns 0 if uninitialised
-	__INLINE size_type k() const{    return ( hasValue() ? const_ptr()->k : 0 ); }
+	INLINE size_type k() const{    return ( hasValue() ? const_ptr()->k : 0 ); }
 
 	/// Redefine the set-size and selection-size the combination, initialises the combination to the
 	/// lexographically first combination
@@ -121,22 +121,22 @@ public:
 	/// Get a pointer to the first element of the data struct
 	///
 	/// Will return NULL if the combination is uninitialised, will not throw
-	__INLINE iterator begin(){ return const_cast< iterator >( cbegin() ); }
+	INLINE iterator begin(){ return const_cast< iterator >( cbegin() ); }
 
 	/// Get a pointer to one-past-the-end of the data struct
 	///
 	/// Will return NULL if the combination is uninitialised, will not throw
-	__INLINE iterator end(){ return const_cast< iterator>( cend() ); }
+	INLINE iterator end(){ return const_cast< iterator>( cend() ); }
 
 	/// Get a pointer to the first element of the data struct
 	///
 	/// Will return NULL if the combination is uninitialised, will not throw
-	__INLINE const_iterator cbegin() const { return M_pStart; }
+	INLINE const_iterator cbegin() const { return M_pStart; }
 
 	/// Get a pointer to one-past-the-end of the data struct
 	///
 	/// Will return NULL if the combination is uninitialised, will not throw
-	__INLINE const_iterator cend() const { return M_pFinish; }
+	INLINE const_iterator cend() const { return M_pFinish; }
 
 	/// Check that the combination is valid The k elements should lie in the range 0 to n-1,
 	/// with each value occurring once at most and in increasing order

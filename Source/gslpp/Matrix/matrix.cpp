@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <algorithm>
+#include <iterator>
 
 #include <gsl/gsl_blas.h>
 
@@ -136,7 +137,7 @@ const realMatrix &realMatrix::operator/=(const realMatrix &m ) throw ( matrix_si
 
 ////////////////////////////////////////////////////////////
 
-gsl::realVector realMatrix::row( realMatrix::size_type i ) const
+gsl::vector< real > realMatrix::row( realMatrix::size_type i ) const
 	throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc )
 {
     if ( isNull() )
@@ -145,7 +146,7 @@ gsl::realVector realMatrix::row( realMatrix::size_type i ) const
     if ( i >= rows() )
         throw std::out_of_range( "matrix element out-of-range" );
 
-    gsl::realVector out( cols() );
+    gsl::vector< real > out( cols() );
     gsl_matrix_get_row(out.ptr(), const_ptr(), i );
 
 	out.setRowVector();
@@ -154,7 +155,7 @@ gsl::realVector realMatrix::row( realMatrix::size_type i ) const
 
 ////////////////////////////////////////////////////////////
 
-gsl::realVector realMatrix::col(realMatrix::size_type i ) const
+gsl::vector< real > realMatrix::col(realMatrix::size_type i ) const
 	throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc )
 {
     if ( isNull() )
@@ -163,7 +164,7 @@ gsl::realVector realMatrix::col(realMatrix::size_type i ) const
     if ( i >= cols() )
         throw std::out_of_range( "matrix element out-of-range" );
 
-    gsl::realVector out( rows() );
+    gsl::vector< real > out( rows() );
     gsl_matrix_get_col(out.ptr(), const_ptr(), i );
 
     out.setColVector();
@@ -172,7 +173,7 @@ gsl::realVector realMatrix::col(realMatrix::size_type i ) const
 
 ////////////////////////////////////////////////////////////
 
-gsl::realVector realMatrix::diagonal( int k ) const
+gsl::vector< real > realMatrix::diagonal( int k ) const
 	throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc )
 {
     if ( isNull() )
@@ -182,9 +183,9 @@ gsl::realVector realMatrix::diagonal( int k ) const
         throw std::out_of_range( "matrix element out-of-range" );
 
     size_type size = k < 0 ? std::min( cols(), rows() + k ) : std::min( rows(), cols() - k );
-    gsl::realVector out( size );
+    gsl::vector< real > out( size );
 
-    gsl::realVector::iterator it_v = out.begin();
+    gsl::vector< real >::iterator it_v = out.begin();
     const_iterator it = cbegin() + ( k < 0 ? -k*cols() : k );
     size_type step = cols() + 1;
 
@@ -195,7 +196,7 @@ gsl::realVector realMatrix::diagonal( int k ) const
 
 ////////////////////////////////////////////////////////////
 
-void realMatrix::setRow( realMatrix::size_type i, const gsl::realVector& v ) throw ( matrix_uninitialised, std::out_of_range)
+void realMatrix::setRow( realMatrix::size_type i, const gsl::vector< real >& v ) throw ( matrix_uninitialised, std::out_of_range)
 {
     if ( isNull() )
         throw matrix_uninitialised();
@@ -203,12 +204,12 @@ void realMatrix::setRow( realMatrix::size_type i, const gsl::realVector& v ) thr
     if ( i >= rows() )
         throw std::out_of_range( "matrix element out-of-range" );
 
-    gsl_matrix_set_row( ptr(), i, v.const_ptr() );
+    gsl_matrix_set_row( ptr(), i, v.as_gsl_vector() );
 }
 
 ////////////////////////////////////////////////////////////
 
-void realMatrix::setCol(realMatrix::size_type i, const gsl::realVector& v ) throw ( matrix_uninitialised, std::out_of_range)
+void realMatrix::setCol(realMatrix::size_type i, const gsl::vector< real >& v ) throw ( matrix_uninitialised, std::out_of_range)
 {
     if ( isNull() )
         throw matrix_uninitialised();
@@ -216,7 +217,7 @@ void realMatrix::setCol(realMatrix::size_type i, const gsl::realVector& v ) thro
     if ( i >= cols() )
         throw std::out_of_range( "matrix element out-of-range" );
 
-    gsl_matrix_set_col( ptr(), i, v.const_ptr() );
+    gsl_matrix_set_col( ptr(), i, v.as_gsl_vector() );
 }
 
 ////////////////////////////////////////////////////////////
@@ -633,11 +634,8 @@ const gsl::realMatrix operator-(const gsl::realMatrix& left, const gsl::realMatr
 
 const gsl::realMatrix operator-(const gsl::realMatrix::value_type& x, const gsl::realMatrix& right)
 {
-	gsl::realMatrix out( right );
-    gsl::realMatrix::iterator it = out.begin();
-	
-	while ( it != out.end() )	*it++ = x - *it ;
-	
+	gsl::realMatrix out( std::difference( right.begin(), right.end() ), x );
+	std::transform( out.cbegin(), out.cend(), right.cbegin(), out.begin(), std::minus< real >() ); 
     return out;
 }
 

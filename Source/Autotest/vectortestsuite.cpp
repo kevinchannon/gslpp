@@ -252,24 +252,24 @@ void VectorTestSuite::ElementwiseVectorDivide()
 
 void VectorTestSuite::MaxAndMin()
 {
-    const int iVectorSize = 10;
+    const size_t iVectorSize = 10;
     const real rMultiplier = 323.3242349;
 
-    gsl::realVector vec( iVectorSize );
+    gsl::vector< real > vec( iVectorSize );
 
-    for ( int i = 0; i < vec.size(); ++i )
-        vec[i] = i*rMultiplier - 3*rMultiplier;
+    for ( size_t i = 0; i < vec.size(); ++i )
+        vec[i] = static_cast< real >(i)*rMultiplier - 3*rMultiplier;
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(-3*rMultiplier, vec.min(), rTolerance );
     CPPUNIT_ASSERT_DOUBLES_EQUAL( (iVectorSize - 3 - 1)*rMultiplier, vec.max(), rTolerance );
-    CPPUNIT_ASSERT( 0 == vec.min_element() );
-    CPPUNIT_ASSERT( iVectorSize - 1 == vec.max_element() );
+    CPPUNIT_ASSERT( 0 == vec.min_index() );
+    CPPUNIT_ASSERT( iVectorSize - 1 == vec.max_index() );
 
     std::pair< real, real > pair_minMax = vec.minmax();
     CPPUNIT_ASSERT_DOUBLES_EQUAL( -3*rMultiplier, pair_minMax.first, rTolerance );
     CPPUNIT_ASSERT_DOUBLES_EQUAL( (iVectorSize - 3 - 1)*rMultiplier, pair_minMax.second, rTolerance );
 
-    std::pair< size_t, size_t > pair_minMax_element = vec.minmax_element();
+    std::pair< size_t, size_t > pair_minMax_element = vec.minmax_index();
     CPPUNIT_ASSERT( 0 == pair_minMax_element.first );
     CPPUNIT_ASSERT( iVectorSize-1 == pair_minMax_element.second );
 }
@@ -278,17 +278,17 @@ void VectorTestSuite::MaxAndMin()
 
 void VectorTestSuite::Swap()
 {
-    gsl::realVector vec_1(4);
+    gsl::vector< real > vec_1(4);
     vec_1[0] = 1;
     vec_1[1] = 2;
     vec_1[2] = 3;
     vec_1[3] = 4;
 
-    vec_1.swapElements(0,3);
+    vec_1.swap_elements(0,3);
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 4.0, vec_1[0], rTolerance );
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 1.0, vec_1[3], rTolerance );
 
-    gsl::realVector vec_2(4);
+    gsl::vector< real > vec_2(4);
     vec_1.swap( vec_2 );
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL( 4.0, vec_2[0], rTolerance );
@@ -301,7 +301,7 @@ void VectorTestSuite::Swap()
 
 void VectorTestSuite::Basis()
 {
-    gsl::realVector vec(4);
+    gsl::vector< real > vec(4);
     vec.basis(2);
 
     for ( size_t i = 0; i < 4; ++i )
@@ -310,28 +310,13 @@ void VectorTestSuite::Basis()
 
 ////////////////////////////////////////////////////////////
 
-void VectorTestSuite::IsNull()
-{
-    gsl::realVector vec;
-
-    CPPUNIT_ASSERT( vec.isNull() );
-}
-
-////////////////////////////////////////////////////////////
-
 void VectorTestSuite::STLCompatibility()
 {
     const size_t ciVecSize = 10;
-    gsl::realVector vec( ciVecSize );
+    gsl::vector< real > vec( ciVecSize );
 
     for ( size_t i = 0; i < ciVecSize; ++i )
         vec[ i ] = static_cast< double >( i );
-
-    // Iterators
-    CPPUNIT_ASSERT ( vec.ptr()->data == vec.begin() );
-    CPPUNIT_ASSERT ( vec.ptr()->data + vec.size() == vec.end() );
-    CPPUNIT_ASSERT ( vec.ptr()->data + (vec.size() - 1) == vec.rbegin() );
-    CPPUNIT_ASSERT ( vec.ptr()->data - 1 == vec.rend() );
 
     // Capacity
     CPPUNIT_ASSERT ( vec.size() == ciVecSize );
@@ -341,13 +326,10 @@ void VectorTestSuite::STLCompatibility()
     CPPUNIT_ASSERT ( vec.size() == ciVecSize );
     CPPUNIT_ASSERT ( vec.capacity() == ciCap );
 
-    // Not an STL function, but useful here
-    vec.reset();
-    CPPUNIT_ASSERT ( vec.empty() );
-
     // Element access & Modifiers
     //
     // push_back
+	vec.reset();
     for ( size_t i = 0; i < ciVecSize; ++i )
         vec.push_back( static_cast< double >( i ) );
 
@@ -357,35 +339,30 @@ void VectorTestSuite::STLCompatibility()
     CPPUNIT_ASSERT ( vec.back() == 9 );
 
     // assign
-    vec.assign( 25, 1 );
     vec.assign( 6, 2 );
 
-    CPPUNIT_ASSERT ( vec.size() == 25 );
+    CPPUNIT_ASSERT ( vec.size() == 6 );
     for ( size_t i = 0; i < 6; ++i )
         CPPUNIT_ASSERT ( vec[i] == 2 );
-    for ( size_t i = 6; i < 25; ++i )
-        CPPUNIT_ASSERT ( vec[i] == 1 );
 
     // insert
     vec.insert( vec.begin() + 6, 7 );
     CPPUNIT_ASSERT ( vec[6] == 7 );
 
     // pop_back
-    CPPUNIT_ASSERT ( vec.pop_back() == 1 );
+    CPPUNIT_ASSERT ( vec.pop_back() == 7 );
 
     // erase
-    vec.erase(6);
-    CPPUNIT_ASSERT ( vec.size() == 24 );
-    for ( size_t i = 0; i < 6; ++i )
+    vec.erase(4);
+    CPPUNIT_ASSERT ( vec.size() == 5 );
+    for ( size_t i = 0; i < 5; ++i )
         CPPUNIT_ASSERT ( vec[i] == 2 );
-    for ( size_t i = 6; i < 24; ++i )
-        CPPUNIT_ASSERT ( vec[i] == 1 );
-
+	
     // clear
     vec.clear();
     CPPUNIT_ASSERT ( vec.empty() );
     CPPUNIT_ASSERT ( vec.size() == 0);
-    CPPUNIT_ASSERT ( vec.capacity() == 26 );
+    CPPUNIT_ASSERT ( vec.capacity() == 20 );
 }
 
 ////////////////////////////////////////////////////////////
@@ -394,7 +371,7 @@ void VectorTestSuite::Squeeze()
 {
     const size_t ciVecSize = 10;
     const size_t ciCap = 1000;
-    gsl::realVector vec( ciVecSize, 2.0 );
+    gsl::vector< real > vec( ciVecSize, 2.0 );
 
     CPPUNIT_ASSERT ( vec.size() == ciVecSize );
     CPPUNIT_ASSERT ( vec.capacity() == ciVecSize );
@@ -417,7 +394,7 @@ void VectorTestSuite::Squeeze()
 void VectorTestSuite::AccessorsAndMutators()
 {
     const size_t ciVecSize = 10;
-    gsl::realVector vec( ciVecSize );
+    gsl::vector< real > vec( ciVecSize );
 
     for ( size_t i = 0; i < ciVecSize; ++i )
         vec[ i ] = static_cast< double >( i );
@@ -455,7 +432,7 @@ void VectorTestSuite::Performance()
 
     start = clock();
 
-    gsl::realVector gslVec;
+    gsl::vector< real > gslVec;
     for ( size_t j = 0; j < 100; ++j ){
         for ( size_t i = 0; i < 100000; ++i )
             gslVec.push_back( 3.1415269 );

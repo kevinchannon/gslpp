@@ -18,22 +18,22 @@ public:
     /// Get a pointer to the underlying GSL struct
     ///
     /// Will not throw, can return NULL
-    __INLINE T* ptr(){                    return M_pGSLData;  }
+    INLINE T* ptr(){                    return M_pGSLData;  }
 
     /// Get a const pointer to the underlying GSL struct
     ///
     /// Will not throw, can return NULL
-    __INLINE const T* const_ptr() const{  return M_pGSLData;  }
+    INLINE const T* const_ptr() const{  return M_pGSLData;  }
 
     /// Check if it's OK to try and manipulate the object
     ///
     /// Will not throw
-    __INLINE bool hasValue() const{       return M_pGSLData != 0;  }
+    INLINE bool hasValue() const{       return M_pGSLData != 0;  }
 
     /// Check if it's not OK to try and manipulate the object
     ///
     /// Will not throw
-    __INLINE bool isNull() const{         return M_pGSLData == 0; }
+    INLINE bool isNull() const{         return M_pGSLData == 0; }
 
 protected:
 
@@ -44,12 +44,12 @@ protected:
     /// Set the value of the underlying GSL struct
     ///
     /// Will not throw
-    __INLINE void set_ptr( T* p ){        M_pGSLData = p;     }
+    INLINE void set_ptr( T* p ){        M_pGSLData = p;     }
 	
 	/// Exchange the underlying GSL struct with another of the same kind
 	///
 	/// will not throw
-	__INLINE void swap_ptr( T*& p){	std::swap( M_pGSLData, p );	}
+	INLINE void swap_ptr( T*& p){	std::swap( M_pGSLData, p );	}
 
     T* M_pGSLData;
 
@@ -65,22 +65,22 @@ public:
 	/// Get a reference to the underlying object
 	///
 	/// Will not throw, will no return NULL
-	__INLINE T& ref(){	return M_GSLData;	}
+	INLINE T& ref(){	return M_GSLData;	}
 	
 	/// Get a const reference to the underlying object
 	///
 	/// Will not throw, will no return NULL
-	__INLINE const T& const_ref() const {	return M_GSLData;	}
+	INLINE const T& const_ref() const {	return M_GSLData;	}
 	
 	/// Get a pointer to the underlying object
 	///
 	/// Will not throw, will not return NULL
-	__INLINE T* ptr(){	return const_cast< T* >( const_ptr() );	}
+	INLINE T* ptr(){	return const_cast< T* >( const_ptr() );	}
 	
 	/// Get a const pointer to the underlying object
 	///
 	/// Will not throw, will not return NULL
-	__INLINE const T* const_ptr() const {	return &M_GSLData;	}
+	INLINE const T* const_ptr() const {	return &M_GSLData;	}
 	
 protected:
 	T M_GSLData;
@@ -101,30 +101,30 @@ public:
     typedef typename T::size_type		size_type;
     typedef typename T::difference_type	difference_type;
 	
-	__INLINE iterator begin(){				return M_STLData.begin();	}
-	__INLINE const_iterator cbegin() const{	return M_STLData.cbegin();	}
-	__INLINE iterator end(){				return M_STLData.end();		}
-	__INLINE const_iterator cend() const{	return M_STLData.cend();	}
+	INLINE iterator begin(){				return M_STLData.begin();	}
+	INLINE const_iterator cbegin() const{	return M_STLData.cbegin();	}
+	INLINE iterator end(){				return M_STLData.end();		}
+	INLINE const_iterator cend() const{	return M_STLData.cend();	}
 	
-	__INLINE size_type size() const{		return M_STLData.size();	}
-	__INLINE bool empty() const{			return M_STLData.empty();	}
-	__INLINE size_type max_size() const{	return M_STLData.max_size();}
+	INLINE size_type size() const{		return M_STLData.size();	}
+	INLINE bool empty() const{			return M_STLData.empty();	}
+	INLINE size_type max_size() const{	return M_STLData.max_size();}
 	
-	__INLINE iterator insert ( iterator position, const value_type& x )
+	INLINE iterator insert ( iterator position, const value_type& x )
 		{	return M_STLData.insert(position, x);	}
 		
-    __INLINE void insert ( iterator position, size_type n, const value_type& x )
+    INLINE void insert ( iterator position, size_type n, const value_type& x )
 		{	return M_STLData.insert( position, n, x );	}
 		
 	template <class InputIterator>
-    __INLINE void insert ( iterator position, InputIterator first, InputIterator last )
+    INLINE void insert ( iterator position, InputIterator first, InputIterator last )
 		{	return M_STLData.insert( position, first, last );	}
 	
-	__INLINE iterator erase ( iterator position ){	return M_STLData.erase( position );	}
-	__INLINE iterator erase ( iterator first, iterator last ){	return M_STLData.erase(first, last);	}
+	INLINE iterator erase ( iterator position ){	return M_STLData.erase( position );	}
+	INLINE iterator erase ( iterator first, iterator last ){	return M_STLData.erase(first, last);	}
 	
-	__INLINE void swap( T& other){	M_STLData.swap( other );	}
-	__INLINE void clear(){			M_STLData.clear();			}
+	INLINE void swap( T& other){	M_STLData.swap( other );	}
+	INLINE void clear(){			M_STLData.clear();			}
 	
 protected:
 	~from_STL_container(){}

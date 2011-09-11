@@ -28,27 +28,27 @@ public:
 	~block()
 		{	if ( has_value() )	delete[] M_pStart;	}
 	
-	__INLINE bool is_null() const
+	INLINE bool is_null() const
 		{		return M_pStart == NULL;	}
-	__INLINE bool has_value() const
+	INLINE bool has_value() const
 		{	return ! is_null();			}
 	
-	__INLINE size_type size() const
+	INLINE size_type size() const
 		{	return static_cast< size_type >(M_pFinish - M_pStart);	}
-	__INLINE const_iterator cbegin() const
+	INLINE const_iterator cbegin() const
 		{	return M_pStart;	}
-	__INLINE iterator begin()
+	INLINE iterator begin()
 		{	return M_pStart;	}
-	__INLINE const_iterator cend() const
+	INLINE const_iterator cend() const
 		{	return M_pFinish;	}
-	__INLINE iterator end()
+	INLINE iterator end()
 		{	return M_pFinish;	}
-	__INLINE bool empty() const
+	INLINE bool empty() const
 		{	return M_pStart == M_pFinish;	}
 	
-	__INLINE reference operator[]( size_type i )
+	INLINE reference operator[]( size_type i )
 		{	return M_pStart[ i ];	}
-	__INLINE const_reference operator[]( size_type i ) const
+	INLINE const_reference operator[]( size_type i ) const
 		{	return M_pStart[ i ];	}
 	
 private:

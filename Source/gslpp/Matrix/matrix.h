@@ -47,7 +47,7 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 		M_matrix_element_type( realMatrix::size_type r, realMatrix::size_type c ) :
 		row( r ), col( c ) {}
 		
-		__INLINE bool operator==( const M_matrix_element_type& right ) const{	return (right.row == row) && (right.col == col);	}
+		INLINE bool operator==( const M_matrix_element_type& right ) const{	return (right.row == row) && (right.col == col);	}
 	};
 	
 	typedef M_matrix_element_type element_type;
@@ -137,26 +137,26 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// Logical inequality
 	///
 	/// Will not throw
-	__INLINE bool operator!=( const realMatrix& right ) const{		return !(*this == right );		}
+	INLINE bool operator!=( const realMatrix& right ) const{		return !(*this == right );		}
 	
 	/// Get an rvalue for an element directly, without range checking
 	///
 	/// Will not throw
-	__INLINE const_reference operator[]( const realMatrix::element_type& x ) const {
+	INLINE const_reference operator[]( const realMatrix::element_type& x ) const {
 		return *( cbegin() + ( x.row * cols() ) + x.col );
 	}
 	
 	/// Get an lvalue for an element directly, without range checking
 	///
 	/// Will not throw
-	__INLINE reference operator[]( const realMatrix::element_type& x ){
+	INLINE reference operator[]( const realMatrix::element_type& x ){
 		return *( begin() + ( x.row * cols() ) + x.col );
 	}
 	
 	/// Get an rvalue for an element directly, with cyclic boundary conditions
 	///
 	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
-	__INLINE const_reference operator()( int r, int c ) const {
+	INLINE const_reference operator()( int r, int c ) const {
 		int R = static_cast< int >( rows() );
 		int C = static_cast< int >( cols() );
 		return *( cbegin() + ((r % R + R) % R) * C + ( (c % C + C) % C ) );
@@ -165,7 +165,7 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// Get an lvalue for an element directly, with cyclic boundary conditions
 	///
 	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
-	__INLINE reference operator()( int r, int c ){
+	INLINE reference operator()( int r, int c ){
 		int R = static_cast< int >( rows() );
 		int C = static_cast< int >( cols() );
 		return *( begin() + ((r % R + R) % R) * C + ( (c % C + C) % C ) );
@@ -174,14 +174,14 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// Get an rvalue for an element directly, with cyclic boundary conditions
 	///
 	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
-	__INLINE const_reference operator()( const realMatrix::element_type& x ) const {
+	INLINE const_reference operator()( const realMatrix::element_type& x ) const {
 		return this->operator()( x.row, x.col );
 	}
 	
 	/// Get an lvalue for an element directly, with cyclic boundary conditions
 	///
 	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
-	__INLINE reference operator()( const realMatrix::element_type& x ) {
+	INLINE reference operator()( const realMatrix::element_type& x ) {
 		return this->operator()( x.row, x.col );
 	}
 	
@@ -194,53 +194,53 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// Get the number of rows in the matrix
 	/// 
 	/// Will not throw
-	__INLINE size_type rows() const {	return M_uRows;	}
+	INLINE size_type rows() const {	return M_uRows;	}
 	
 	/// Get the number of columns in the matrix
 	/// 
 	/// Will not throw
-	__INLINE size_type cols() const {	return M_uCols;	}
+	INLINE size_type cols() const {	return M_uCols;	}
 	
 	/// Get a const_iterator to the first element in the matrix
 	///
 	/// Will not throw, can return NULL
-	__INLINE const_iterator cbegin() const {		return M_pStart;	}
+	INLINE const_iterator cbegin() const {		return M_pStart;	}
 	
 	/// Get a const_iterator to one past the last element in the matrix
 	///
 	/// Will not throw, can return NULL
-	__INLINE const_iterator cend() const {		return M_pFinish;	}
+	INLINE const_iterator cend() const {		return M_pFinish;	}
 	
 	/// Get an iterator to the first element in the matrix
 	///
 	/// Will not throw, can return NULL
-	__INLINE iterator begin() {	return M_pStart;		}
+	INLINE iterator begin() {	return M_pStart;		}
 	
 	/// Get an iterator to one past the last element in the matrix
 	///
 	/// Will not throw, can return NULL
-	__INLINE iterator end() {		return M_pFinish;		}
+	INLINE iterator end() {		return M_pFinish;		}
 	
 	/// Get a row from the matrix as a vector
-	gsl::realVector row( size_type r ) const throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc );
+	gsl::vector< real > row( size_type r ) const throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc );
 	
 	/// Get a column from the matrix as a vector
-	gsl::realVector col( size_type c ) const throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc );
+	gsl::vector< real > col( size_type c ) const throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc );
 	
 	/// Get the k-th diagonal of the matrix as a vector.
-	gsl::realVector diagonal( int k = 0 ) const throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc );
+	gsl::vector< real > diagonal( int k = 0 ) const throw ( matrix_uninitialised, std::out_of_range, std::bad_alloc );
 	
 	/// Set the values of a given matrix row
-	void setRow( size_type r, const gsl::realVector& v ) throw ( matrix_uninitialised, std::out_of_range);
+	void setRow( size_type r, const gsl::vector< real >& v ) throw ( matrix_uninitialised, std::out_of_range);
 	
 	/// Set the values of a given matrix column
-	void setCol( size_type c, const gsl::realVector& v ) throw ( matrix_uninitialised, std::out_of_range);
+	void setCol( size_type c, const gsl::vector< real >& v ) throw ( matrix_uninitialised, std::out_of_range);
 	
 	/// Get the matrix transpose (returns a new matrix)
 	gsl::realMatrix transpose() const throw ( matrix_uninitialised );
 	
 	/// Determine if the matrix is square or not
-	__INLINE bool isSquare() const {	return this->rows() == this->cols();	}
+	INLINE bool isSquare() const {	return this->rows() == this->cols();	}
 	
 	/// Exchange two columns
 	void swapCols( size_type c1, size_type c2 ) throw (std::out_of_range );
@@ -285,7 +285,7 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// Set all private fields to NULL
 	///
 	/// Will not throw
-	__INLINE void M_zero_all_fields()
+	INLINE void M_zero_all_fields()
 	{
 		M_pStart = NULL;
 		M_pFinish = NULL;
@@ -297,7 +297,7 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// m must not be NULL
 	///
 	/// Will not throw
-	__INLINE void M_set_all_fields( const gsl_matrix* m )
+	INLINE void M_set_all_fields( const gsl_matrix* m )
 	{
 		assert( m != 0 );
 		M_pStart = m->block->data;
@@ -310,13 +310,13 @@ class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	/// given matrix
 	///
 	/// Will not throw
-	__INLINE bool M_dimensions_are_equal( const realMatrix& m ) const
+	INLINE bool M_dimensions_are_equal( const realMatrix& m ) const
 	{
 		return ( this->rows() == m.rows() ) && ( this->cols() == m.cols() );
 	}
 };
 
-	__INLINE void swap( realMatrix& a, realMatrix& b ){	a.swap( b );	}
+	INLINE void swap( realMatrix& a, realMatrix& b ){	a.swap( b );	}
 
 END_GSL_NAMESPACE
 
@@ -358,4 +358,4 @@ const gsl::realMatrix operator%(const gsl::realMatrix::value_type& x, const gsl:
 const gsl::realMatrix operator*(const gsl::realMatrix& left, const gsl::realMatrix& right ) throw ( gsl::matrix_size_mismatch );
 const gsl::realMatrix operator*(const gsl::realMatrix& left, const gsl::realMatrix::value_type& x);
 const gsl::realMatrix operator*(const gsl::realMatrix::value_type& x, const gsl::realMatrix& right);
-const gsl::realVector operator*(const gsl::realMatrix& left, const gsl::realVector& v) throw ( gsl::matrix_size_mismatch );
+const gsl::vector< real > operator*(const gsl::realMatrix& left, const gsl::vector< real >& v) throw ( gsl::matrix_size_mismatch );

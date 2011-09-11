@@ -1,5 +1,7 @@
 #include "sort.h"
 
+#include <algorithm>
+
 #include "../Vector/vector.h"
 #include "../Permutation/permutation.h"
 
@@ -9,11 +11,13 @@
 
 BEGIN_GSL_NAMESPACE
 
-    void sort( gsl::realVector& v )
-    {   gsl_sort_vector( v.ptr() ); }
+	template< typename T >
+    void sort( gsl::vector< T >& v )
+    {   std::sort( v.begin(), v.end()); }
 
-    void sort( gsl::permutation& p, const gsl::realVector &v)
-    {   gsl_sort_vector_index (p.ptr(), v.const_ptr() );  }
+	template< typename T >
+    void sort( gsl::permutation& p, const gsl::vector< T >& v)
+    {   gsl_sort_vector_index (p.ptr(), v.as_gsl_vector() );  }
 
     void sortSmallest(real *dest, size_t numberOfElements, const gsl::realVector& src)
     {   gsl_sort_vector_smallest( dest, numberOfElements, src.const_ptr() );    }

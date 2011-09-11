@@ -5,6 +5,9 @@
 #include <iterator>
 #include <algorithm>
 #include <vector>
+#include <sstream>
+#include <string>
+#include <limits>
 
 #include <gsl/gsl_vector.h>
 
@@ -46,66 +49,77 @@ template<>
 struct gsl_vector_type< real >
 {
 	typedef gsl_vector type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< char >
 {
 	typedef gsl_vector_char type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_char_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< float >
 {
 	typedef gsl_vector_float type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_float_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< int >
 {
-	typedef gsl_vector_float type;
+	typedef gsl_vector_int type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_int_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< long >
 {
-	typedef gsl_vector_float type;
+	typedef gsl_vector_long type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_long_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< long double >
 {
-	typedef gsl_vector_float type;
+	typedef gsl_vector_long_double type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_long_double_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< short >
 {
 	typedef gsl_vector_short type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_short_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< unsigned char >
 {
-	typedef gsl_vector_float type;
+	typedef gsl_vector_uchar type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_uchar_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< unsigned short >
 {
 	typedef gsl_vector_ushort type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_ushort_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< unsigned int >
 {
 	typedef gsl_vector_uint type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_uint_alloc(n);	}
 };
 
 template<>
 struct gsl_vector_type< unsigned long >
 {
-	typedef gsl_vector_float type;
+	typedef gsl_vector_ulong type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_ulong_alloc(n);	}
 };
 
 ////////////////////////////////////////////////////////////
@@ -173,25 +187,24 @@ public:
 	/// Construct from an std::vector
     vector( const std::vector< T >& original, bool isColVector = true ) throw ( std::bad_alloc ) :
 	M_bIsColVector( isColVector )
-	{
-		this->M_STLData = original;
-	}
+	{	this->M_STLData = original;	}
+	
     ~vector(){}
 	
 	/// Check if the vector is a column vector
-	__INLINE bool  is_col_vector() const {	return   M_bIsColVector;	}
+	INLINE bool  is_col_vector() const {	return   M_bIsColVector;	}
 	
 	/// Check if the vector is a row vector
-	__INLINE bool  is_row_vector() const {	return ! M_bIsColVector;	}
+	INLINE bool  is_row_vector() const {	return ! M_bIsColVector;	}
 	
 	/// Set the vector to column vector
-	__INLINE void set_col_vector(){	M_bIsColVector = true;	}
+	INLINE void set_col_vector(){	M_bIsColVector = true;	}
 	
 	/// Set the vector to row vector
-	__INLINE void set_row_vector(){	M_bIsColVector = false;	}
+	INLINE void set_row_vector(){	M_bIsColVector = false;	}
 	
 	/// Copy assignment operator
-    __INLINE gsl::vector< T >& operator=(const gsl::vector< T > &right)
+    INLINE gsl::vector< T >& operator=(const gsl::vector< T > &right)
 	{
 		this->M_STLData = right.M_STLData;
 		this->M_bIsColVector = right.M_bIsColVector;
@@ -199,14 +212,14 @@ public:
 	}
 	
 	/// Value assignment operator
-    __INLINE gsl::vector< T >& operator=( const value_type x )
+    INLINE gsl::vector< T >& operator=( const value_type x )
 	{
 		std::fill( this->M_STLData.begin(), this->M_STLData.end(), x );
 		return *this;
 	}
 	
 	/// std::vector assignment operator
-	__INLINE gsl::vector< T >& operator=( const std::vector< T >& right )
+	INLINE gsl::vector< T >& operator=( const std::vector< T >& right )
 	{
 		this->M_STLData = right;
 		return *this;
@@ -223,34 +236,239 @@ public:
     gsl::vector< T >& operator/=( const value_type right);
 
 	/// Boolean equal
-	__INLINE bool operator==( const gsl::vector< T >& right )
-	{
-		return this->M_STLData == right.M_STLData && this->M_bIsColVector == right.M_bIsColVector;
-	} 
+	INLINE bool operator==( const gsl::vector< T >& right )
+	{	return this->M_STLData == right.M_STLData && this->M_bIsColVector == right.M_bIsColVector;	} 
 
 	/// Boolean not equal
-	__INLINE bool operator!=( const gsl::vector< T >& right )
+	INLINE bool operator!=( const gsl::vector< T >& right )
 	{    return !( *this == right ); 	}
 	
+	/// GSL-style Functions
+	
+	/// Get the maximum value in the vector
+    INLINE value_type max() const
+	{	return *std::max_element( this->begin(), this->end() );	}
+	
+	/// Get the minimum value in the vector
+    INLINE value_type min() const
+	{	return *std::min_element( this->begin(), this->end() );	}
+	
+	/// Get both the min and max values in the vector
+    INLINE std::pair< real, real > minmax() const
+	{	return std::make_pair(this->min(), this->max() );	}
+	
+	/// Get the position of the maximum element
+    INLINE size_type max_index() const
+	{	return std::distance(this->begin(), std::max_element( this->begin(), this->end() ) );  }
+	
+	/// Get the position of the minimum element
+    INLINE size_type min_index() const
+	{	return std::distance(this->begin(), std::min_element( this->begin(), this->end() ) );  }
+	
+	/// Get the indices of the minimum and maximum elements
+    INLINE std::pair< size_type, size_type > minmax_index() const
+	{ 	return std::make_pair(this->min_index(), this->max_index() );  }
+	
+	/// Get a const iterator to the maximum element
+	INLINE const_iterator max_element() const
+	{	return std::max( this->begin(), this->end() );	}
+	
+	/// Get an iterator to the maximum element
+	INLINE iterator max_element()
+	{	return std::max( this->begin(), this->end() );	}
+	
+	/// Get a const iterator to the minimum element
+	INLINE const_iterator min_element() const
+	{	return std::min( this->begin(), this->end() );	}
+	
+	/// Get an iterator to the minimum element
+	INLINE iterator min_element()
+	{	return std::min( this->begin(), this->end() );	}
+	
+	/// Swap the two specified elements
+	INLINE void swap_elements( size_type index1, size_type index2)
+	{	std::swap( (*this)[index1], (*this)[index2] );	}
+	
+	/// Set all the values in the vector to zero
+	INLINE void zero()
+	{	std::fill( this->begin(), this->end(), static_cast< T >(0) );	}
+	
+    INLINE void basis(unsigned index)
+	{
+		this->zero();
+		this->at( index ) = static_cast< T >(1);
+	}
+	
+	/// STL-style functions
+	
+    /// Capacity
+    INLINE void resize(const size_type length){	this->M_STLData.resize( length );	}
+    INLINE void resize(const size_type length, const real value){	this->M_STLData.resize(length, value);	}
+    INLINE size_type capacity() const{    return this->M_STLData.capacity();  }
+    INLINE void reserve( size_type n ){		this->M_STLData.reserve(n);	}
+	
+    /// Element access
+	
 	/// Unchecked accessor
-	__INLINE reference operator[]( size_type i ){	return this->M_STLData[i];	}
-	__INLINE const_reference operator[]( size_type i ) const {	return this->M_STLData[i];	}
+	INLINE reference operator[]( size_type i )
+	{	return this->M_STLData[i];	}
+	INLINE const_reference operator[]( size_type i ) const
+	{	return this->M_STLData[i];	}
+	
+	/// Accessor with cyclic boundary condition
+	/// behaviour is undefined if the vector has zero size
+	/// Will throw if the vector has a size greater than the int max size
+	INLINE reference operator()( int i )
+	{
+		if ( this->size() > std::numeric_limits< int >::max() )
+			throw std::out_of_range("Vector is too large for valid use of operator()");
+			
+		int N = static_cast< int >( this->size() );
+		return this->M_STLData[ ((i % N) + N) % N ];
+	}
+	INLINE const_reference operator()( size_type i ) const
+	{	
+		if ( this->size() > std::numeric_limits< int >::max() )
+			throw std::out_of_range("Vector is too large for valid use of operator()");
+			
+		int N = static_cast< int >( this->size() );
+		return this->M_STLData[ ((i % N) + N) % N ];
+	}
+	
+	/// Safe accessor
+	const_reference at( size_type i ) const
+	{
+		M_throw_if_out_of_range( i );
+		return this->M_STLData[i];
+	}
+	reference at( size_type i )
+	{
+		M_throw_if_out_of_range( i );
+		return this->M_STLData[i];
+	}
 	
 	/// Iterators
-    __INLINE iterator begin(){  return this->M_STLData.begin();  }
-    __INLINE iterator end(){ return this->M_STLData.end(); }
-    __INLINE iterator rbegin(){  return this->M_STLData.rbegin();  }
-    __INLINE iterator rend(){ return this->M_STLData.rend(); }
-    __INLINE const_iterator begin() const {  return this->M_STLData.begin();  }
-    __INLINE const_iterator end() const{ return this->M_STLData.end(); }
-    __INLINE const_iterator rbegin() const{  return this->M_STLData.rbegin();  }
-    __INLINE const_iterator rend() const{ return this->M_STLData.rend(); }
-    __INLINE const_iterator cbegin() const {  return this->M_STLData.begin();  }
-    __INLINE const_iterator cend() const {  return this->M_STLData.end();  }
-    __INLINE const_iterator crbegin() const {  return this->M_STLData.rbegin();  }
-    __INLINE const_iterator crend() const { return this->M_STLData.rend();  }
+    INLINE iterator begin(){  				return this->M_STLData.begin();		}
+    INLINE iterator end(){ 					return this->M_STLData.end();		}
+    INLINE iterator rbegin(){  				return this->M_STLData.rbegin();	}
+    INLINE iterator rend(){ 					return this->M_STLData.rend();		}
+    INLINE const_iterator begin() const {  	return this->M_STLData.begin();		}
+    INLINE const_iterator end() const{ 		return this->M_STLData.end();		}
+    INLINE const_iterator rbegin() const{  	return this->M_STLData.rbegin();	}
+    INLINE const_iterator rend() const{ 		return this->M_STLData.rend();		}
+    INLINE const_iterator cbegin() const {  	return this->M_STLData.begin();		}
+    INLINE const_iterator cend() const {  	return this->M_STLData.end();		}
+    INLINE const_iterator crbegin() const {	return this->M_STLData.rbegin();	}
+    INLINE const_iterator crend() const {		return this->M_STLData.rend();  	}
+	
+    INLINE reference front(){					return this->M_STLData.front();	}
+    INLINE reference back(){					return this->M_STLData.back();	}
+    INLINE const_reference front() const {	return this->M_STLData.front();	}
+    INLINE const_reference back() const {		return this->M_STLData.back();	}
+
+    /// Modifiers
+    INLINE void assign( size_type n, const_reference value ){	this->M_STLData.assign(n, value);	}
+    void assign( const_iterator start, const_iterator finish ){	this->M_STLData.assign(start, finish);	}
+	
+	/// Swap this vector with another
+	INLINE void swap( gsl::vector< T >& other )
+	{
+		std::swap( this->M_STLData, other.M_STLData );
+		std::swap( this->M_bIsColVector, other.M_bIsColVector);
+	}
+	
+    INLINE void clear(){	this->M_STLData.clear();	}
+    INLINE void push_back( value_type value ){	this->M_STLData.push_back( value );	}
+    INLINE value_type pop_back()
+	{
+		value_type out = this->back();
+		this->M_STLData.pop_back();
+		return out;
+	}
+    INLINE void erase( iterator pos){	this->M_STLData.erase( pos );	}
+    INLINE void erase( size_type pos){	this->M_STLData.erase( this->begin() + pos );	}
+    INLINE iterator insert( iterator pos, value_type x ){	return this->M_STLData.insert(pos,x);	}
+    INLINE void insert ( iterator pos, size_type n, value_type x ){	return this->M_STLData.insert(pos,n,x);	}
+    INLINE void insert ( iterator pos, iterator first, iterator last ){	return this->M_STLData.insert(pos,first,last);	}
+
+    /// Misc convenience functions
+    pointer to_array() const
+	{
+		pointer out = new T[ this->size() ];
+		std::copy(this->begin(), this->end(), out);
+		return out;
+	}
+
+	INLINE pointer as_array(){	return this->M_STLData.data();	}
+	INLINE const_pointer as_array() const {	return this->M_STLData.data();	}
+	
+	INLINE const gsl_vec_t* as_gsl_vector() const
+	{	return M_as_const_gsl_vector();	}
+	
+	INLINE gsl_vec_t* as_gsl_vector()
+	{	return const_cast< gsl_vec_t* >(M_as_const_gsl_vector());	}
+	
+	gsl_vec_t* to_gsl_vector()
+	{
+		gsl_vec_t* out = gsl_vector_type< T >::alloc( this->size() );
+		if ( out == NULL )
+			throw std::bad_alloc();
+		
+		std::copy( this->begin(), this->end(), out->data );
+		return out;
+	}
+
+    void squeeze()
+	{
+		if ( this->capacity() == this->size() )
+			return;
+			
+		vector< T > temp(*this);
+		this->swap(temp);
+	}
+	
+	INLINE void reset()
+	{
+		this->clear();
+		this->resize(0);
+	}
+	
+	std::ostream &operator<<(std::ostream &os)
+	{
+		char sep( this->is_col_vector() ?  '\n' : ' ' );
+
+		os << "(" << sep;
+		std::copy( this->cbegin(), this->cend(), std::ostream_iterator< T >( os, &sep ));
+		os << ")";
+
+		return os;
+	}
 	
 private:
+
+	const gsl_vec_t* M_as_const_gsl_vector() const
+	{
+		gsl_vec_t* out = new gsl_vec_t;
+		
+		// The gsl_vector doesn't own the underlying memory
+		out->owner = 0;
+		
+		out->block->data = const_cast< pointer >(this->M_STLData.data());
+		out->block->size = this->size();
+		out->data = out->block->data;
+		out->size = this->size();
+		out->stride = 1;
+		return out;
+	}
+
+	void M_throw_if_out_of_range( size_type i )
+	{
+		if ( i >= this->size() ){
+			std::stringstream ss;
+			ss << "Index, " << i << ", is out of range. Max = " << this->size() - 1;
+			throw std::out_of_range(ss.str());
+		} 
+	}
 	
 	bool M_bIsColVector;
 };
@@ -270,7 +488,7 @@ gsl::vector< T >& gsl::vector< T >::operator+=(const gsl::vector< T >& right) th
 ////////////////////////////////////////////////////////////
 
 template< typename T >
-__INLINE gsl::vector< T >& gsl::vector< T >::operator+=( const value_type right)
+INLINE gsl::vector< T >& gsl::vector< T >::operator+=( const value_type right)
 {
 	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::plus< T >(), right) );
 	return *this;
@@ -291,7 +509,7 @@ gsl::vector< T >& gsl::vector< T>::operator-=(const gsl::vector< T >& right) thr
 ////////////////////////////////////////////////////////////
 
 template< typename T >
-__INLINE gsl::vector< T >& gsl::vector< T>::operator-=( const value_type right)
+INLINE gsl::vector< T >& gsl::vector< T>::operator-=( const value_type right)
 {
 	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::minus< T >(), right) );
 	return *this;
@@ -312,7 +530,7 @@ gsl::vector< T >& gsl::vector< T>::operator*=(const gsl::vector< T >& right) thr
 ////////////////////////////////////////////////////////////
 
 template< typename T >
-__INLINE gsl::vector< T >& gsl::vector< T>::operator*=( const value_type right)
+INLINE gsl::vector< T >& gsl::vector< T>::operator*=( const value_type right)
 {
 	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::multiplies< T >(), right) );
 	return *this;
@@ -333,7 +551,7 @@ gsl::vector< T >& gsl::vector< T>::operator/=(const gsl::vector< T >& right) thr
 ////////////////////////////////////////////////////////////
 
 template< typename T >
-__INLINE gsl::vector< T >& gsl::vector< T>::operator/=( const value_type right)
+INLINE gsl::vector< T >& gsl::vector< T>::operator/=( const value_type right)
 {
 	std::transform(this->begin(), this->end(), this->begin(), std::bind2nd(std::divides< T >(), right) );
 	return *this;
@@ -341,140 +559,11 @@ __INLINE gsl::vector< T >& gsl::vector< T>::operator/=( const value_type right)
 
 ////////////////////////////////////////////////////////////
 
-class realVector : public gsl_base_ptr< gsl_vector >
+template< typename T >
+INLINE void swap( gsl::vector< T >& a, gsl::vector< T >& b)
 {
-public :
-
-// TODO: understand this and make it work
-//    struct _vector_iterator : public std::iterator_traits< real* >{};
-
-    typedef real*                       iterator;
-    typedef const real*                 const_iterator;
-    typedef real&                       reference;
-    typedef const real&                 const_reference;
-    typedef real*                       pointer;
-    typedef const real*                 const_pointer;
-    typedef real                        value_type;
-    typedef size_t                      size_type;
-    typedef ptrdiff_t                   difference_type;
-
-    realVector();
-    realVector( size_type length, bool isColVector = true ) throw ( std::bad_alloc );
-    realVector( size_type length, real defaultElementValue, bool isColVector = true ) throw ( std::bad_alloc );
-    realVector( size_type length, real* array, bool isColVector = true  ) throw ( std::bad_alloc );
-    realVector( const gsl::realVector& original ) throw ( std::bad_alloc );
-    realVector( gsl_vector* original, bool isColVector = true ) throw ( std::bad_alloc );
-    realVector( const std::vector< real >& original, bool isColVector = true ) throw ( std::bad_alloc );
-    ~realVector();
-
-    /// Over-loaded operators
-    gsl::realVector &operator=(const gsl::realVector &right);
-    gsl::realVector &operator=( const value_type right);
-    gsl::realVector &operator+=(const gsl::realVector &right) throw ( vector_uninitialised, vector_size_mismatch );
-    gsl::realVector &operator+=( const value_type right) throw ( vector_uninitialised );
-    gsl::realVector &operator-=(const gsl::realVector &right) throw ( vector_uninitialised, vector_size_mismatch );
-    gsl::realVector &operator-=( const value_type right) throw ( vector_uninitialised );
-    gsl::realVector &operator*=(const gsl::realVector &right) throw ( vector_uninitialised, vector_size_mismatch );
-    gsl::realVector &operator*=( const value_type right) throw ( vector_uninitialised );
-    gsl::realVector &operator/=(const gsl::realVector &right) throw ( vector_uninitialised, vector_size_mismatch );
-    gsl::realVector &operator/=( const value_type right) throw ( vector_uninitialised );
-
-    /// Accessor with cyclic boundary
-    reference operator()(int index) throw ( std::bad_alloc );
-    const_reference operator()(int index) const;
-
-    /// GSL-style Functions
-    __INLINE value_type max() const{ return gsl_vector_max( this->const_ptr() );    }
-    __INLINE value_type min() const{ return gsl_vector_min( this->const_ptr() );    }
-    std::pair< real, real > minmax() const;
-    __INLINE size_type max_element() const{ return gsl_vector_max_index( this->const_ptr() );  }
-    __INLINE size_type min_element() const{ return gsl_vector_min_index( this->const_ptr() );  }
-    std::pair< size_type, size_type > minmax_element() const;
-
-    void swapElements( size_type index1, size_type index2);
-
-    __INLINE difference_type stride() const { return static_cast< difference_type >( this->const_ptr()->stride );   }
-//    void set_stride( difference_type s );
-
-    void zero();
-    void basis(unsigned index);
-    void free();
-
-    /// STL-style functions
-
-    // Iterators
-    __INLINE iterator begin(){  return const_cast< iterator >( cbegin() );  }
-    __INLINE iterator end(){ return const_cast< iterator >( cend() ); }
-    __INLINE iterator rbegin(){  return const_cast< iterator >( crbegin() );  }
-    __INLINE iterator rend(){ return const_cast< iterator >( crend() ); }
-    __INLINE const_iterator cbegin() const {  return static_cast< const_iterator >( M_pStart );  }
-    __INLINE const_iterator cend() const {  return static_cast< const_iterator >( M_pFinish );  }
-    __INLINE const_iterator crbegin() const {  return static_cast< const_iterator >( M_pFinish - 1 );  }
-    __INLINE const_iterator crend() const { return static_cast< const_iterator >( M_pStart - 1 );  }
-
-    // Capacity
-    __INLINE size_type size() const { return M_pFinish - M_pStart; }
-    void resize(const size_type length);
-    void resize(const size_type length, const real value);
-    __INLINE bool empty() const{ return M_pFinish == M_pStart; }
-    __INLINE size_type capacity() const{    return M_pEnd_of_storage - M_pStart;  }
-    void reserve( size_type ) throw (std::bad_alloc );
-
-    // Element access
-    __INLINE reference operator[](size_type index){  return *( M_pStart + index );   }
-    __INLINE const_reference operator[](size_type index) const{  return *( M_pStart + index );  }
-    const_reference at( size_type index) const throw ( std::out_of_range, vector_uninitialised );
-    reference at( size_type index) throw ( std::out_of_range, vector_uninitialised );
-    __INLINE reference front(){   return *begin();  }
-    __INLINE reference back(){    return *( end() - 1);    }
-    __INLINE const_reference front() const {   return *cbegin();  }
-    __INLINE const_reference back() const {    return *( cend() - 1);    }
-
-    // Modifiers
-    void assign( size_type n, const_reference value );
-    void assign( const_iterator start, const_iterator finish );
-    void swap(gsl::realVector& otherVector);
-    __INLINE void clear(){    M_pFinish = M_pStart;    }
-    void push_back( value_type value );
-    value_type pop_back();
-    void erase( size_type n );
-    iterator insert ( iterator position, value_type x );
-    void insert ( iterator position, size_type n, value_type x );
-    void insert ( iterator position, iterator first, iterator last );
-
-    /// Misc convenience functions
-    __INLINE bool isRowVector() const{   return M_bIsRowVector;  }
-    __INLINE void setRowVector(bool bIsRowVec = true ){         M_bIsRowVector = bIsRowVec; }
-    __INLINE bool isColVector() const{   return !M_bIsRowVector; }
-    __INLINE void setColVector(bool bIsColVec = true ){         M_bIsRowVector = !bIsColVec; }
-
-    iterator toArray() const throw ( std::bad_alloc );
-
-    void squeeze();
-    void reset();
-
-private :
-    pointer M_pStart;
-    pointer M_pFinish;
-    pointer M_pEnd_of_storage;
-
-    bool M_bIsRowVector;
-
-    void M_guaranteed_reserve( size_type n );
-    void M_realloc( size_type length ) throw ( std::bad_alloc) ;
-    __INLINE void M_range_check( size_type n ) const throw ( std::out_of_range )
-    {
-        if ( n >= size() )
-            throw std::out_of_range( "vector index out-of-range" );
-    }
-};
-
-////////////////////////////////////////////////////////////
-
- __INLINE void swap( gsl::realVector& a, gsl::realVector& b)
- {
-	  a.swap( b );
- }
+  a.swap( b );
+}
 
 ////////////////////////////////////////////////////////////
 
@@ -482,27 +571,77 @@ END_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////
 
-std::ostream &operator<<(std::ostream &os, const gsl::realVector &right);
+/// Element-wise add
+/// Returns a new vector whose ith element is the sum of left[i] and right[i]
+/// The vectors must have the same size, but the orientation is ignored.
+template< typename T , typename U >
+const gsl::vector< T > operator+(const gsl::vector< T >& left, const gsl::vector< U >& right)
+{
+	if ( left.size() != right.size() )
+		throw gsl::vector_size_mismatch();
+		
+	gsl::vector< T > out( left.size() );
+	std::transform(left.cbegin(), left.cend(), right.cbegin(), out.begin(), std::plus< T >() );
+	return out;
+}
+
+/// Element-wise subtract
+/// Returns a new vector whose ith element is the difference of left[i] and right[i]
+/// The vectors must have the same size, but the orientation is ignored.
+template< typename T , typename U >
+const gsl::vector< T > operator-(const gsl::vector< T >& left, const gsl::vector< U >& right)
+{
+	if ( left.size() != right.size() )
+		throw gsl::vector_size_mismatch();
+		
+	gsl::vector< T > out( left.size() );
+	std::transform(left.cbegin(), left.cend(), right.cbegin(), out.begin(), std::minus< T >() );
+	return out;
+}
 
 ////////////////////////////////////////////////////////////
 
-bool operator==( const gsl::realVector& left, const gsl::realVector& right );
-
-__INLINE bool operator!=( const gsl::realVector& left, const gsl::realVector& right )
-{    return !( left == right ); 	}
+/// Element-wise multiply
+/// Returns a new vector whose ith element is the product of left[i] and right[i]
+/// The vectors must have the same size, but the orientation is ignored.
+template< typename T, typename U >
+const gsl::vector< T > operator%(const gsl::vector< T >& left, const gsl::vector< U >& right)
+{
+	if ( left.size() != right.size() )
+		throw gsl::vector_size_mismatch();
+		
+	gsl::vector< T > out( left.size() );
+	std::transform(left.cbegin(), left.cend(), right.cbegin(), out.begin(), std::multiplies< T >() );
+	return out;
+}
 
 ////////////////////////////////////////////////////////////
 
-const gsl::realVector operator+(const gsl::realVector& left, const gsl::realVector &right);
-const gsl::realVector operator-(const gsl::realVector& left, const gsl::realVector &right);
-
-////////////////////////////////////////////////////////////
-
-// Element-wise multiply
-const gsl::realVector operator%(const gsl::realVector& left, const gsl::realVector &right);
+// Element-wise divide
+/// Returns a new vector whose ith element is the quotient of left[i] and right[i]
+/// The vectors must have the same size, but the orientation is ignored.
+template< typename T, typename U >
+const gsl::vector< T > operator/(const gsl::vector< T >& left, const gsl::vector< U >& right)
+{
+	if ( left.size() != right.size() )
+		throw gsl::vector_size_mismatch();
+		
+	gsl::vector< T > out( left.size() );
+	std::transform(left.cbegin(), left.cend(), right.cbegin(), out.begin(), std::divides< T >() );
+	return out;
+}
 
 // Scalar product
-real operator*(const gsl::realVector& left, const gsl::realVector &right);
+template< typename T, typename U >
+T operator*(const gsl::vector< T >& left, const gsl::vector< U >& right)
+{
+	if ( left.size() != right.size() )
+		throw gsl::vector_size_mismatch();
+		
+	gsl::vector< T > temp( left.size() );
+	std::transform(left.cbegin(), left.cend(), right.cbegin(), temp.begin(), std::multiplies< T >() );
+	return std::accumulate(temp->cbegin(), temp->cend(), realZero, std::plus< T >() );
+}
 
 // Vector product
 //const gsl::matrix operator^(const gsl::vector& left, const gsl::vector &right) const;

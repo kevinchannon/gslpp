@@ -63,20 +63,20 @@ public:
 	/// Access elements of the permutation without range-checking
 	///
 	/// Will not throw, no range checking so may display undefined behaviour if index is out-of-range
-	__INLINE reference operator[](size_type index){  return const_cast< reference >( this->ptr()->data[ index ] );   }
-	__INLINE const_reference operator[](size_type index) const{  return const_ptr()->data[ index ];   }
+	INLINE reference operator[](size_type index){  return const_cast< reference >( this->ptr()->data[ index ] );   }
+	INLINE const_reference operator[](size_type index) const{  return const_ptr()->data[ index ];   }
 
 	/// Access elements of the permutation without range checking, but with cyclic boundary conditions
 	///
 	/// Will not throw
-	__INLINE reference operator()(int index)
+	INLINE reference operator()(int index)
 	{  
 		if ( this->isNull() || this->size() == 0 )
 			throw permutation_uninitialised();
 			
 		return const_ptr()->data[ ( index % size() + size()) % size() ];
 	}
-	__INLINE const_reference operator()(int index) const throw ( permutation_uninitialised )
+	INLINE const_reference operator()(int index) const throw ( permutation_uninitialised )
 	{  
 		if ( this->isNull() || this->size() == 0 )
 			throw permutation_uninitialised();
@@ -91,7 +91,7 @@ public:
 	/// Get the size of the permutation
 	///
 	/// Will not throw, returns 0 if uninitialised
-	__INLINE size_type size() const{    return ( hasValue() ? const_ptr()->size : 0 ); }
+	INLINE size_type size() const{    return ( hasValue() ? const_ptr()->size : 0 ); }
 
 	/// Resize the permutation
 	void resize( size_type n ) throw ( std::bad_alloc );
@@ -99,22 +99,22 @@ public:
 	/// Get a pointer to the first element of the data struct
 	///
 	/// Will return NULL if the permutation is uninitialised, will not throw
-	__INLINE iterator begin(){ return const_cast< iterator >( cbegin() ); }
+	INLINE iterator begin(){ return const_cast< iterator >( cbegin() ); }
 
 	/// Get a pointer to one-past-the-end of the data struct
 	///
 	/// Will return NULL if the permutation is uninitialised, will not throw
-	__INLINE iterator end(){ return const_cast< iterator>( cend() ); }
+	INLINE iterator end(){ return const_cast< iterator>( cend() ); }
 
 	/// Get a pointer to the first element of the data struct
 	///
 	/// Will return NULL if the permutation is uninitialised, will not throw
-	__INLINE const_iterator cbegin() const { return ( hasValue() ? const_ptr()->data : NULL ); }
+	INLINE const_iterator cbegin() const { return ( hasValue() ? const_ptr()->data : NULL ); }
 
 	/// Get a pointer to one-past-the-end of the data struct
 	///
 	/// Will return NULL if the permutation is uninitialised, will not throw
-	__INLINE const_iterator cend() const { return ( hasValue() ? const_ptr()->data + size() : NULL ); }
+	INLINE const_iterator cend() const { return ( hasValue() ? const_ptr()->data + size() : NULL ); }
 
 	/// Swap this permutation for another one
 	///

@@ -104,11 +104,11 @@ class floating_point{
 		return *this;
 	}
 	
-	__INLINE gsl::sign_type sign() const{	return M_rFraction < 0 ? gsl::negative : gsl::positive;	}
-	__INLINE real& f(){	return M_rFraction;	}
-	__INLINE const real& f() const {	return M_rFraction;	}
-	__INLINE int& e(){	return M_iExponent;	}
-	__INLINE const int& e() const{		return M_iExponent;	}
+	INLINE gsl::sign_type sign() const{	return M_rFraction < 0 ? gsl::negative : gsl::positive;	}
+	INLINE real& f(){	return M_rFraction;	}
+	INLINE const real& f() const {	return M_rFraction;	}
+	INLINE int& e(){	return M_iExponent;	}
+	INLINE const int& e() const{		return M_iExponent;	}
 };
 
 ////////////////////////////////////////////////////////////
