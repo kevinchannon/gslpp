@@ -56,7 +56,7 @@ const realMatrix &realMatrix::operator=(const realMatrix& right) throw ( std::ba
 
 const realMatrix &realMatrix::operator+=(const realMatrix::value_type x)
 {
-    gsl_matrix_add_constant( this->ptr(), x );
+    std::transform(this->cbegin(), this->cend(), this->begin(), std::bind2nd( std::plus< value_type >(), x ) );
     return *this;
 }
 
@@ -76,7 +76,7 @@ const realMatrix &realMatrix::operator+=(const realMatrix &m ) throw ( matrix_si
 
 const realMatrix &realMatrix::operator-=(const realMatrix::value_type x )
 {
-    gsl_matrix_add_constant( ptr(), -x );
+    std::transform(this->cbegin(), this->cend(), this->begin(), std::bind2nd( std::minus< value_type >(), x ) );
     return *this;
 }
 
@@ -147,9 +147,9 @@ gsl::vector< real > realMatrix::row( realMatrix::size_type i ) const
         throw std::out_of_range( "matrix element out-of-range" );
 
     gsl::vector< real > out( cols() );
-    gsl_matrix_get_row(out.ptr(), const_ptr(), i );
+    gsl_matrix_get_row(out.as_gsl_vector(), const_ptr(), i );
 
-	out.setRowVector();
+	out.set_row_vector();
     return out;
 }
 
@@ -165,9 +165,9 @@ gsl::vector< real > realMatrix::col(realMatrix::size_type i ) const
         throw std::out_of_range( "matrix element out-of-range" );
 
     gsl::vector< real > out( rows() );
-    gsl_matrix_get_col(out.ptr(), const_ptr(), i );
+    gsl_matrix_get_col(out.as_gsl_vector(), const_ptr(), i );
 
-    out.setColVector();
+    out.set_col_vector();
     return out;
 }
 
@@ -634,8 +634,8 @@ const gsl::realMatrix operator-(const gsl::realMatrix& left, const gsl::realMatr
 
 const gsl::realMatrix operator-(const gsl::realMatrix::value_type& x, const gsl::realMatrix& right)
 {
-	gsl::realMatrix out( std::difference( right.begin(), right.end() ), x );
-	std::transform( out.cbegin(), out.cend(), right.cbegin(), out.begin(), std::minus< real >() ); 
+	gsl::realMatrix out( right );
+	std::transform( out.cbegin(), out.cend(), out.begin(), std::bind1st(std::minus< gsl::realMatrix::value_type >(), x ) ); 
     return out;
 }
 
@@ -735,15 +735,15 @@ const gsl::realMatrix operator*(const gsl::realMatrix::value_type& x, const gsl:
 
 ////////////////////////////////////////////////////////////
 
-const gsl::realVector operator*(const gsl::realMatrix& left, const gsl::realVector& v ) throw ( gsl::matrix_size_mismatch )
+const gsl::vector< real > operator*(const gsl::realMatrix& left, const gsl::vector< real >& v ) throw ( gsl::matrix_size_mismatch )
 {
-	if ( v.isRowVector() || ( v.isColVector() && left.cols() != v.size() ) )
+	if ( v.is_row_vector() || ( v.is_col_vector() && left.cols() != v.size() ) )
 		throw gsl::matrix_size_mismatch();
 		
-	gsl::realVector out( left.rows() );
+	gsl::vector< real > out( left.rows() );
 	
 	// TODO: Stop segfault
-	gsl_blas_dgemv( CblasNoTrans, 1.0, left.const_ptr(), v.const_ptr(), 0.0, out.ptr() );
+	gsl_blas_dgemv( CblasNoTrans, 1.0, left.const_ptr(), v.as_gsl_vector(), 0.0, out.as_gsl_vector() );
 	
 	return out;
 }

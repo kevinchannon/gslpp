@@ -3,9 +3,96 @@
 #include "../Common/macros.h"
 #include "../Common/number.h"
 
+#include <gsl/gsl_block.h>
+
 ////////////////////////////////////////////////////////////
 
 BEGIN_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
+
+/// Main gsl_block type template
+template< typename T >
+struct gsl_block_type
+{};
+
+/// Template specialisations for actual gsl_block types
+template<>
+struct gsl_block_type< real >
+{
+	typedef gsl_block type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< char >
+{
+	typedef gsl_block_char type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_char_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< float >
+{
+	typedef gsl_block_float type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_float_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< int >
+{
+	typedef gsl_block_int type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_int_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< long >
+{
+	typedef gsl_block_long type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_long_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< long double >
+{
+	typedef gsl_block_long_double type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_long_double_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< short >
+{
+	typedef gsl_block_short type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_short_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< unsigned char >
+{
+	typedef gsl_block_uchar type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_uchar_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< unsigned short >
+{
+	typedef gsl_block_ushort type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_ushort_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< unsigned int >
+{
+	typedef gsl_block_uint type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_uint_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< unsigned long >
+{
+	typedef gsl_block_ulong type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_ulong_alloc(n);	}
+};
 
 ////////////////////////////////////////////////////////////
 

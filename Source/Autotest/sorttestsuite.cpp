@@ -15,7 +15,7 @@ void SortTestSuite::VectorSortInPlace()
 {
     size_t iVectorSize = 10;
     real rMultiplier = 0.938243247;
-    gsl::realVector vec( iVectorSize );
+    gsl::vector< real > vec( iVectorSize );
 
     for ( int i = 10; i > 0; --i )
         vec[10 - i] = i*rMultiplier;
@@ -30,13 +30,13 @@ void SortTestSuite::VectorSortIndices()
 {
     const size_t ciVectorSize = 10;
     real rMultiplier = 0.938243247;
-    gsl::realVector vec( ciVectorSize );
+    gsl::vector< real > vec( ciVectorSize );
     gsl::permutation p( vec.size() );
 
     for ( int i = 10; i > 0; --i )
         vec(10 - i) = i*rMultiplier;
 
-    gsl::sort(p, vec );
+    gsl::sort(p, vec);
 
     for ( size_t i = 0; i < ciVectorSize; ++i ){
         int expected = ciVectorSize - 1 - i;

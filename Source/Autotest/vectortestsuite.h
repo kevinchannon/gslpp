@@ -10,6 +10,7 @@ class VectorTestSuite : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST_SUITE ( VectorTestSuite );
 
 	CPPUNIT_TEST( Initialise );
+	CPPUNIT_TEST( AccessGSLVector );
     CPPUNIT_TEST( VectorsAreEqual );
     CPPUNIT_TEST( AddVector );
     CPPUNIT_TEST( SubtractVector );
@@ -35,6 +36,7 @@ public:
 
 protected:
 	void Initialise();
+	void AccessGSLVector();
     void VectorsAreEqual();
     void AddVector();
     void SubtractVector();

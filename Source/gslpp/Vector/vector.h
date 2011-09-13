@@ -8,9 +8,11 @@
 #include <sstream>
 #include <string>
 #include <limits>
+#include <numeric>
 
 #include <gsl/gsl_vector.h>
 
+#include "../Block/block.h"
 #include "../Common/macros.h"
 #include "../Common/gslstructbase.h"
 #include "../Common/number.h"
@@ -41,8 +43,7 @@ class vector_size_mismatch : public std::runtime_error
 /// Main gsl_vector type template
 template< typename T >
 struct gsl_vector_type
-{
-};
+{};
 
 /// Template specialisations for actual gsl_vector types
 template<>
@@ -129,6 +130,7 @@ class vector : public from_STL_container< std::vector< T > >
 {
 public:
 	typedef typename gsl_vector_type< T >::type gsl_vec_t;
+	typedef typename gsl_block_type< T >::type gsl_block_t;
 	
 	typedef typename from_STL_container< std::vector< T > >::iterator 		iterator;
 	typedef typename from_STL_container< std::vector< T > >::const_iterator	const_iterator;
@@ -320,7 +322,7 @@ public:
 	/// Will throw if the vector has a size greater than the int max size
 	INLINE reference operator()( int i )
 	{
-		if ( this->size() > std::numeric_limits< int >::max() )
+		if ( this->size() > static_cast< size_type >(std::numeric_limits< int >::max()) )
 			throw std::out_of_range("Vector is too large for valid use of operator()");
 			
 		int N = static_cast< int >( this->size() );
@@ -328,7 +330,7 @@ public:
 	}
 	INLINE const_reference operator()( size_type i ) const
 	{	
-		if ( this->size() > std::numeric_limits< int >::max() )
+		if ( this->size() > static_cast< size_type >(std::numeric_limits< int >::max()) )
 			throw std::out_of_range("Vector is too large for valid use of operator()");
 			
 		int N = static_cast< int >( this->size() );
@@ -402,11 +404,37 @@ public:
 	INLINE pointer as_array(){	return this->M_STLData.data();	}
 	INLINE const_pointer as_array() const {	return this->M_STLData.data();	}
 	
-	INLINE const gsl_vec_t* as_gsl_vector() const
-	{	return M_as_const_gsl_vector();	}
-	
 	INLINE gsl_vec_t* as_gsl_vector()
-	{	return const_cast< gsl_vec_t* >(M_as_const_gsl_vector());	}
+	{
+		gsl_block_t* b = (gsl_block_t*) malloc( sizeof( gsl_block_t ) );
+		b->data = this->M_STLData.data();		
+		b->size = this->size();
+		
+		gsl_vec_t* v = (gsl_vec_t*) malloc( sizeof( gsl_vec_t ) );
+		v->owner = 0;	// The gsl_vector doesn't own the underlying memory
+		v->block = b;
+		v->data = b->data;
+		v->size = b->size;
+		v->stride = 1;
+		
+		return v;
+	}
+	
+	INLINE const gsl_vec_t* as_gsl_vector() const
+	{
+		gsl_block_t* b = (gsl_block_t*) malloc( sizeof( gsl_block_t ) );
+		b->data = const_cast< pointer >(this->M_STLData.data());		
+		b->size = this->size();
+		
+		gsl_vec_t* v = (gsl_vec_t*) malloc( sizeof( gsl_vec_t ) );
+		v->owner = 0;	// The gsl_vector doesn't own the underlying memory
+		v->block = b;
+		v->data = b->data;
+		v->size = b->size;
+		v->stride = 1;
+		
+		return v;
+	}
 	
 	gsl_vec_t* to_gsl_vector()
 	{
@@ -445,21 +473,6 @@ public:
 	}
 	
 private:
-
-	const gsl_vec_t* M_as_const_gsl_vector() const
-	{
-		gsl_vec_t* out = new gsl_vec_t;
-		
-		// The gsl_vector doesn't own the underlying memory
-		out->owner = 0;
-		
-		out->block->data = const_cast< pointer >(this->M_STLData.data());
-		out->block->size = this->size();
-		out->data = out->block->data;
-		out->size = this->size();
-		out->stride = 1;
-		return out;
-	}
 
 	void M_throw_if_out_of_range( size_type i )
 	{

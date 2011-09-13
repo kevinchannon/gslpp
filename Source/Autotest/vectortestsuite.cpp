@@ -1,6 +1,10 @@
 #include "vectortestsuite.h"
 
 #include <vector>
+#include <algorithm>
+#include <iterator>
+#include <iostream>
+#include <numeric>
 #include <ctime>
 
 #include "gslpp/Common/number.h"
@@ -8,6 +12,7 @@
 #include "gslpp/Common/exceptions.h"
 
 #include <gsl/gsl_vector.h>
+#include <gsl/gsl_sort_vector.h>
 
 ////////////////////////////////////////////////////////////
 
@@ -54,6 +59,21 @@ void VectorTestSuite::Initialise()
 
 ////////////////////////////////////////////////////////////
 
+void VectorTestSuite::AccessGSLVector()
+{
+	gsl::vector< real > v(100, 1.0);
+	std::partial_sum(v.begin(), v.end(), v.begin());
+	real* array = v.as_array();
+	array[10] = 23;
+	CPPUNIT_ASSERT_EQUAL( 23.0, v[10]);
+	
+	gsl_vector* gslVec = v.as_gsl_vector();
+	gsl_vector_set(gslVec, 4, 0.000001);
+	CPPUNIT_ASSERT_EQUAL( 0.000001, v[4]);
+}
+
+////////////////////////////////////////////////////////////
+
 void VectorTestSuite::VectorsAreEqual()
 {
     const int iVectorSize = 10;
@@ -81,15 +101,15 @@ void VectorTestSuite::AddVector()
     const int iVectorSize = 10;
     const int iOffset = 5;
 
-    gsl::realVector vec_1( iVectorSize );
-    gsl::realVector vec_2( iVectorSize );
+    gsl::vector< real > vec_1( iVectorSize );
+    gsl::vector< real > vec_2( iVectorSize );
 
     for ( size_t i = 0; i < vec_1.size(); ++i ){
         vec_1[i] = i;
         vec_2[i] = i + iOffset;
     }
 
-    gsl::realVector vec_3 = vec_1 + vec_2;
+    gsl::vector< real > vec_3 = vec_1 + vec_2;
 
     for ( size_t i = 0; i < vec_1.size(); ++i ){
         double expected = i + i + iOffset;
@@ -104,15 +124,15 @@ void VectorTestSuite::SubtractVector()
     const int iVectorSize = 10;
     const int iOffset = 5;
 
-    gsl::realVector vec_1( iVectorSize );
-    gsl::realVector vec_2( iVectorSize );
+    gsl::vector< real > vec_1( iVectorSize );
+    gsl::vector< real > vec_2( iVectorSize );
 
     for ( int i = 0; i < vec_1.size(); ++i ){
         vec_1[i] = i;
         vec_2[i] = iVectorSize - i - iOffset;
     }
 
-    gsl::realVector vec_3 = vec_1 - vec_2;
+    gsl::vector< real > vec_3 = vec_1 - vec_2;
 
     for ( int i = 0; i < vec_1.size(); ++i ){
         double expected = i - (iVectorSize - i - iOffset);
@@ -127,7 +147,7 @@ void VectorTestSuite::AddConstant()
     const int iVectorSize = 10;
     const double value = 1.22313;
 
-    gsl::realVector vec( iVectorSize );
+    gsl::vector< real > vec( iVectorSize );
 
     for ( int i = 0; i < iVectorSize; ++i ) vec[i] = i;
 
@@ -147,7 +167,7 @@ void VectorTestSuite::SubtractConstant()
     const int iVectorSize = 10;
     const double value = 1.22313;
 
-    gsl::realVector vec( iVectorSize );
+    gsl::vector< real > vec( iVectorSize );
 
     for ( int i = 0; i < iVectorSize; ++i ) vec[i] = i;
 
@@ -167,7 +187,7 @@ void VectorTestSuite::MultiplyConstant()
     const int iVectorSize = 10;
     const double value = 1.22313;
 
-    gsl::realVector vec( iVectorSize );
+    gsl::vector< real > vec( iVectorSize );
 
     for ( int i = 0; i < iVectorSize; ++i ) vec[i] = i;
 
@@ -187,7 +207,7 @@ void VectorTestSuite::DivideConstant()
     const int iVectorSize = 10;
     const double value = 1.22313;
 
-    gsl::realVector vec( iVectorSize );
+    gsl::vector< real > vec( iVectorSize );
 
     for ( int i = 0; i < iVectorSize; ++i )
         vec[i] = i;
@@ -208,8 +228,8 @@ void VectorTestSuite::ElementwiseVectorMultiply()
     const int iVectorSize = 10;
     const real rMultiplier = 323.3242349;
 
-    gsl::realVector vec_1( iVectorSize );
-    gsl::realVector vec_2( iVectorSize );
+    gsl::vector< real > vec_1( iVectorSize );
+    gsl::vector< real > vec_2( iVectorSize );
 
     for ( int i = 0; i < vec_1.size(); ++i ){
         vec_1[i] = i + 1;
@@ -229,8 +249,8 @@ void VectorTestSuite::ElementwiseVectorDivide()
     const int iVectorSize = 10;
     const real rMultiplier = 323.3242349;
 
-    gsl::realVector vec_1( iVectorSize );
-    gsl::realVector vec_2( iVectorSize );
+    gsl::vector< real > vec_1( iVectorSize );
+    gsl::vector< real > vec_2( iVectorSize );
 
     for ( int i = 0; i < vec_1.size(); ++i ){
         vec_1[i] = i + 1;
@@ -245,7 +265,7 @@ void VectorTestSuite::ElementwiseVectorDivide()
     vec_1.zero();
     vec_2 /= vec_1;
 
-    CPPUNIT_ASSERT ( vec_2 == gsl::realVector( iVectorSize, realPlusInf ) );
+    CPPUNIT_ASSERT ( vec_2 == gsl::vector< real >( iVectorSize, realPlusInf ) );
 }
 
 ////////////////////////////////////////////////////////////

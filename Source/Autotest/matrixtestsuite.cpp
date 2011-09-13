@@ -218,11 +218,11 @@ void MatrixTestSuite::RowsColsAndDiagonals()
     }
 
     // Rows & cols
-    gsl::realVector v_col = m.col(4);
+    gsl::vector< real > v_col = m.col(4);
     CPPUNIT_ASSERT ( v_col.size() == iRows );
-    CPPUNIT_ASSERT ( v_col.isColVector() );
+    CPPUNIT_ASSERT ( v_col.is_col_vector() );
 
-    gsl::realVector v_col_exp( iRows );
+    gsl::vector< real > v_col_exp( iRows );
     v_col_exp[0] =  4;
     v_col_exp[1] = 11;
     v_col_exp[2] = 18;
@@ -230,12 +230,12 @@ void MatrixTestSuite::RowsColsAndDiagonals()
     v_col_exp[4] = 32;
     CPPUNIT_ASSERT ( v_col_exp == v_col );
 
-    gsl::realVector v_row = m.row(2);
+    gsl::vector< real > v_row = m.row(2);
     CPPUNIT_ASSERT ( v_row.size() == iCols );
-    CPPUNIT_ASSERT (v_row.isRowVector() );
+    CPPUNIT_ASSERT (v_row.is_row_vector() );
 
-    gsl::realVector v_row_exp( iCols );
-	v_row_exp.setRowVector();
+    gsl::vector< real > v_row_exp( iCols );
+	v_row_exp.set_row_vector();
     v_row_exp[0] = 14;
     v_row_exp[1] = 15;
     v_row_exp[2] = 16;
@@ -246,11 +246,11 @@ void MatrixTestSuite::RowsColsAndDiagonals()
     CPPUNIT_ASSERT ( v_row_exp == v_row );
 
     // Diagonals
-    gsl::realVector v_diag = m.diagonal();
-    gsl::realVector v_subDiag = m.diagonal(-3);
-    gsl::realVector v_supDiag = m.diagonal(6);
+    gsl::vector< real > v_diag = m.diagonal();
+    gsl::vector< real > v_subDiag = m.diagonal(-3);
+    gsl::vector< real > v_supDiag = m.diagonal(6);
 
-    gsl::realVector v_diag_exp(5);
+    gsl::vector< real > v_diag_exp(5);
     v_diag_exp[0] =  0;
     v_diag_exp[1] =  8;
     v_diag_exp[2] = 16;
@@ -258,12 +258,12 @@ void MatrixTestSuite::RowsColsAndDiagonals()
     v_diag_exp[4] = 32;
     CPPUNIT_ASSERT ( v_diag_exp == v_diag );
 
-    gsl::realVector v_subDiag_exp(2);
+    gsl::vector< real > v_subDiag_exp(2);
     v_subDiag_exp[0] = 21;
     v_subDiag_exp[1] = 29;
     CPPUNIT_ASSERT ( v_subDiag_exp == v_subDiag );
 
-    gsl::realVector v_supDiag_exp(1);
+    gsl::vector< real > v_supDiag_exp(1);
     v_supDiag_exp[0] = 6;
     CPPUNIT_ASSERT ( v_supDiag_exp == v_supDiag );
 
@@ -317,15 +317,15 @@ void MatrixTestSuite::MatrixVectorMultiplication()
 	while ( it_A != A.end() )
 		*it_A++ = static_cast< gsl::realMatrix::value_type>( i++ );
 	
-	gsl::realVector x( iCols );		// The size of the vector must be the same as the number of cols in the matrix
+	gsl::vector< real > x( iCols );		// The size of the vector must be the same as the number of cols in the matrix
 	i = 0;
-	gsl::realVector::iterator it_x = x.begin();
+	gsl::vector< real >::iterator it_x = x.begin();
 	while ( it_x != x.end() )
-		*it_x++ = static_cast< gsl::realVector::value_type >( i++ );
+		*it_x++ = static_cast< gsl::vector< real >::value_type >( i++ );
 		
-	gsl::realVector y = A*x;
+	gsl::vector< real > y = A*x;
 	
-	gsl::realVector targetResult( iRows );
+	gsl::vector< real > targetResult( iRows );
 	targetResult[ 0 ] = 30;
 	targetResult[ 1 ] = 80;
 	targetResult[ 2 ] = 130;

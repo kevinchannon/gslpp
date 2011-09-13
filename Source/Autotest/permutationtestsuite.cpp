@@ -110,28 +110,28 @@ void PermutationTestSuite::Vectors()
     size_t iSize = 5;
     gsl::permutation p( iSize, gsl::permutation::initialised );
 
-    gsl::realVector v( iSize );
+    gsl::vector< real > v( iSize );
 
     real i = 0.0;
-    for ( gsl::realVector::iterator it_v = v.begin(); it_v != v.end(); ++it_v, ++i )
+    for ( gsl::vector< real >::iterator it_v = v.begin(); it_v != v.end(); ++it_v, ++i )
         *it_v = i;
 
     // Advance the permutation to produce a non-identity permutation
     for ( size_t i = 0; i < 70; ++i )   p.next();
 
-    gsl::realVector w = p*v;
+    gsl::vector< real > w = p*v;
 
     w = p.inverse()*w;
 
     i = 0.0;
-    for ( gsl::realVector::iterator it_v = v.begin(); it_v != v.end(); ++it_v, ++i )
+    for ( gsl::vector< real >::iterator it_v = v.begin(); it_v != v.end(); ++it_v, ++i )
         CPPUNIT_ASSERT_EQUAL ( i, *it_v );
 
     gsl::permute::vector( p, v );
     gsl::permute::vectorInverse( p, v);
 
     i = 0.0;
-    for ( gsl::realVector::iterator it_v = v.begin(); it_v != v.end(); ++it_v, ++i )
+    for ( gsl::vector< real >::iterator it_v = v.begin(); it_v != v.end(); ++it_v, ++i )
         CPPUNIT_ASSERT_EQUAL ( i, *it_v );
 }
 
