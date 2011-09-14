@@ -111,9 +111,45 @@ public:
 	
 	block() : M_pStart(0), M_pFinish(0){}
 	block( size_type N ) : M_pStart( new T[ N ] )
-		{	M_pFinish = M_pStart + N;	}
+	{	M_pFinish = M_pStart + N;	}
+	block( size_type N, value_type x ) : M_pStart( new T[ N ] )
+	{
+		M_pFinish = M_pStart + N;
+		std::fill( this->begin(), this->end(), x );
+	}
+	block( const gsl_block* b )
+	{
+		if ( b != NULL ){
+			M_pStart = new T[b->size];
+			M_pFinish = M_pStart + b->size;
+			std::copy( b->data, b->data + b->size, this->begin() );
+		}
+	}
+	block( const gsl::block< T >& original )
+	{
+		size_type N = original.size();
+		if ( N > 0 )
+		{
+			M_pStart = new T[ N ];
+			M_pFinish = M_pStart + N;
+			std::copy( original.cbegin(), original.cend(), this->begin() );
+		}
+	}
 	~block()
 		{	if ( has_value() )	delete[] M_pStart;	}
+		
+	INLINE void swap( gsl::block< T >& other )
+	{
+		std::swap( M_pStart, other.M_pStart );
+		std::swap( M_pFinish, other.M_pFinish );
+	}
+	
+	gsl::block< T > operator=( const gsl::block< T >& right )
+	{
+		gsl::block< T > temp( right );
+		this->swap(temp);
+		return *this;
+	}
 	
 	INLINE bool is_null() const
 		{		return M_pStart == NULL;	}
@@ -126,9 +162,13 @@ public:
 		{	return M_pStart;	}
 	INLINE iterator begin()
 		{	return M_pStart;	}
+	INLINE const_iterator begin() const
+		{	return M_pStart;	}
 	INLINE const_iterator cend() const
 		{	return M_pFinish;	}
 	INLINE iterator end()
+		{	return M_pFinish;	}
+	INLINE const_iterator end() const
 		{	return M_pFinish;	}
 	INLINE bool empty() const
 		{	return M_pStart == M_pFinish;	}
@@ -137,6 +177,43 @@ public:
 		{	return M_pStart[ i ];	}
 	INLINE const_reference operator[]( size_type i ) const
 		{	return M_pStart[ i ];	}
+		
+	typedef typename gsl_block_type< T >::type gsl_block_t;
+	gsl_block_t* as_gsl_block()
+	{
+		gsl_block_t* b = new gsl_block_t;
+		b->data = M_pStart;
+		b->size = this->size();
+		return b;
+	}
+	
+	const gsl_block_t* as_gsl_block() const
+	{
+		gsl_block_t* b = new gsl_block_t;
+		b->data = M_pStart;
+		b->size = this->size();
+		return b;
+	}
+	
+	gsl_block_t* to_gsl_block() throw ( std::bad_alloc )
+	{
+		gsl_block_t* b = gsl_block_type< T >::alloc( this->size() );
+		if ( b == NULL )
+			throw std::bad_alloc();
+			
+		std::copy( this->cbegin(), this->cend(), b->data );
+		return b;
+	}
+	
+	const gsl_block_t* to_gsl_block() const throw ( std::bad_alloc )
+	{
+		gsl_block_t* b = gsl_block_type< T >::alloc( this->size() );
+		if ( b == NULL )
+			throw std::bad_alloc();
+			
+		std::copy( this->cbegin(), this->cend(), b->data );
+		return b;
+	}
 	
 private:
 	T* M_pStart;

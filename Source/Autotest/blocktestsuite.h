@@ -10,6 +10,7 @@ class BlockTestSuite : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST_SUITE ( BlockTestSuite );
 	
 	CPPUNIT_TEST ( Instantiation );
+	CPPUNIT_TEST ( GSLCompatibility );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -19,4 +20,5 @@ public:
 
 protected:
 	void Instantiation();
+	void GSLCompatibility();
 };
