@@ -132,14 +132,14 @@ public:
 	typedef typename gsl_vector_type< T >::type gsl_vec_t;
 	typedef typename gsl_block_type< T >::type gsl_block_t;
 	
-	typedef typename from_STL_container< std::vector< T > >::iterator 		iterator;
-	typedef typename from_STL_container< std::vector< T > >::const_iterator	const_iterator;
-	typedef typename from_STL_container< std::vector< T > >::reference		reference;
+	typedef typename from_STL_container< std::vector< T > >::iterator 			iterator;
+	typedef typename from_STL_container< std::vector< T > >::const_iterator		const_iterator;
+	typedef typename from_STL_container< std::vector< T > >::reference			reference;
     typedef typename from_STL_container< std::vector< T > >::const_reference	const_reference;
     typedef typename from_STL_container< std::vector< T > >::pointer			pointer;
-    typedef typename from_STL_container< std::vector< T > >::const_pointer	const_pointer;
-    typedef typename from_STL_container< std::vector< T > >::value_type		value_type;
-    typedef typename from_STL_container< std::vector< T > >::size_type		size_type;
+    typedef typename from_STL_container< std::vector< T > >::const_pointer		const_pointer;
+    typedef typename from_STL_container< std::vector< T > >::value_type			value_type;
+    typedef typename from_STL_container< std::vector< T > >::size_type			size_type;
     typedef typename from_STL_container< std::vector< T > >::difference_type	difference_type;
 	
 	/// Default constructor
@@ -575,7 +575,7 @@ INLINE gsl::vector< T >& gsl::vector< T>::operator/=( const value_type right)
 template< typename T >
 INLINE void swap( gsl::vector< T >& a, gsl::vector< T >& b)
 {
-  a.swap( b );
+	a.swap( b );
 }
 
 ////////////////////////////////////////////////////////////

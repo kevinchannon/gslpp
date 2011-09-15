@@ -12,7 +12,11 @@
 
 #include <gsl/gsl_matrix.h>
 
+////////////////////////////////////////////////////////////
+
 BEGIN_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
 
 class matrix_uninitialised : public std::runtime_error
 {
@@ -25,6 +29,189 @@ class matrix_size_mismatch : public std::runtime_error
 	public:
 	matrix_size_mismatch() : std::runtime_error("matrix sizes are mismatched"){}
 };
+
+////////////////////////////////////////////////////////////
+
+/// Main gsl_vector type template
+template< typename T >
+struct gsl_matrix_type
+{};
+
+/// Template specialisations for actual gsl_matrix types
+template<>
+struct gsl_matrix_type< real >
+{
+	typedef gsl_matrix type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< char >
+{
+	typedef gsl_matrix_char type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_char_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< float >
+{
+	typedef gsl_matrix_float type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_float_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< int >
+{
+	typedef gsl_matrix_int type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_int_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< long >
+{
+	typedef gsl_matrix_long type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_long_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< long double >
+{
+	typedef gsl_matrix_long_double type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_long_double_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< short >
+{
+	typedef gsl_matrix_short type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_short_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< unsigned char >
+{
+	typedef gsl_matrix_uchar type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_uchar_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< unsigned short >
+{
+	typedef gsl_matrix_ushort type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_ushort_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< unsigned int >
+{
+	typedef gsl_matrix_uint type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_uint_alloc(r,c);	}
+};
+
+template<>
+struct gsl_matrix_type< unsigned long >
+{
+	typedef gsl_matrix_ulong type;
+	INLINE static type* alloc( size_t r, size_t c ){	return gsl_matrix_ulong_alloc(r,c);	}
+};
+
+////////////////////////////////////////////////////////////
+
+template< typename T >
+class matrix : public from_STL_container< std::vector< T > >
+{
+public:
+	typedef typename gsl_matrix_type< T >::type gsl_mat_t;
+	
+	typedef typename from_STL_container< std::vector< T > >::iterator 			iterator;
+	typedef typename from_STL_container< std::vector< T > >::const_iterator		const_iterator;
+	typedef typename from_STL_container< std::vector< T > >::reference			reference;
+    typedef typename from_STL_container< std::vector< T > >::const_reference	const_reference;
+    typedef typename from_STL_container< std::vector< T > >::pointer			pointer;
+    typedef typename from_STL_container< std::vector< T > >::const_pointer		const_pointer;
+    typedef typename from_STL_container< std::vector< T > >::value_type			value_type;
+    typedef typename from_STL_container< std::vector< T > >::size_type			size_type;
+    typedef typename from_STL_container< std::vector< T > >::difference_type	difference_type;
+	
+	struct M_matrix_element_type{
+		size_type row;
+		size_type col;
+		
+		M_matrix_element_type( size_type r, size_type c ) :
+		row( r ), col( c ) {}
+		
+		INLINE bool operator==( const M_matrix_element_type& right ) const{	return (right.row == row) && (right.col == col);	}
+	};
+
+	typedef M_matrix_element_type element_type;
+	
+	/// Default constructor
+	matrix() : M_rows(0), M_cols(0) {}
+	
+	/// Construct an empty matrix of a given size
+	matrix( size_type r, size_type c ) : M_rows(r), M_cols(c)
+	{
+		this->M_STLData.resize( r*c );
+	}
+	
+	/// Construct a matrix of a given size with each element set to the given value
+	matrix( size_type r, size_type c, const value_type& x ) : M_rows(r), M_cols(c)
+	{
+		this->M_STLData.resize( r*c, x );
+	}
+	
+	/// Copy constructor
+	matrix( const matrix< T >& m ) : M_rows(m.rows()), M_cols(m.cols())
+	{
+		this->M_STLData.resize( M_rows, M_cols );
+		std::copy( m.cbegin(), m.cend(), this->begin() );
+	}
+	
+	/// Construct from a gsl_matrix
+	matrix( const gsl_mat_t* m ) : M_rows(m->size1), M_cols(m->size2)
+	{
+		this->M_STLData.resize( M_rows, M_cols );
+		std::copy( m->data, m->data + m->block->size, this->begin() );
+	}
+	
+	/// Destructor
+	~matrix(){}
+	
+	/// Swap the contents of this matrix with another
+	///
+	/// Will not throw
+	void swap( matrix< T >& other )
+	{
+		std::swap( this->M_STLData, other.M_STLData );
+		std::swap( this->M_rows, other.M_rows );
+		std::swap( this->M_cols, other.M_cols );
+	}
+	
+	/// Assignment operator
+	const matrix< T >& operator=(const matrix< T >& right)
+	{
+		matrix< T > temp( right );
+		this->swap( temp );
+		return *this;
+	}
+	
+	/// Get the number of rows in the matrix
+	/// 
+	/// Will not throw
+	INLINE size_type rows() const {	return M_rows;	}
+	
+	/// Get the number of columns in the matrix
+	/// 
+	/// Will not throw
+	INLINE size_type cols() const {	return M_cols;	}
+	
+private:
+	size_type M_rows;
+	size_type M_cols;
+};
+
+
+
 
 class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {
 	
