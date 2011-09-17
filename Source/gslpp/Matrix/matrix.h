@@ -157,20 +157,20 @@ public:
 	/// Construct a matrix of a given size with each element set to the given value
 	matrix( size_type r, size_type c, const value_type& x ) : M_rows(r), M_cols(c)
 	{
-		this->M_STLData.resize( r*c, x );
+		this->M_STLData.assign( r*c, x );
 	}
 	
 	/// Copy constructor
 	matrix( const matrix< T >& m ) : M_rows(m.rows()), M_cols(m.cols())
 	{
-		this->M_STLData.resize( M_rows, M_cols );
+		this->M_STLData.resize( M_rows * M_cols );
 		std::copy( m.cbegin(), m.cend(), this->begin() );
 	}
 	
 	/// Construct from a gsl_matrix
 	matrix( const gsl_mat_t* m ) : M_rows(m->size1), M_cols(m->size2)
 	{
-		this->M_STLData.resize( M_rows, M_cols );
+		this->M_STLData.resize( M_rows * M_cols );
 		std::copy( m->data, m->data + m->block->size, this->begin() );
 	}
 	
@@ -195,6 +195,36 @@ public:
 		return *this;
 	}
 	
+	/// Get a const_iterator to the first element in the matrix
+	///
+	/// Will not throw, can return NULL
+	INLINE const_iterator cbegin() const {		return this->M_STLData.begin();	}
+	
+	/// Get a const_iterator to the first element in the matrix
+	///
+	/// Will not throw, can return NULL
+	INLINE const_iterator begin() const {		return this->M_STLData.begin();	}
+	
+	/// Get a const_iterator to one past the last element in the matrix
+	///
+	/// Will not throw, can return NULL
+	INLINE const_iterator cend() const {		return this->M_STLData.end();	}
+	
+	/// Get a const_iterator to one past the last element in the matrix
+	///
+	/// Will not throw, can return NULL
+	INLINE const_iterator end() const {		return this->M_STLData.end();	}
+	
+	/// Get an iterator to the first element in the matrix
+	///
+	/// Will not throw, can return NULL
+	INLINE iterator begin() {	return this->M_STLData.begin();		}
+	
+	/// Get an iterator to one past the last element in the matrix
+	///
+	/// Will not throw, can return NULL
+	INLINE iterator end() {		return this->M_STLData.end();		}
+	
 	/// Get the number of rows in the matrix
 	/// 
 	/// Will not throw
@@ -205,12 +235,264 @@ public:
 	/// Will not throw
 	INLINE size_type cols() const {	return M_cols;	}
 	
+	/// Unary arithmetic operators (scalars)
+	/// 
+	/// Will not throw
+	INLINE const matrix< T > &operator+=(const value_type& x){
+		std::transform( this->begin(), this->end(), this->begin(), std::bind2nd(std::plus< T >(), x ) );
+		return *this;
+	}
+	const matrix< T >& operator-=(const value_type& x){
+		std::transform( this->begin(), this->end(), this->begin(), std::bind2nd(std::minus< T >(), x ) );
+		return *this;
+	}
+	const matrix< T >& operator*=(const value_type& x){
+		std::transform( this->begin(), this->end(), this->begin(), std::bind2nd(std::multiplies< T >(), x ) );
+		return *this;
+	}
+	const matrix< T >& operator/=(const value_type& x){
+		std::transform( this->begin(), this->end(), this->begin(), std::bind2nd(std::divides< T >(), x ) );
+		return *this;
+	}
+	
+	
+	/// Unary arithetic operators (matrices)
+	const matrix< T >& operator+=(const matrix< T >& right) throw ( matrix_size_mismatch ){
+		if ( this->size() != right.size() )
+			throw matrix_size_mismatch();
+		std::transform( this->begin(), this->end(), right.begin(), this->begin(), std::plus< T >() );
+		return *this;
+	}
+	const matrix< T >& operator-=(const matrix< T >& right) throw ( matrix_size_mismatch ){
+		if ( this->size() != right.size() )
+			throw matrix_size_mismatch();
+		std::transform( this->begin(), this->end(), right.begin(), this->begin(), std::minus< T >() );
+		return *this;
+	}
+	const matrix< T >& operator*=(const matrix< T >& right) throw ( matrix_size_mismatch ){
+		if ( this->size() != right.size() )
+			throw matrix_size_mismatch();
+		std::transform( this->begin(), this->end(), right.begin(), this->begin(), std::multiplies< T >() );
+		return *this;
+	}
+	const matrix< T >& operator/=(const matrix< T >& right) throw ( matrix_size_mismatch ){
+		if ( this->size() != right.size() )
+			throw matrix_size_mismatch();
+		std::transform( this->begin(), this->end(), right.begin(), this->begin(), std::divides< T >() );
+		return *this;
+	}
+	
+	/// Logical equality
+	///
+	/// Will not throw
+	INLINE bool operator==( const matrix< T >& right ) const
+	{	return this->M_rows == right.M_rows && this->M_cols == right.M_cols && this->M_STLData == right.M_STLData;	}
+	
+	/// Logical inequality
+	///
+	/// Will not throw
+	INLINE bool operator!=( const matrix< T >& right ) const{		return !(*this == right );		}
+	
+	/// Get an rvalue for an element directly, without range checking
+	///
+	/// Will not throw
+	INLINE const_reference operator[]( const matrix< T >::element_type& x ) const {
+		return *( cbegin() + ( x.row * cols() ) + x.col );
+	}
+	
+	/// Get an lvalue for an element directly, without range checking
+	///
+	/// Will not throw
+	INLINE reference operator[]( const matrix< T >::element_type& x ){
+		return *( begin() + ( x.row * cols() ) + x.col );
+	}
+	
+	/// Get an rvalue for an element directly, with cyclic boundary conditions
+	///
+	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
+	INLINE const_reference operator()( int r, int c ) const {
+		int R = static_cast< int >( rows() ), C = static_cast< int >( cols() );
+		return *( cbegin() + ((r % R + R) % R) * C + ( (c % C + C) % C ) );
+	}
+	
+	/// Get an lvalue for an element directly, with cyclic boundary conditions
+	///
+	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
+	INLINE reference operator()( int r, int c ){
+		int R = static_cast< int >( rows() ), C = static_cast< int >( cols() );
+		return *( begin() + ((r % R + R) % R) * C + ( (c % C + C) % C ) );
+	}
+	
+	/// Get an rvalue for an element directly, with cyclic boundary conditions
+	///
+	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
+	INLINE const_reference operator()( const element_type& x ) const {
+		return this->operator()( x.row, x.col );
+	}
+	
+	/// Get an lvalue for an element directly, with cyclic boundary conditions
+	///
+	/// Will not throw, but behaviour will be undefined if the matrix is uninitialised, or has zero size
+	INLINE reference operator()( const element_type& x ) {
+		return this->operator()( x.row, x.col );
+	}
+	
+	/// Get an rvalue for an element directly, with validity- and range-checking
+	const_reference at(const size_type& r, const size_type& c) const throw( std::out_of_range ){
+		if ( r >= this->rows() || c >= this->cols() )
+			throw std::out_of_range("matrix index out of range");
+		
+		return this->operator[]( element_type(r,c) );
+	}
+	
+	/// Get an rvalue for an element directly, with validity- and range-checking
+	reference at(const size_type& r, const size_type& c) throw( std::out_of_range ){
+		if ( r >= this->rows() || c >= this->cols() )
+			throw std::out_of_range("matrix index out of range");
+		
+		return this->operator[]( element_type(r,c) );
+	}
+	
+	/// Get a row from the matrix as a vector
+	gsl::vector< T > row( size_type r ) const throw ( std::out_of_range )
+	{
+		if ( r >= this->rows() )
+			throw std::out_of_range("Matrix element out-of-range");
+			
+		gsl::vector< T > out( this->cols() );
+		out.set_row_vector();
+		std::copy( this->begin() + r * this->cols(), this->begin() + (r + 1) * this->cols(), out.begin() );
+		return out;
+	}
+	
+	/// Get a column from the matrix as a vector
+	gsl::vector< T > col( size_type c ) const throw ( std::out_of_range )
+	{
+		if ( c >= this->cols() )
+			throw std::out_of_range("Matrix element out-of-range");
+			
+		gsl::vector< T > out( this->rows() );
+		out.set_col_vector();
+		typename gsl::vector< T >::iterator it_out = out.begin();
+		const typename gsl::vector< T >::const_iterator it_outEnd = out.end();
+		const_iterator it_matrix = this->begin() + c;
+		difference_type step = this->cols();
+		while( it_out != it_outEnd ){
+			*it_out = *it_matrix;
+			++it_out;
+			std::advance( it_matrix, step );
+		}
+		
+		return out;
+	}
+	
+	/// Get the k-th diagonal of the matrix as a vector.
+	gsl::vector< T > diagonal( int k = 0 ) const throw ( std::out_of_range )
+	{
+		if ( k >= static_cast< int >( this->cols() ) || -k >= static_cast< int >( this->rows() ) )
+			throw std::out_of_range( "matrix element out-of-range" );
+			
+		size_type size = k < 0 ? std::min( this->cols(), this->rows() + k ) : std::min( this->rows(), this->cols() - k );
+		gsl::vector< T > out( size );
+
+		typename gsl::vector< T >::iterator it_out = out.begin();
+		const typename gsl::vector< T >::const_iterator it_end = out.end();
+		
+		const_iterator it_matrix = this->begin() + ( k < 0 ? -k * this->cols() : k );
+		difference_type step = this->cols() + 1;
+		while( it_out != it_end ){
+			*it_out = *it_matrix;
+			++it_out;
+			std::advance( it_matrix, step );
+		}
+
+		return out;
+	}
+	
 private:
 	size_type M_rows;
 	size_type M_cols;
 };
 
+// Addition and subtraction
+template< typename T >
+const gsl::matrix< T > operator+(const gsl::matrix< T >& left, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( left );
+	return out += right;	// this will throw if sizes are mis-matched
+}
 
+template< typename T >
+const gsl::matrix< T > operator+(const gsl::matrix< T >& left, const typename gsl::matrix< T >::value_type& x){
+	gsl::matrix< T > out( left );
+	return out += x;
+}
+
+template< typename T >
+const gsl::matrix< T > operator+(const typename gsl::matrix< T >::value_type& x, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( right.rows(), right.cols() );
+	std::transform( right.begin(), right.end(), out.begin(), std::bind1st( std::plus< T >(), x ) );
+	return out;
+}
+
+template< typename T >
+const gsl::matrix< T > operator-(const gsl::matrix< T >& left, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( left );
+	return out -= right;	// this will throw if sizes are mis-matched
+}
+
+template< typename T >
+const gsl::matrix< T > operator-(const gsl::matrix< T >& left, const typename gsl::matrix< T >::value_type& x){
+	gsl::matrix< T > out( left );
+	return out -= x;
+}
+
+template< typename T >
+const gsl::matrix< T > operator-(const typename gsl::matrix< T >::value_type& x, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( right.rows(), right.cols() );
+	std::transform( right.begin(), right.end(), out.begin(), std::bind1st( std::minus< T >(), x ) );
+	return out;
+}
+
+
+// Element-wise divide
+template< typename T >
+const gsl::matrix< T > operator/(const gsl::matrix< T >& left, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( left );
+	return out /= right;	// this will throw if sizes are mis-matched
+}
+
+template< typename T >
+const gsl::matrix< T > operator/(const gsl::matrix< T >& left, const typename gsl::matrix< T >::value_type& x){
+	gsl::matrix< T > out( left );
+	return out /= x;
+}
+
+template< typename T >
+const gsl::matrix< T > operator/(const typename gsl::matrix< T >::value_type& x, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( right.rows(), right.cols() );
+	std::transform( right.begin(), right.end(), out.begin(), std::bind1st( std::divides< T >(), x ) );
+	return out;
+}
+
+// Element-wise multiply
+template< typename T >
+const gsl::matrix< T > operator%(const gsl::matrix< T >& left, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( left );
+	return out *= right;	// this will throw if sizes are mis-matched
+}
+
+template< typename T >
+const gsl::matrix< T > operator%(const gsl::matrix< T >& left, const typename gsl::matrix< T >::value_type& x){
+	gsl::matrix< T > out( left );
+	return out *= x;
+}
+
+template< typename T >
+const gsl::matrix< T > operator%(const typename gsl::matrix< T >::value_type& x, const gsl::matrix< T >& right){
+	gsl::matrix< T > out( right.rows(), right.cols() );
+	std::transform( right.begin(), right.end(), out.begin(), std::bind1st( std::multiplies< T >(), x ) );
+	return out;
+}
 
 
 class realMatrix : public gsl::gsl_base_ptr< gsl_matrix > {

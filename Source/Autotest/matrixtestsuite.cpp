@@ -11,6 +11,8 @@
 #include "gslpp/Common/exceptions.h"
 #include "gslpp/Matrix/matrix.h"
 
+#include <gsl/gsl_matrix.h>
+
 ////////////////////////////////////////////////////////////
 
 CPPUNIT_TEST_SUITE_REGISTRATION( MatrixTestSuite );
@@ -30,36 +32,44 @@ void MatrixTestSuite::Construction()
 	const int iRows = 10;
 	const int iCols = 5;
 
-	gsl::realMatrix m_1( iRows, iCols, 1 );
-	gsl::realMatrix m_2( m_1 );
+	gsl::matrix< real > m_1( iRows, iCols, 1 );
+	gsl::matrix< real > m_2( m_1 );
 	
 	CPPUNIT_ASSERT( m_1.rows() == m_2.rows() );
 	CPPUNIT_ASSERT( m_1.cols() == m_2.cols() );
 	
-	for ( gsl::realMatrix::const_iterator it_1 = m_1.cbegin(), it_2 = m_2.cbegin(); it_1 != m_1.cend(); ++it_1, ++it_2 )
+	
+	for ( gsl::matrix< real >::const_iterator it_1 = m_1.begin(), it_2 = m_2.begin(); it_1 != m_1.end(); ++it_1, ++it_2 )
 		CPPUNIT_ASSERT( *it_1 == *it_2 );
-		
-	gsl::realMatrix m_3( m_1.const_ptr() );
+
+	gsl_matrix* gslMat = gsl_matrix_alloc( iRows, iCols );
+	for ( int i = 0; i < iRows; ++i ){
+		for ( int j = 0; j < iCols; ++j )
+			gsl_matrix_set(gslMat, i, j, i + j );
+	}
 	
-	CPPUNIT_ASSERT( m_1.rows() == m_3.rows() );
-	CPPUNIT_ASSERT( m_1.cols() == m_3.cols() );
+	gsl::matrix< real > m_3( gslMat );
 	
-	for ( gsl::realMatrix::const_iterator it_1 = m_1.cbegin(), it_3 = m_3.cbegin(); it_1 != m_1.cend(); ++it_1, ++it_3 )
-		CPPUNIT_ASSERT( *it_1 == *it_3 );
+	CPPUNIT_ASSERT( m_3.rows() == gslMat->size1 );
+	CPPUNIT_ASSERT( m_3.cols() == gslMat->size2 );
+
+	double* pGSLData = gslMat->data;
+	for ( gsl::matrix< real >::const_iterator it = m_3.cbegin(); it != m_3.cend(); ++it, ++pGSLData )
+		CPPUNIT_ASSERT( *it == *pGSLData );
 }
 
 ////////////////////////////////////////////////////////////
 
 void MatrixTestSuite::MatricesAreEqual()
 {
-	typedef gsl::realMatrix::element_type xy;
+	typedef gsl::matrix< real >::element_type xy;
     const int iRows = 10;
     const int iCols = 5;
 
-    gsl::realMatrix m_1( iRows, iCols, 1 );
-    gsl::realMatrix m_2( iRows, iCols, 1 );
-	gsl::realMatrix m_3( iRows, iCols, 2 );
-	gsl::realMatrix m_4( iRows - 1, iCols - 1, 1);
+    gsl::matrix< real > m_1( iRows, iCols, 1 );
+    gsl::matrix< real > m_2( iRows, iCols, 1 );
+	gsl::matrix< real > m_3( iRows, iCols, 2 );
+	gsl::matrix< real > m_4( iRows - 1, iCols - 1, 1);
 	
 	for ( size_t i = 0; i < m_1.rows(); ++i ){
         for ( size_t j = 0; j < m_1.cols(); ++j ){
@@ -84,14 +94,14 @@ void MatrixTestSuite::MatricesAreEqual()
 
 void MatrixTestSuite::ElementAccess()
 {
-	typedef gsl::realMatrix::element_type xy;
-	gsl::realMatrix A(3,3);
+	typedef gsl::matrix< real >::element_type xy;
+	gsl::matrix< real > A(3,3);
 	
 	// Put some values into the matrix
 	size_t i = 0;
-	gsl::realMatrix::iterator it_A = A.begin();
+	gsl::matrix< real >::iterator it_A = A.begin();
 	while ( it_A != A.end() )
-		*it_A++ = static_cast< gsl::realMatrix::value_type>( i++ );
+		*it_A++ = static_cast< gsl::matrix< real >::value_type>( i++ );
 		
 	CPPUNIT_ASSERT( A[ xy(1,1) ] == 4 );
 	
@@ -125,15 +135,15 @@ void MatrixTestSuite::ElementAccess()
 
 void MatrixTestSuite::ElementwiseArithmetic()
 {
-    typedef gsl::realMatrix::element_type xy;
+    typedef gsl::matrix< real >::element_type xy;
 
     const int iRows = 10;
     const int iCols = 5;
 
-    gsl::realMatrix mat_1( iRows, iCols, 2 );
-    gsl::realMatrix mat_2( iRows, iCols, 5 );
+    gsl::matrix< real > mat_1( iRows, iCols, 2 );
+    gsl::matrix< real > mat_2( iRows, iCols, 5 );
 
-    gsl::realMatrix result = mat_1 + mat_2;
+    gsl::matrix< real > result = mat_1 + mat_2;
 
     for ( size_t i = 0; i < mat_1.rows(); ++i ){
         for ( size_t j = 0; j < mat_1.cols(); ++j ){
@@ -205,11 +215,11 @@ void MatrixTestSuite::ElementwiseArithmetic()
 
 void MatrixTestSuite::RowsColsAndDiagonals()
 {
-    typedef gsl::realMatrix::element_type xy;
+    typedef gsl::matrix< real >::element_type xy;
 
-    gsl::realMatrix::size_type iRows = 5;
-    gsl::realMatrix::size_type iCols = 7;
-    gsl::realMatrix m( iRows, iCols );
+    gsl::matrix< real >::size_type iRows = 5;
+    gsl::matrix< real >::size_type iCols = 7;
+    gsl::matrix< real > m( iRows, iCols );
 
     for ( size_t i = 0; i < m.rows(); ++i ){
         for ( size_t j = 0; j < m.cols(); ++j ){
@@ -269,9 +279,6 @@ void MatrixTestSuite::RowsColsAndDiagonals()
 
     CPPUNIT_ASSERT_THROW ( m.diagonal( -10 ), std::out_of_range );
     CPPUNIT_ASSERT_THROW ( m.diagonal( 7 ), std::out_of_range );
-
-    gsl::realMatrix x;
-    CPPUNIT_ASSERT_THROW ( x.diagonal(), gsl::matrix_uninitialised );
 }
 
 ////////////////////////////////////////////////////////////
