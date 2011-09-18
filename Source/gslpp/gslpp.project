@@ -13,7 +13,6 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Matrix">
     <File Name="Matrix/matrix.h"/>
-    <File Name="Matrix/matrix.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Permutation">
     <File Name="Permutation/permutation.cpp"/>
@@ -79,6 +78,7 @@
       <General OutputFile="$(IntermediateDirectory)/Targets/Debug/libgsl++.so" IntermediateDirectory="../.." Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)/Objects" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -119,6 +119,7 @@
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).so" IntermediateDirectory="../../Targets/Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
+      
       
       
       

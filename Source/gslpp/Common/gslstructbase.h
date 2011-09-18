@@ -101,14 +101,21 @@ public:
     typedef typename T::size_type		size_type;
     typedef typename T::difference_type	difference_type;
 	
+	from_STL_container(){}
+	
+	from_STL_container( const T& original ) : M_STLData( original ){}
+	
+	template< typename InputIterator >
+	from_STL_container( InputIterator it_first, InputIterator it_last ) : M_STLData( it_first, it_last ){}
+	
 	INLINE iterator begin(){				return M_STLData.begin();	}
 	INLINE const_iterator cbegin() const{	return M_STLData.cbegin();	}
-	INLINE iterator end(){				return M_STLData.end();		}
-	INLINE const_iterator cend() const{	return M_STLData.cend();	}
+	INLINE iterator end(){					return M_STLData.end();		}
+	INLINE const_iterator cend() const{		return M_STLData.cend();	}
 	
-	INLINE size_type size() const{		return M_STLData.size();	}
-	INLINE bool empty() const{			return M_STLData.empty();	}
-	INLINE size_type max_size() const{	return M_STLData.max_size();}
+	INLINE size_type size() const{			return M_STLData.size();	}
+	INLINE bool empty() const{				return M_STLData.empty();	}
+	INLINE size_type max_size() const{		return M_STLData.max_size();}
 	
 	INLINE iterator insert ( iterator position, const value_type& x )
 		{	return M_STLData.insert(position, x);	}

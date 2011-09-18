@@ -18,6 +18,7 @@ class MatrixTestSuite : public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST ( MatrixVectorMultiplication );
 	CPPUNIT_TEST ( Transpose );
 	CPPUNIT_TEST ( SwapRowsAndCols );
+	CPPUNIT_TEST ( SetRowsAndCols );
 	CPPUNIT_TEST ( MinMax );
 	CPPUNIT_TEST ( RealBooleanComparisons );
 //    CPPUNIT_TEST ( Swap );
@@ -38,6 +39,7 @@ protected:
 	void MatrixVectorMultiplication();
 	void Transpose();
 	void SwapRowsAndCols();
+	void SetRowsAndCols();
 	void MinMax();
 	void RealBooleanComparisons();
 //    void Swap();

@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=17/09/11
+Date                   :=18/09/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -52,7 +52,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Complex_complex$(ObjectSuffix) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -77,14 +77,6 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix): Matrix/matrix.cpp $(IntermediateDirectory)/Matrix_matrix$(DependSuffix)
-	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Matrix/matrix.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Matrix_matrix$(DependSuffix): Matrix/matrix.cpp
-	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix) -MF$(IntermediateDirectory)/Matrix_matrix$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Matrix/matrix.cpp"
-
-$(IntermediateDirectory)/Matrix_matrix$(PreprocessSuffix): Matrix/matrix.cpp
-	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Matrix_matrix$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Matrix/matrix.cpp"
-
 $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix): Permutation/permutation.cpp $(IntermediateDirectory)/Permutation_permutation$(DependSuffix)
 	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Permutation/permutation.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/Permutation_permutation$(DependSuffix): Permutation/permutation.cpp
@@ -147,9 +139,6 @@ $(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix): Polynomial/po
 ## Clean
 ##
 clean:
-	$(RM) $(IntermediateDirectory)/Matrix_matrix$(ObjectSuffix)
-	$(RM) $(IntermediateDirectory)/Matrix_matrix$(DependSuffix)
-	$(RM) $(IntermediateDirectory)/Matrix_matrix$(PreprocessSuffix)
 	$(RM) $(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/Permutation_permutation$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/Permutation_permutation$(PreprocessSuffix)

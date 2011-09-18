@@ -167,12 +167,14 @@ public:
 		std::copy( array, array + length, this->M_STLData.begin() );
 	}
 	
+	template< typename ForwardIteratorType >
+	vector( ForwardIteratorType it_first, ForwardIteratorType it_last, bool isColVector = true  ) :
+	from_STL_container< std::vector< T > >(it_first, it_last), M_bIsColVector( isColVector ){}
+	
 	/// Copy constructor
-    vector( const gsl::vector< T >& original ) throw ( std::bad_alloc ) :
-	M_bIsColVector( original.is_col_vector() )
-	{
+    vector( const gsl::vector< T >& original ) : M_bIsColVector( original.is_col_vector() ){
 		this->M_STLData.resize( original.size() );
-		std::copy( original.cbegin(), original.cend(), this->M_STLData.begin() );
+		std::copy( original.begin(), original.end(), this->begin() );
 	}
 	
 	/// Construct from a gsl_vector (or any of the gsl_vector_xxx family, e.g. gsl_vector_char )
@@ -187,9 +189,8 @@ public:
 	}
 	
 	/// Construct from an std::vector
-    vector( const std::vector< T >& original, bool isColVector = true ) throw ( std::bad_alloc ) :
-	M_bIsColVector( isColVector )
-	{	this->M_STLData = original;	}
+    vector( const std::vector< T >& original, bool isColVector = true ) :
+	from_STL_container< std::vector< T > >( original ), M_bIsColVector( isColVector ){}
 	
     ~vector(){}
 	
@@ -436,7 +437,7 @@ public:
 		return v;
 	}
 	
-	gsl_vec_t* to_gsl_vector()
+	gsl_vec_t* to_gsl_vector() const
 	{
 		gsl_vec_t* out = gsl_vector_type< T >::alloc( this->size() );
 		if ( out == NULL )

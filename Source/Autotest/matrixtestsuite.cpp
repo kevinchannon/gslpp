@@ -240,9 +240,9 @@ void MatrixTestSuite::RowsColsAndDiagonals()
     v_col_exp[4] = 32;
     CPPUNIT_ASSERT ( v_col_exp == v_col );
 
-    gsl::vector< real > v_row = m.row(2);
-    CPPUNIT_ASSERT ( v_row.size() == iCols );
-    CPPUNIT_ASSERT (v_row.is_row_vector() );
+    gsl::vector< real > v_row_1 = m.row(2);
+    CPPUNIT_ASSERT ( v_row_1.size() == iCols );
+    CPPUNIT_ASSERT (v_row_1.is_row_vector() );
 
     gsl::vector< real > v_row_exp( iCols );
 	v_row_exp.set_row_vector();
@@ -253,7 +253,11 @@ void MatrixTestSuite::RowsColsAndDiagonals()
     v_row_exp[4] = 18;
     v_row_exp[5] = 19;
     v_row_exp[6] = 20;
-    CPPUNIT_ASSERT ( v_row_exp == v_row );
+    CPPUNIT_ASSERT ( v_row_exp == v_row_1 );
+	
+	// Get a row using square brackets
+	gsl::vector< real > v_row_2 = m[2];
+	CPPUNIT_ASSERT( v_row_1 == v_row_2 );
 
     // Diagonals
     gsl::vector< real > v_diag = m.diagonal();
@@ -285,9 +289,9 @@ void MatrixTestSuite::RowsColsAndDiagonals()
 
 void MatrixTestSuite::MatrixMatrixMultiplication()
 {
-	typedef gsl::realMatrix::element_type xy;
-	gsl::realMatrix A(2,3);
-	gsl::realMatrix B(3,2);
+	typedef gsl::matrix< real >::element_type xy;
+	gsl::matrix< real > A(2,3);
+	gsl::matrix< real > B(3,2);
 	
 	A[ xy(0,0) ] = 0.11; A[ xy(0,1) ] = 0.12; A[ xy(0,2) ] = 0.13;
 	A[ xy(1,0) ] = 0.21; A[ xy(1,1) ] = 0.22; A[ xy(1,2) ] = 0.23;
@@ -296,7 +300,7 @@ void MatrixTestSuite::MatrixMatrixMultiplication()
 	B[ xy(1,0) ] = 1021; B[ xy(1,1) ] = 1022;
 	B[ xy(2,0) ] = 1031; B[ xy(2,1) ] = 1032;
 	
-	gsl::realMatrix C = A*B;
+	gsl::matrix< real > C = A*B;
 	
 	CPPUNIT_ASSERT( C.rows() == 2 );
 	CPPUNIT_ASSERT( C.cols() == 2 );
@@ -312,17 +316,17 @@ void MatrixTestSuite::MatrixMatrixMultiplication()
 
 void MatrixTestSuite::MatrixVectorMultiplication()
 {
-	typedef gsl::realMatrix::element_type xy;
+	typedef gsl::matrix< real >::element_type xy;
 	
-	gsl::realMatrix::size_type iRows = 8;
-	gsl::realMatrix::size_type iCols = 5;
-	gsl::realMatrix A(iRows, iCols);
+	gsl::matrix< real >::size_type iRows = 8;
+	gsl::matrix< real >::size_type iCols = 5;
+	gsl::matrix< real > A(iRows, iCols);
 	
 	// Put some values into the matrix
 	size_t i = 0;
-	gsl::realMatrix::iterator it_A = A.begin();
+	gsl::matrix< real >::iterator it_A = A.begin();
 	while ( it_A != A.end() )
-		*it_A++ = static_cast< gsl::realMatrix::value_type>( i++ );
+		*it_A++ = static_cast< gsl::matrix< real >::value_type>( i++ );
 	
 	gsl::vector< real > x( iCols );		// The size of the vector must be the same as the number of cols in the matrix
 	i = 0;
@@ -349,20 +353,20 @@ void MatrixTestSuite::MatrixVectorMultiplication()
 
 void MatrixTestSuite::Transpose()
 {
-	typedef gsl::realMatrix::element_type xy;
+	typedef gsl::matrix< real >::element_type xy;
 	
-	gsl::realMatrix::size_type iRows = 3;
-	gsl::realMatrix::size_type iCols = 2;
-	gsl::realMatrix A(iRows, iCols);
+	gsl::matrix< real >::size_type iRows = 3;
+	gsl::matrix< real >::size_type iCols = 2;
+	gsl::matrix< real > A(iRows, iCols);
 	
 	// Put some values into the matrix
 	size_t i = 0;
-	gsl::realMatrix::iterator it_A = A.begin();
+	gsl::matrix< real >::iterator it_A = A.begin();
 	while ( it_A != A.end() )
-		*it_A++ = static_cast< gsl::realMatrix::value_type>( i++ );
+		*it_A++ = static_cast< gsl::matrix< real >::value_type>( i++ );
 		
 	// Test non-square matrix
-	gsl::realMatrix B = A.transpose();
+	gsl::matrix< real > B = A.transpose();
 	
 	CPPUNIT_ASSERT ( A[ xy(0,0) ] == B[ xy(0,0) ] );
 	CPPUNIT_ASSERT ( A[ xy(0,1) ] == B[ xy(1,0) ] );
@@ -372,13 +376,13 @@ void MatrixTestSuite::Transpose()
 	CPPUNIT_ASSERT ( A[ xy(2,1) ] == B[ xy(1,2) ] );
 	
 	// Test square matrix
-	gsl::realMatrix C(2,2);
+	gsl::matrix< real > C(2,2);
 	
-	gsl::realMatrix::iterator it_C = C.begin();
+	gsl::matrix< real >::iterator it_C = C.begin();
 	while ( it_C != C.end() )
-		*it_C++ = static_cast< gsl::realMatrix::value_type>( i++ );
+		*it_C++ = static_cast< gsl::matrix< real >::value_type>( i++ );
 	
-	gsl::realMatrix D = C.transpose();
+	gsl::matrix< real > D = C.transpose();
 	
 	CPPUNIT_ASSERT ( C[ xy(0,0) ] == D[ xy(0,0) ] );
 	CPPUNIT_ASSERT ( C[ xy(0,1) ] == D[ xy(1,0) ] );
@@ -391,19 +395,19 @@ void MatrixTestSuite::Transpose()
 
 void MatrixTestSuite::SwapRowsAndCols()
 {
-	typedef gsl::realMatrix::element_type xy;
+	typedef gsl::matrix< real >::element_type xy;
 	
-	gsl::realMatrix::size_type iRows = 4;
-	gsl::realMatrix::size_type iCols = 3;
-	gsl::realMatrix A(iRows, iCols);
+	gsl::matrix< real >::size_type iRows = 4;
+	gsl::matrix< real >::size_type iCols = 3;
+	gsl::matrix< real > A(iRows, iCols);
 	
 	// Put some values into the matrix
 	size_t i = 0;
-	gsl::realMatrix::iterator it_A = A.begin();
+	gsl::matrix< real >::iterator it_A = A.begin();
 	while ( it_A != A.end() )
-		*it_A++ = static_cast< gsl::realMatrix::value_type>( i++ );
+		*it_A++ = static_cast< gsl::matrix< real >::value_type>( i++ );
 	
-	A.swapRows(1,3);
+	A.swap_rows(1,3);
 	
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 9,  A[ xy(1,0) ], rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 10, A[ xy(1,1) ], rTolerance );
@@ -412,7 +416,7 @@ void MatrixTestSuite::SwapRowsAndCols()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 4,  A[ xy(3,1) ], rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 5,  A[ xy(3,2) ], rTolerance );
 	
-	A.swapCols(0,2);
+	A.swap_cols(0,2);
 	
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 2,  A[ xy(0,0) ], rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 11, A[ xy(1,0) ], rTolerance );
@@ -423,14 +427,14 @@ void MatrixTestSuite::SwapRowsAndCols()
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 6,  A[ xy(2,2) ], rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 3,  A[ xy(3,2) ], rTolerance );
 	
-	gsl::realMatrix B(iRows, iRows);
+	gsl::matrix< real > B(iRows, iRows);
 	
 	// Put some values into the matrix
-	gsl::realMatrix::iterator it_B = B.begin();
+	gsl::matrix< real >::iterator it_B = B.begin();
 	while ( it_B != B.end() )
-		*it_B++ = static_cast< gsl::realMatrix::value_type>( i++ );
+		*it_B++ = static_cast< gsl::matrix< real >::value_type>( i++ );
 	
-	B.swapRowCol(2,3);
+	B.swap_row_col(2,3);
 	
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 15, B[ xy(2,0) ], rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 19, B[ xy(2,1) ], rTolerance );
@@ -443,28 +447,65 @@ void MatrixTestSuite::SwapRowsAndCols()
 
 ////////////////////////////////////////////////////////////
 
+void MatrixTestSuite::SetRowsAndCols()
+{
+	typedef gsl::matrix< real >::element_type xy;
+	
+	const real rTolerance = 1e-15;
+	
+	gsl::matrix< real >::size_type iRows = 4;
+	gsl::matrix< real >::size_type iCols = 3;
+	gsl::matrix< real > A(iRows, iCols);
+	
+	// Put some values into the matrix
+	size_t i = 0;
+	gsl::matrix< real >::iterator it_A = A.begin();
+	while ( it_A != A.end() )
+		*it_A++ = static_cast< gsl::matrix< real >::value_type >( i++ );
+		
+	// Make a vector to replace a row with
+	gsl::vector< real > rowVec( iCols );
+	for ( unsigned j = 0; j < iCols; ++j )
+		rowVec[j] = 2*i + 1;
+	
+	A.set_row( 3, rowVec );
+	for ( unsigned j = 0; j < iCols; ++j )
+		CPPUNIT_ASSERT_DOUBLES_EQUAL( rowVec[j], A[xy(3,j)], rTolerance );
+		
+	// Make a vector to replace a rcol with
+	gsl::vector< real > colVec( iRows );
+	for ( unsigned j = 0; j < iRows; ++j )
+		colVec[j] = 0.2*i + 1.3;
+	
+	A.set_col( 1, colVec );
+	for ( unsigned j = 0; j < iCols; ++j )
+		CPPUNIT_ASSERT_DOUBLES_EQUAL( colVec[j], A[xy(j,1)], rTolerance );
+}
+
+////////////////////////////////////////////////////////////
+
 void MatrixTestSuite::MinMax()
 {
-	typedef gsl::realMatrix::element_type xy;
-	gsl::realMatrix A( 2, 2 );
+	typedef gsl::matrix< real >::element_type xy;
+	gsl::matrix< real > A( 2, 2 );
 	A[ xy( 0, 0 ) ] = 2.1;	A[ xy( 0, 1 ) ] = 2.4;
 	A[ xy( 1, 0 ) ] = 2.0;	A[ xy( 1, 1 ) ] = 2.9;
 	
-	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 2.0, A.min(), rTolerance );
-	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 2.9, A.max(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 2.0, A.min_value(), rTolerance );
+	CPPUNIT_ASSERT_DOUBLES_EQUAL ( 2.9, A.max_value(), rTolerance );
 	CPPUNIT_ASSERT ( A.min_element() == xy( 1, 0 ) );
 	CPPUNIT_ASSERT ( A.max_element() == xy( 1, 1 ) );
 	
-	CPPUNIT_ASSERT ( A.minMax() == std::make_pair( 2.0, 2.9 ) );
-	CPPUNIT_ASSERT ( A.minMax_element() == std::make_pair( xy(1,0), xy(1,1) ) );
+	CPPUNIT_ASSERT ( A.min_max_value() == std::make_pair( 2.0, 2.9 ) );
+	CPPUNIT_ASSERT ( A.min_max_element() == std::make_pair( xy(1,0), xy(1,1) ) );
 }
 
 ////////////////////////////////////////////////////////////
 
 void MatrixTestSuite::RealBooleanComparisons()
 {
-	typedef gsl::realMatrix::element_type xy;
-	gsl::realMatrix A( 2, 2, 1 );
+	typedef gsl::matrix< real >::element_type xy;
+	gsl::matrix< real > A( 2, 2, 1 );
 	
 	CPPUNIT_ASSERT ( A == 1.0);
 	CPPUNIT_ASSERT ( 1.0 == A );
