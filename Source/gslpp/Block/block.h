@@ -13,8 +13,7 @@ BEGIN_GSL_NAMESPACE
 
 /// Main gsl_block type template
 template< typename T >
-struct gsl_block_type
-{};
+struct gsl_block_type {};
 
 /// Template specialisations for actual gsl_block types
 template<>
@@ -92,6 +91,13 @@ struct gsl_block_type< unsigned long >
 {
 	typedef gsl_block_ulong type;
 	INLINE static type* alloc( size_t n ){	return gsl_block_ulong_alloc(n);	}
+};
+
+template<>
+struct gsl_block_type< gsl::complex >
+{
+	typedef gsl_block_complex type;
+	INLINE static type* alloc( size_t n ){	return gsl_block_complex_alloc(n);	}
 };
 
 ////////////////////////////////////////////////////////////

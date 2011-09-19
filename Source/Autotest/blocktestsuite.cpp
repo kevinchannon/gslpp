@@ -1,6 +1,7 @@
 #include "blocktestsuite.h"
 
 #include "gslpp/Block/block.h"
+#include "gslpp/Complex/complex.h"
 
 #include <gsl/gsl_block.h>
 
@@ -42,6 +43,8 @@ void BlockTestSuite::Instantiation()
 	CPPUNIT_ASSERT( b6.size() == 10 );
 	for ( size_t i = 0; i < 10; ++i )
 		CPPUNIT_ASSERT( 1 == b6[i] );
+		
+	gsl::block< gsl::complex > b7(20);
 }
 
 ////////////////////////////////////////////////////////////

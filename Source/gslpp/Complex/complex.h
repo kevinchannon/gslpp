@@ -19,143 +19,162 @@
 
 BEGIN_GSL_NAMESPACE
 
+template< typename >
+struct gsl_complex_type {};
+
+/// Template specialisations for actual gsl_complex types
+template<>
+struct gsl_complex_type< real >
+{	typedef gsl_complex type;	};
+
+template<>
+struct gsl_complex_type< long double >
+{	typedef gsl_complex_long_double type;	};
+
+template<>
+struct gsl_complex_type< float >
+{	typedef gsl_complex_float type;	};
+
 ////////////////////////////////////////////////////////////
 
-class complex : public gsl_base< gsl_complex >
+template< typename T >
+class complex : public gsl_base< typename gsl_complex_type< T >::type >
 {
 public:
+
+	typedef typename gsl_complex_type< T >::type gsl_cplx_t;
 
 	/// Default constructor
 	complex(){}
 	
 	/// Construct from real and complex components
-	complex( real X ){
+	complex( const T& X ){
 		this->x() = X;
-		this->y() = realZero;
+		this->y() = static_cast< T >( realZero );
 	}
 	
 	/// Construct from real and complex components
-	complex( real X, real Y ){
+	complex( const T& X, const T& Y ){
 		this->x() = X;
 		this->y() = Y;
 	}
 	
 	/// Copy constructor
-	complex( const gsl::complex& z ){
+	complex( const gsl::complex< T >& z ){
 		M_GSLData.dat[0] = z.x();
 		M_GSLData.dat[1] = z.y();
 	}
 	
 	/// Copy from a gsl_complex struct
-	complex( const gsl_complex& z ){
+	complex( const gsl_cplx_t& z ){
 		this->ref().dat[0] = z.dat[0];
 		this->ref().dat[1] = z.dat[1];
 	}
 	
-	/// type-cast to real
-	operator real(){	return this->abs();	}
+	/// type-cast to POD
+	operator T(){	return this->abs();	}
 	
 	/// Swap, wraps std:swap
-	void swap( gsl::complex& other ){
+	void swap( gsl::complex< T >& other ){
 		std::swap( *this, other );
 	}
 	
 	/// Assignment operator, complex
-	gsl::complex& operator=( const gsl::complex& right ){
+	gsl::complex< T >& operator=( const gsl::complex< T >& right ){
 		if ( this != &right )	M_GSLData = right.const_ref();
 		return *this;
 	}
 	
 	/// Assignment from a real
-	gsl::complex& operator=( const real& right ){
+	gsl::complex< T >& operator=( const T& right ){
 		this->x() = right;
-		this->y() = realZero;
+		this->y() = static_cast< T >( realZero );
 		
 		return *this;
 	}
 	
 	/// Get the real component
-	INLINE const real& x() const{	return GSL_REAL( this->const_ref() );	}
+	INLINE const T& x() const{	return GSL_REAL( this->const_ref() );	}
 	
 	/// Set the real component by assignment
-	INLINE real& x(){	return GSL_REAL( this->ref() );	}
+	INLINE T& x(){	return GSL_REAL( this->ref() );	}
 	
 	/// Set the real component
-	INLINE void x( real X ){ 	this->x() = X;	}
+	INLINE void x( const T& X ){ 	this->x() = X;	}
 	
 	/// Get the imaginary component
-	INLINE const real& y() const{	return GSL_IMAG( this->const_ref() );	}
+	INLINE const T& y() const{	return GSL_IMAG( this->const_ref() );	}
 	
 	/// Set the imaginary component by assignment
-	INLINE real& y(){	return GSL_IMAG( this->ref() );	}
+	INLINE T& y(){	return GSL_IMAG( this->ref() );	}
 	
 	/// Set the imaginary component
-	INLINE void y( real Y ){	this->y() = Y;	}
+	INLINE void y( const T& Y ){	this->y() = Y;	}
 	
 	/// Set the magnitude, keeps the argument the same
-	void abs( real R );
+	void abs( const T& R );
 	
 	/// Set the argument, keeps the magnitude the same
-	void arg( real Q );
+	void arg( const T& Q );
 	
 	/// Get the magnitude, |z|
-	INLINE real abs() const{	return gsl_complex_abs( this->const_ref() );	}
+	INLINE T abs() const{	return gsl_complex_abs( this->const_ref() );	}
 	
 	/// Get the argument
-	INLINE real arg() const{	return gsl_complex_arg( this->const_ref() );	}
+	INLINE T arg() const{	return gsl_complex_arg( this->const_ref() );	}
 	
 	/// Get the square of the magnitude, |z|^2
-	INLINE real abs2() const{	return gsl_complex_abs2( this->const_ref() );	}
+	INLINE T abs2() const{	return gsl_complex_abs2( this->const_ref() );	}
 	
 	/// Get the natural log of the magnitude, Allows accurate evaluation of ln|z| when
 	/// |z| is close to unity, where a naive evaluation would lead to loss of precision
-	INLINE real log_abs() const{	return gsl_complex_logabs( this->const_ref() );	}
+	INLINE T log_abs() const{	return gsl_complex_logabs( this->const_ref() );	}
 	
 	/// Get the complex conjugate
-	INLINE gsl::complex conj() const{	return gsl_complex_conjugate( this->const_ref() );	}
+	INLINE gsl::complex< T > conj() const{	return gsl_complex_conjugate( this->const_ref() );	}
 	
 	/// Overloaded unitary operators
-	gsl::complex& operator+=( const gsl::complex& right ){
+	gsl::complex< T >& operator+=( const gsl::complex< T >& right ){
 		this->x() += right.x();
 		this->y() += right.y();
 		
 		return *this;
 	}
-	gsl::complex& operator+=( real X ){
+	gsl::complex< T >& operator+=( const T& X ){
 		this->x() += X;
 		return *this;
 	}
 	
-	gsl::complex& operator-=( const gsl::complex& right ){
+	gsl::complex< T >& operator-=( const gsl::complex< T >& right ){
 		this->x() -= right.x();
 		this->y() -= right.y();
 		
 		return *this;
 	}
-	gsl::complex& operator-=( real X ){
+	gsl::complex< T >& operator-=( const T& X ){
 		this->x() -= X;
 		return *this;
 	}
 	
-	gsl::complex& operator*=( const gsl::complex& right ){
-		gsl::complex temp( gsl_complex_mul(this->const_ref(), right.const_ref()) );
+	gsl::complex< T >& operator*=( const gsl::complex< T >& right ){
+		gsl::complex< T > temp( gsl_complex_mul(this->const_ref(), right.const_ref()) );
 		*this = temp;
 		
 		return *this;
 	}
-	gsl::complex& operator*=( real X ){
+	gsl::complex< T >& operator*=( const T& X ){
 		this->x() *= X;
 		this->y() *= X;
 		return *this;
 	}
 	
-	gsl::complex& operator/=( const gsl::complex& right ){
-		gsl::complex temp( gsl_complex_div(this->const_ref(), right.const_ref()) );
+	gsl::complex< T >& operator/=( const gsl::complex< T >& right ){
+		gsl::complex< T > temp( gsl_complex_div(this->const_ref(), right.const_ref()) );
 		*this = temp;
 		
 		return *this;
 	}
-	gsl::complex& operator/=( real X ){
+	gsl::complex< T >& operator/=( const T& X ){
 		this->x() /= X;
 		this->y() /= X;
 		return *this;
@@ -164,7 +183,8 @@ public:
 
 ////////////////////////////////////////////////////////////
 
-bool operator==( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+bool operator==( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {
 	if ( left.x() != right.x() )
 		return false;
@@ -176,72 +196,84 @@ bool operator==( const gsl::complex& left, const gsl::complex& right )
 
 ////////////////////////////////////////////////////////////
 
-INLINE bool operator!=( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE operator!=( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {
 	return !( left == right );
 }
 
 ////////////////////////////////////////////////////////////
 
-INLINE bool operator<( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE bool operator<( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {
 	return left.abs() < right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-INLINE bool operator<=( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE bool operator<=( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {
 	return left.abs() <= right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-INLINE bool operator>( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE bool operator>( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {
 	return left.abs() > right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-INLINE bool operator>=( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE bool operator>=( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {
 	return left.abs() >= right.abs();
 }
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator+( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE gsl::complex< T > operator+( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {	return gsl_complex_add( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator+( real left, const gsl::complex& right )
+template< typename T >
+INLINE gsl::complex< T > operator+( const T& left, const gsl::complex< T >& right )
 {	return gsl_complex_add_real( right.const_ref(), left );			}
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator+( const gsl::complex& left, real right )
+template< typename T >
+INLINE gsl::complex< T > operator+( const gsl::complex< T >& left, const T& right )
 {	return gsl_complex_add_real( left.const_ref(), right );			}
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator-( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE gsl::complex< T > operator-( const gsl::complex< T >& left, const gsl::complex< T >& right )
 {	return gsl_complex_sub( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator-( real left, const gsl::complex& right )
+template< typename T >
+INLINE gsl::complex< T > operator-( const T& left, const gsl::complex< T >& right )
 {	return gsl_complex_negative( gsl_complex_sub_real( right.const_ref(), left ) );	}
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator-( const gsl::complex& left, real right )
+template< typename T >
+INLINE gsl::complex< T > operator-( const gsl::complex< T >& left, const T& right )
 {	return gsl_complex_sub_real( left.const_ref(), right );	}
 
 ////////////////////////////////////////////////////////////
 
-INLINE gsl::complex operator*( const gsl::complex& left, const gsl::complex& right )
+template< typename T >
+INLINE gsl::complex< T > operator*( const gsl::complex& left, const gsl::complex& right )
 {	return gsl_complex_mul( left.const_ref(), right.const_ref() );	}
 
 ////////////////////////////////////////////////////////////
