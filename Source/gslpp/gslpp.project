@@ -43,10 +43,6 @@
     <File Name="blas/blas1.cpp"/>
     <File Name="blas/blas1.h"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Complex">
-    <File Name="Complex/complex.cpp"/>
-    <File Name="Complex/complex.h"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="Polynomial">
     <File Name="Polynomial/polynomial.h"/>
     <File Name="Polynomial/polynomial.cpp"/>
@@ -78,6 +74,7 @@
       <General OutputFile="$(IntermediateDirectory)/Targets/Debug/libgsl++.so" IntermediateDirectory="../.." Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)/Objects" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
+      
       
       ]]>
       </Environment>
@@ -119,6 +116,7 @@
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).so" IntermediateDirectory="../../Targets/Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
+      
       
       
       

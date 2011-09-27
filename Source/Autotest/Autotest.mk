@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=19/09/11
+Date                   :=27/09/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -52,8 +52,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/complextestsuite$(ObjectSuffix) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) $(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) \
-	
+Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) $(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -130,14 +129,6 @@ $(IntermediateDirectory)/combinationtestsuite$(DependSuffix): combinationtestsui
 $(IntermediateDirectory)/combinationtestsuite$(PreprocessSuffix): combinationtestsuite.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/combinationtestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/combinationtestsuite.cpp"
 
-$(IntermediateDirectory)/complextestsuite$(ObjectSuffix): complextestsuite.cpp $(IntermediateDirectory)/complextestsuite$(DependSuffix)
-	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/complextestsuite$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/complextestsuite$(DependSuffix): complextestsuite.cpp
-	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/complextestsuite$(ObjectSuffix) -MF$(IntermediateDirectory)/complextestsuite$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp"
-
-$(IntermediateDirectory)/complextestsuite$(PreprocessSuffix): complextestsuite.cpp
-	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/complextestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/complextestsuite.cpp"
-
 $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix): mathfunctionstestsuite.cpp $(IntermediateDirectory)/mathfunctionstestsuite$(DependSuffix)
 	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/mathfunctionstestsuite.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) $(IncludePath)
 $(IntermediateDirectory)/mathfunctionstestsuite$(DependSuffix): mathfunctionstestsuite.cpp
@@ -186,9 +177,6 @@ clean:
 	$(RM) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/combinationtestsuite$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/combinationtestsuite$(PreprocessSuffix)
-	$(RM) $(IntermediateDirectory)/complextestsuite$(ObjectSuffix)
-	$(RM) $(IntermediateDirectory)/complextestsuite$(DependSuffix)
-	$(RM) $(IntermediateDirectory)/complextestsuite$(PreprocessSuffix)
 	$(RM) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/mathfunctionstestsuite$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/mathfunctionstestsuite$(PreprocessSuffix)
