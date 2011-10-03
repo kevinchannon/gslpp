@@ -55,7 +55,7 @@ const real pi = M_PI;
 const real half_pi = M_PI_2;
 
 /// pi / 4
-const real quater_pi = M_PI_4;
+const real quarter_pi = M_PI_4;
 
 /// square-root of pi
 const real sqrt_pi = M_SQRTPI;
