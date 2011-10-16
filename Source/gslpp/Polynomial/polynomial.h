@@ -15,8 +15,6 @@
 
 BEGIN_GSL_NAMESPACE
 
-class complex;
-
 ////////////////////////////////////////////////////////////
 
 class polynomial : public gsl_base_ptr< gsl_poly_complex_workspace >
@@ -24,45 +22,23 @@ class polynomial : public gsl_base_ptr< gsl_poly_complex_workspace >
 public:
 	typedef typename std::vector< std::complex< real > >::reverse_iterator			reverse_iterator;
     typedef typename std::vector< std::complex< real > >::const_reverse_iterator	const_reverse_iterator;
-	typedef typename std::vector< std::complex< real > >::iterator			iterator;
-    typedef typename std::vector< std::complex< real > >::const_iterator	const_iterator;
-	typedef typename std::vector< std::complex< real > >::reference			reference;
-    typedef typename std::vector< std::complex< real > >::const_reference	const_reference;
-    typedef typename std::vector< std::complex< real > >::pointer			pointer;
-    typedef typename std::vector< std::complex< real > >::const_pointer		const_pointer;
-    typedef typename std::vector< std::complex< real > >::value_type		value_type;
-    typedef typename std::vector< std::complex< real > >::size_type			size_type;
+	typedef typename std::vector< std::complex< real > >::iterator					iterator;
+    typedef typename std::vector< std::complex< real > >::const_iterator			const_iterator;
+	typedef typename std::vector< std::complex< real > >::reference					reference;
+    typedef typename std::vector< std::complex< real > >::const_reference			const_reference;
+    typedef typename std::vector< std::complex< real > >::pointer					pointer;
+    typedef typename std::vector< std::complex< real > >::const_pointer				const_pointer;
+    typedef typename std::vector< std::complex< real > >::value_type				value_type;
+    typedef typename std::vector< std::complex< real > >::size_type					size_type;
 	
 	/// Default constructor
-	polynomial() : gsl_base_ptr(0), M_bRootsKnown(false){
-		M_vzCoeffs.push_back(realZero);
-	}
+	polynomial();
 	
 	/// Construct a polynomial of order N
-	polynomial( size_type N) throw ( std::bad_alloc ) :
-		gsl_base_ptr( gsl_poly_complex_workspace_alloc(N + 1) ),
-		M_bRootsKnown(false)
-	{
-		if ( M_pGSLData == NULL )
-			throw std::bad_alloc();
-	}
+	polynomial( size_type N) throw ( std::bad_alloc );
 	
 	/// Copy constructor
-	polynomial( const gsl::polynomial& original ){
-		M_vzCoeffs = original.M_vzCoeffs;
-		M_vzRoots = original.M_vzRoots;
-		M_bRootsKnown = original.M_bRootsKnown;
-		
-		// Create a new GSL workspace for this polynomial
-		M_pGSLData = gsl_poly_complex_workspace_alloc( this->order() + 1 );
-		if ( M_pGSLData == NULL )
-			throw std::bad_alloc();
-		
-		// Fill in the workspace with details from the original
-		M_pGSLData->nc = original.M_pGSLData->nc;
-		size_t nc2 = M_pGSLData->nc * M_pGSLData->nc;
-		std::copy( original.M_pGSLData->matrix, original.M_pGSLData->matrix + nc2, M_pGSLData->matrix );
-	}
+	polynomial( const gsl::polynomial& original );
 
 #ifndef GSLPP_NO_CPP0X	
 	/// Construct a polynomial with coefficients specified:
@@ -72,25 +48,20 @@ public:
 		M_add_coefficients( x, args... );
 		M_vzRoots.resize( this->order() );
 		M_bRootsKnown = false;
-		M_pGSLData = gsl_poly_complex_workspace_alloc( order() + 1 );
-		if ( M_pGSLData == NULL )
-			throw std::bad_alloc();
+		
+		// Don't allocate the gsl_poly_complex_workspace here, it is done just before
+		// it's needed for finding the roots.
 	}
 #endif	// GSLPP_NO_CPP0X
 
-	~polynomial(){}
+	~polynomial();
 	
 	/// Add a term to the polynomial
 	///
 	/// Can throw std::bad_alloc
-	void add_term( const std::complex< real >& zNewCoeff );
+	void add_term( const_reference zNewCoeff );
 	
-	/// Add a term with the specified order
-	///
-	/// Can throw std::bad_alloc
-	void add_term( const std::complex< real >& zNewCoeff, size_type iOrder );
-	
-	/// Change the order of the polynomial
+	/// Change the order of the polynomial. If the order is increased, the new terms have coefficients of zero
 	///
 	/// Can throw std::bad_alloc
 	void resize( size_type iNewOrder );
@@ -100,7 +71,7 @@ public:
 	/// Will throw if i is out of range
 	INLINE const_reference coeff( size_type i) const throw ( std::out_of_range ){
 		if ( i >= M_vzCoeffs.size() )
-			throw std::out_of_range( "Polynomial coefficient out exceeds polynomial order" );
+			throw std::out_of_range( "Polynomial coefficient exceeds polynomial order" );
 		return M_vzCoeffs[i];
 	}
 	
@@ -109,7 +80,8 @@ public:
 	/// Will throw if i is out of range
 	INLINE reference coeff( size_type i)  throw ( std::out_of_range ){
 		if ( i >= M_vzCoeffs.size() )
-			throw std::out_of_range( "Polynomial coefficient out exceeds polynomial order" );
+			throw std::out_of_range( "Polynomial coefficient exceeds polynomial order" );
+		M_bRootsKnown = false;
 		return M_vzCoeffs[i];
 	}
 	
@@ -170,10 +142,13 @@ public:
 	/// Uses Horner's method for stability
 	///
 	/// Will not throw
-	INLINE std::complex< real > at( const std::complex< real >& z ) const{
-		return std::accumulate( M_vzCoeffs.rbegin(), M_vzCoeffs.rend(), std::complex< real >(0.0),
-			[z]( const std::complex< real >& tot, const std::complex< real >& curr ){return curr + tot*z;  } );
+	INLINE value_type at( const_reference z ) const{
+		return std::accumulate( M_vzCoeffs.rbegin(), M_vzCoeffs.rend(), static_cast< value_type >(realZero),
+			[z]( const_reference tot, const_reference curr ){return curr + tot*z;  } );
 	}
+	
+	/// Find the roots of the polynomial
+	std::vector< value_type > roots();
 
 private:
 

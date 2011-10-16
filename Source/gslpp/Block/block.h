@@ -117,7 +117,7 @@ public:
     typedef const pointer	const_pointer;
     typedef T				value_type;
     typedef size_t			size_type;
-    typedef ptrdiff_t		difference_type;
+//    typedef ptrdiff_t		difference_type;
 	
 	typedef typename gsl_block_type< T >::type gsl_block_t;
 	
@@ -255,7 +255,7 @@ public:
     typedef const pointer		const_pointer;
     typedef std::complex< T >	value_type;
     typedef size_t				size_type;
-    typedef ptrdiff_t			difference_type;
+//    typedef ptrdiff_t			difference_type;
 	
 	typedef typename gsl::gsl_block_type< std::complex< T > >::type gsl_cplx_block_t;
 	
