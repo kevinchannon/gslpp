@@ -1,5 +1,7 @@
 #pragma once
 
+#include <complex>
+
 #include "macros.h"
 
 #include <gsl/gsl_math.h>
@@ -14,6 +16,9 @@ const real realEmpty = GSL_NAN;
 const real NaN = GSL_NAN;
 const real realPlusInf = GSL_POSINF;
 const real realMinusInf = GSL_NEGINF;
+
+const std::complex< real > complexZero( realZero, realZero );
+const std::complex< real > complexEmpty( realEmpty, realEmpty );
 
 inline bool is_empty( real x ){	return gsl_isnan(x);	}
 inline bool is_nan( real x ){	return gsl_isnan(x);	}

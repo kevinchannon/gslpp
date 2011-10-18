@@ -46,8 +46,9 @@ public:
 	template< typename... Args >
 	polynomial( const std::complex< real >& x, Args... args ) throw ( std::bad_alloc ){
 		M_add_coefficients( x, args... );
-		M_vzRoots.resize( this->order() );
+		M_vzRoots.resize( M_vzCoeffs.size() );
 		M_bRootsKnown = false;
+		M_bOrderKnown = false;	// We don't know because we don't know what the values of the coefficients were
 		
 		// Don't allocate the gsl_poly_complex_workspace here, it is done just before
 		// it's needed for finding the roots.
@@ -82,6 +83,7 @@ public:
 		if ( i >= M_vzCoeffs.size() )
 			throw std::out_of_range( "Polynomial coefficient exceeds polynomial order" );
 		M_bRootsKnown = false;
+		M_bOrderKnown = false;
 		return M_vzCoeffs[i];
 	}
 	
@@ -91,7 +93,12 @@ public:
 	
 	/// Get the value of the ith order component without range checking
 	/// Behaviour is undefined if i exceeds the order of the polynomial
-	INLINE reference operator[]( size_type i) {	return M_vzCoeffs[i];	}
+	INLINE reference operator[]( size_type i)
+	{
+		M_bRootsKnown = false;
+		M_bOrderKnown = false;
+		return M_vzCoeffs[i];
+	}
 	
 	/// Get a const_iterator to the first coefficient of the polynomial
 	///
@@ -101,7 +108,12 @@ public:
 	/// Get a iterator to the first coefficient of the polynomial
 	///
 	/// Will not throw
-	INLINE iterator coeff_begin() {	return M_vzCoeffs.begin();	}
+	INLINE iterator coeff_begin()
+	{
+		M_bRootsKnown = false;
+		M_bOrderKnown = false;
+		return M_vzCoeffs.begin();
+	}
 	
 	/// Get a const_iterator to one-past the last coefficient of the polynomial
 	///
@@ -111,7 +123,12 @@ public:
 	/// Get a iterator to one-past the last coefficient of the polynomial
 	///
 	/// Will not throw
-	INLINE iterator coeff_end() {	return M_vzCoeffs.end();	}
+	INLINE iterator coeff_end()
+	{
+		M_bRootsKnown = false;
+		M_bOrderKnown = false;
+		return M_vzCoeffs.end();
+	}
 	
 	/// Get a const_iterator to the first coefficient of the polynomial
 	///
@@ -121,7 +138,12 @@ public:
 	/// Get a iterator to the first coefficient of the polynomial
 	///
 	/// Will not throw
-	INLINE reverse_iterator coeff_rbegin() {	return M_vzCoeffs.rbegin();	}
+	INLINE reverse_iterator coeff_rbegin()
+	{
+		M_bRootsKnown = false;
+		M_bOrderKnown = false;
+		return M_vzCoeffs.rbegin();
+	}
 	
 	/// Get a const_iterator to one-past the last coefficient of the polynomial
 	///
@@ -131,12 +153,17 @@ public:
 	/// Get a iterator to one-past the last coefficient of the polynomial
 	///
 	/// Will not throw
-	INLINE reverse_iterator coeff_rend() {	return M_vzCoeffs.rend();	}
+	INLINE reverse_iterator coeff_rend()
+	{
+		M_bRootsKnown = false;
+		M_bOrderKnown = false;
+		return M_vzCoeffs.rend();
+	}
 	
-	/// Get the order of the polynomial
+	/// Get the order of the polynomial, finds the position of the last non-zero
 	///
 	/// Will not throw
-	INLINE size_type order() const {	return M_vzCoeffs.size() - 1;	}	
+	size_type order();
 	
 	/// Evaluate the polynomial at the given (complex) point
 	/// Uses Horner's method for stability
@@ -168,11 +195,16 @@ private:
 	template< typename T >
 	void M_add_coeff( T v ){	M_vzCoeffs.push_back(v);	}
 #endif	// GSLPP_NO_CPP0X
+
+	void M_roots_complex_coeffs();
+	void M_roots_real_coeffs();
 	
 /// Variables
 	std::vector< std::complex< real > > M_vzCoeffs;
 	std::vector< std::complex< real > > M_vzRoots;
 	bool M_bRootsKnown;
+	bool M_bOrderKnown;
+	size_type M_iOrder;
 };
 
 ////////////////////////////////////////////////////////////
