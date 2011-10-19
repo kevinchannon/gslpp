@@ -148,7 +148,7 @@ void polynomial::M_roots_real_coeffs()
 				real b = this->coeff(1).real() / this->coeff(3).real();
 				real c = this->coeff(0).real() / this->coeff(3).real();
 				
-				gsl_poly_complex_solve_quadratic (a, b, c, &z0, &z1, &z2);
+				gsl_poly_complex_solve_cubic (a, b, c, &z0, &z1, &z2);
 				
 				M_vzRoots[0] = value_type(GSL_REAL(z0), GSL_IMAG(z0));
 				M_vzRoots[1] = value_type(GSL_REAL(z1), GSL_IMAG(z1));
@@ -156,6 +156,24 @@ void polynomial::M_roots_real_coeffs()
 			}
 			break;
 		default :
+			{
+			   size_type size = this->order() + 1;
+			 
+			   gsl_poly_complex_workspace* ws = gsl_poly_complex_workspace_alloc ( size );
+			   
+			   real* a = new real[ size ];
+			   auto lambda_complexToRealCopier = []( const_reference z ){ return z.real(); };
+			   std::transform(this->coeff_begin(), this->coeff_begin() + size, a, lambda_complexToRealCopier );
+			   
+			   real* z = new real[ 2*(size - 1 )];
+			   
+			   // Solve!
+			   gsl_poly_complex_solve (a, size, ws, z);
+			 
+			   gsl_poly_complex_workspace_free (ws);
+			   delete[] a;
+			   delete[] z;
+			}
 	}
 }
 
