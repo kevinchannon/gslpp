@@ -46,7 +46,7 @@ public:
 	template< typename... Args >
 	polynomial( const std::complex< real >& x, Args... args ) throw ( std::bad_alloc ){
 		M_add_coefficients( x, args... );
-		M_vzRoots.resize( M_vzCoeffs.size() );
+		M_vzRoots.resize( M_vzCoeffs.size() - 1 );
 		M_bRootsKnown = false;
 		M_bOrderKnown = false;	// We don't know because we don't know what the values of the coefficients were
 		

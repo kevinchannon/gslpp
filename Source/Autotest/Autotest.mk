@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=19/10/11
+Date                   :=22/10/11
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -44,7 +44,7 @@ LinkOptions            :=
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch).. $(IncludeSwitch)/usr/local/include $(IncludeSwitch)/usr/include 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)gsl++ $(LibrarySwitch)cppunit 
+Libs                   := $(LibrarySwitch)gsl $(LibrarySwitch)gsl++ $(LibrarySwitch)cppunit 
 LibPath                := $(LibraryPathSwitch). 
 
 
