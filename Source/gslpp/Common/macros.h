@@ -11,3 +11,6 @@
 
 #define BEGIN_BLAS_NAMESPACE namespace blas{
 #define END_BLAS_NAMESPACE }
+
+#define continue_if( condition ) if ( (condition) ) continue
+#define break_if( condition ) if ( (condition) ) break
