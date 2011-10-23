@@ -46,14 +46,9 @@ polynomial::size_type polynomial::order()
 	if ( M_bOrderKnown )
 		return M_iOrder;
 	
-	if ( coeff_begin() != coeff_end() )
-	{
-		// Find the largest non-zero coefficient
-		auto lambda_goodCoeff = []( value_type z ){ return z != complexZero && z != complexEmpty; };
-		M_iOrder = std::distance( coeff_begin(), std::find_if( coeff_rbegin(), coeff_rend(), lambda_goodCoeff ).base()) - 1;
-	}
-	else
-		M_iOrder = 0;
+	// Find the largest non-zero coefficient
+	auto lambda_goodCoeff = []( value_type z ){ return z != complexZero && z != complexEmpty; };
+	M_iOrder = std::distance( coeff_begin(), std::find_if( coeff_rbegin(), coeff_rend(), lambda_goodCoeff ).base()) - 1;
 	
 	M_bOrderKnown = true;
 	return M_iOrder;
@@ -95,22 +90,36 @@ std::vector< polynomial::value_type > polynomial::roots()
 	bool bComplexCoeffs = this->coeff_end() != std::find_if( this->coeff_begin(), this->coeff_end(),
 		[]( const_reference z ){ return z.imag() != realZero; } );
 	
-	if ( bComplexCoeffs ){
-		M_roots_complex_coeffs();
-		return std::vector< value_type >();
-	}
-	else
-		M_roots_real_coeffs();
+	// Find the roots
+	! bComplexCoeffs ? M_roots_real_coeffs() : M_roots_complex_coeffs();
 		
 	M_bRootsKnown = true;
-	return roots();	// Recurse to get the roots
+	return roots();	// Recurse to return the roots
 }
 
 ////////////////////////////////////////////////////////////
 
 void polynomial::M_roots_complex_coeffs()
 {
-	std::cerr << "Solution of complex polynomials with complex coefficients not currently supported" << std::endl;
+	switch ( this->order() ){
+		case 1 :
+		{
+			M_vzRoots.resize(1);
+			M_vzRoots[0] = -this->coeff(0)/this->coeff(1);
+			break;
+		}
+		case polynomial::empty:
+		case 0 :
+		{
+			M_vzRoots.clear();	// No roots to be found in these cases
+			break;
+		}
+		default :
+		{
+			// Not currently supporting higher order complex coefficients
+			M_vzRoots.clear();
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -118,11 +127,11 @@ void polynomial::M_roots_complex_coeffs()
 void polynomial::M_roots_real_coeffs()
 {
 	switch ( this->order() ){
-		case 0 : break;	// nothing to do (no roots)
 		case 1 :
 		{
 			real a = this->coeff(1).real();	// Guaranteed to be non-zero
 			real b = this->coeff(0).real();
+			M_vzRoots.resize(1);
 			M_vzRoots[0] = value_type( -b/a, realZero );
 			break;
 		}
@@ -135,9 +144,13 @@ void polynomial::M_roots_real_coeffs()
 			
 			gsl_poly_complex_solve_quadratic (a, b, c, &z0, &z1);
 			
+			M_vzRoots.resize(2);
 			M_vzRoots[0] = value_type(GSL_REAL(z0), GSL_IMAG(z0));
 			if ( this->coeff(0).real() != 0 ){
 				M_vzRoots[1] = value_type(GSL_REAL(z1), GSL_IMAG(z1));
+			}
+			else{
+				M_vzRoots[1] = value_type(GSL_REAL(z0), GSL_IMAG(z0));
 			}
 			break;
 		}
@@ -150,27 +163,35 @@ void polynomial::M_roots_real_coeffs()
 			
 			gsl_poly_complex_solve_cubic (a, b, c, &z0, &z1, &z2);
 			
+			M_vzRoots.resize(3);
 			M_vzRoots[0] = value_type(GSL_REAL(z0), GSL_IMAG(z0));
 			M_vzRoots[1] = value_type(GSL_REAL(z1), GSL_IMAG(z1));
 			M_vzRoots[2] = value_type(GSL_REAL(z2), GSL_IMAG(z2));
 			break;
 		}
+		case polynomial::empty:
+		case 0 :
+		{
+			M_vzRoots.clear();	// No roots to be found in these cases
+			break;
+		}
 		default :
 		{
-		   size_type size = this->order() + 1;
+		   size_type N = this->order() + 1;
 		 
-		   gsl_poly_complex_workspace* ws = gsl_poly_complex_workspace_alloc ( size );
+		   gsl_poly_complex_workspace* ws = gsl_poly_complex_workspace_alloc ( N );
 		   
-		   real* a = new real[ size ];
+		   real* a = new real[ N ];
 		   auto lambda_complexToRealCopier = []( const_reference z ){ return z.real(); };
-		   std::transform(this->coeff_begin(), this->coeff_begin() + size, a, lambda_complexToRealCopier );
+		   std::transform(this->coeff_begin(), this->coeff_begin() + N, a, lambda_complexToRealCopier );
 		   
-		   real* z = new real[ 2*(size - 1 )];
+		   real* z = new real[ 2*(N - 1 )];
 		   
 		   // Solve!
-		   gsl_poly_complex_solve (a, size, ws, z);
+		   gsl_poly_complex_solve (a, N, ws, z);
 		   
-		   for ( size_t i = 0; i < 2*(size - 1); i+=2 ){
+			M_vzRoots.resize(N - 1);
+		   for ( size_t i = 0; i < 2*(N - 1); i+=2 ){
 			   M_vzRoots[i/2].real(z[i]);
 			   M_vzRoots[i/2].imag(z[i + 1]);
 		   }

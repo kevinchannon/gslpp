@@ -4,6 +4,7 @@
 #include <complex>
 #include <numeric>
 #include <stdexcept>
+#include <limits>
 
 #include "../Common/macros.h"
 #include "../Common/number.h"
@@ -30,6 +31,8 @@ public:
     typedef typename std::vector< std::complex< real > >::const_pointer				const_pointer;
     typedef typename std::vector< std::complex< real > >::value_type				value_type;
     typedef typename std::vector< std::complex< real > >::size_type					size_type;
+	
+	static const size_type empty = std::numeric_limits< size_type >::max();
 	
 	/// Default constructor
 	polynomial();
@@ -160,10 +163,17 @@ public:
 		return M_vzCoeffs.rend();
 	}
 	
-	/// Get the order of the polynomial, finds the position of the last non-zero
+	/// Get the effective order of the polynomial, finds the position of the last non-zero
+	/// coefficient. If there are no non-zero coefficients, polynomial::empty is returned
 	///
 	/// Will not throw
 	size_type order();
+	
+	/// Get the current capacity of the polynomial (i.e. the highest order component accessible, without
+	/// adding new terms, returns polynomial::empty if there are no coefficients
+	///
+	/// will not throw
+	INLINE size_type size() const {	return M_vzCoeffs.size() - 1;	}
 	
 	/// Evaluate the polynomial at the given (complex) point
 	/// Uses Horner's method for stability

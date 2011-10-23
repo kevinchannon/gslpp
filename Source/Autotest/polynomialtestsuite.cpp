@@ -72,23 +72,29 @@ void PolynomialTestSuite::Resize()
 {
 	gsl::polynomial p1;
 	CPPUNIT_ASSERT( p1.order() == 0 );
+	CPPUNIT_ASSERT( p1.size() == gsl::polynomial::empty );
 	
 	p1.add_term( 0.1 );
 	CPPUNIT_ASSERT( p1.order() == 0 );
+	CPPUNIT_ASSERT( p1.size() == 0 );
 	
 	p1.add_term( 0.3 );
 	CPPUNIT_ASSERT( p1.order() == 1 );
+	CPPUNIT_ASSERT( p1.size() == 1 );
 	
 	p1.resize( 5 );
 	CPPUNIT_ASSERT( p1.order() == 1 );
+	CPPUNIT_ASSERT( p1.size() == 5 );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.1, p1.coeff(0).real(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.3, p1.coeff(1).real(), rTolerance );
 	
 	p1.coeff(5) = 1+2i;
 	CPPUNIT_ASSERT( 5 == p1.order() );
+	CPPUNIT_ASSERT( p1.size() == 5 );
 	
 	p1.resize(1);
 	CPPUNIT_ASSERT( p1.order() == 1 );
+	CPPUNIT_ASSERT( p1.size() == 1 );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.1, p1.coeff(0).real(), rTolerance );
 	CPPUNIT_ASSERT_DOUBLES_EQUAL( 0.3, p1.coeff(1).real(), rTolerance );
 }
@@ -97,35 +103,111 @@ void PolynomialTestSuite::Resize()
 
 void PolynomialTestSuite::SolveConstant()
 {
+	gsl::polynomial p1;
+	std::vector< gsl::polynomial::value_type > vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.empty() );
 	
+	p1.add_term( 1 );
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.empty() );
+	
+	p1.coeff(0) = 1i;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.empty() );
+	
+	p1.coeff(0) = 1+2i;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.empty() );
 }
 
 ////////////////////////////////////////////////////////////
 
 void PolynomialTestSuite::SolveLinear()
 {
+	gsl::polynomial p1( 1, 1 );
+	std::vector< gsl::polynomial::value_type > vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 1 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(-1, 0) );
 	
+	p1.coeff(0) = 1+2i;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 1 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(-1, -2) );
 }
 
 ////////////////////////////////////////////////////////////
 
 void PolynomialTestSuite::SolveQuadratic()
 {
+	gsl::polynomial p1(2,-3,1);
+	std::vector< gsl::polynomial::value_type > vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 2 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(1, 0) );
+	CPPUNIT_ASSERT( vRoots[1] == gsl::polynomial::value_type(2, 0) );
 	
+	p1[0] = 0;
+	p1[1] = 0;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 2 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(0, 0) );
+	CPPUNIT_ASSERT( vRoots[1] == gsl::polynomial::value_type(0, 0) );
+	
+	p1[0] = 1;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 2 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(0, -1) );
+	CPPUNIT_ASSERT( vRoots[1] == gsl::polynomial::value_type(0, 1) );
+	
+	p1[1] = 1+1i;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 0 );
 }
 
 ////////////////////////////////////////////////////////////
 
 void PolynomialTestSuite::SolveCubic()
 {
+	gsl::polynomial p1( -6, 11, -6, 1 );
+	std::vector< gsl::polynomial::value_type > vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 3 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(1, 0) );
+	CPPUNIT_ASSERT( vRoots[1] == gsl::polynomial::value_type(2, 0) );
+	CPPUNIT_ASSERT( vRoots[2] == gsl::polynomial::value_type(3, 0) );
 	
+	p1[0] =  0;
+	p1[1] =  0;
+	p1[2] = -1;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 3 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(0, 0) );
+	CPPUNIT_ASSERT( vRoots[1] == gsl::polynomial::value_type(0, 0) );
+	CPPUNIT_ASSERT( vRoots[2] == gsl::polynomial::value_type(1, 0) );
+	
+	p1[0] = 1;
+	p1[1] = 0;
+	p1[2] = 0;
+	vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 3 );
+	CPPUNIT_ASSERT( vRoots[0] == gsl::polynomial::value_type(-1, 0) );
+	CPPUNIT_ASSERT( vRoots[1] == gsl::polynomial::value_type(0.5, -gsl::sqrt3 / 2) );
+	CPPUNIT_ASSERT( vRoots[2] == gsl::polynomial::value_type(0.5,  gsl::sqrt3 / 2) );
 }
 
 ////////////////////////////////////////////////////////////
 
 void PolynomialTestSuite::SolveHighOrder()
 {
-	
+	gsl::polynomial p1( 1, 0, 0, 0, 1 );
+	std::vector< gsl::polynomial::value_type > vRoots = p1.roots();
+	CPPUNIT_ASSERT( vRoots.size() == 4);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -gsl::sqrt_half, vRoots[0].real(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(  gsl::sqrt_half, vRoots[0].imag(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -gsl::sqrt_half, vRoots[1].real(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -gsl::sqrt_half, vRoots[1].imag(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(  gsl::sqrt_half, vRoots[2].real(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(  gsl::sqrt_half, vRoots[2].imag(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(  gsl::sqrt_half, vRoots[3].real(), M_tolerance);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL( -gsl::sqrt_half, vRoots[3].imag(), M_tolerance);
 }
 
 ////////////////////////////////////////////////////////////
