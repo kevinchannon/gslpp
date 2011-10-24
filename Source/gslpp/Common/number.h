@@ -24,6 +24,8 @@ inline bool is_empty( real x ){	return gsl_isnan(x);	}
 inline bool is_nan( real x ){	return gsl_isnan(x);	}
 inline bool is_finite( real x){	return gsl_finite(x);	}
 
+inline bool is_empty( const std::complex< real >& z ){	return z == complexEmpty;	}
+
 ////////////////////////////////////////////////////////////
 
 BEGIN_GSL_NAMESPACE

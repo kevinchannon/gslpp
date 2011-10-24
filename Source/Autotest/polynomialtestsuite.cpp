@@ -5,6 +5,7 @@
 #include <complex>
 
 #include "gslpp/Polynomial/polynomial.h"
+#include "gslpp/Vector/vector.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION( PolynomialTestSuite );
 
@@ -21,9 +22,33 @@ void PolynomialTestSuite::tearDown(){}
 
 void PolynomialTestSuite::Instantiation()
 {
-	gsl::polynomial p1(1.2, 2.5, -15, 6.9);
-	gsl::polynomial p2(1,5.6);
+	gsl::polynomial p1( 1.2, 2.5, -15, 6.9 );
+	gsl::polynomial p2( 1,5.6 );
 	gsl::polynomial p3( 1.5 + 3i, 2.0, 4.2i );
+	
+	std::vector< gsl::polynomial::value_type > std_vz( 4, 1 + 3i );
+	gsl::polynomial p4( std_vz );
+	
+	std::vector< real > std_vr( 4, 2 );
+	gsl::polynomial p5( std_vr );
+	
+	std::vector< gsl::polynomial::value_type > gsl_vz( 4, 2 + 2.5i );
+	gsl::polynomial p6( gsl_vz );
+	
+	gsl::vector< real > gsl_vr( 5, 1 );
+	gsl::polynomial p7(gsl_vr);
+	
+	gsl::polynomial::size_type N = 10;
+	
+	gsl::polynomial::value_type* az = new gsl::polynomial::value_type[ N ];
+	std::fill(az, az + N, 3.1 + 2i );
+	gsl::polynomial p9( az, N );
+	delete[] az;
+	
+	real* ar = new real[ N ];
+	std::fill(ar, ar + N, 4.5 );
+	gsl::polynomial p10( ar, N );
+	delete[] ar;
 }
 
 ////////////////////////////////////////////////////////////

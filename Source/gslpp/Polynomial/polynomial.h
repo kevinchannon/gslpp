@@ -9,6 +9,7 @@
 #include "../Common/macros.h"
 #include "../Common/number.h"
 #include "../Common/gslstructbase.h"
+#include "../Vector/vector.h"
 
 #include <gsl/gsl_poly.h>
 
@@ -38,9 +39,11 @@ public:
 	polynomial();
 	
 	/// Construct a polynomial of order N
-	polynomial( size_type N) throw ( std::bad_alloc );
+	polynomial( size_type N ) throw ( std::bad_alloc );
 	
 	/// Copy constructor
+	///
+	/// Can throw std::bad_alloc
 	polynomial( const gsl::polynomial& original );
 
 #ifndef GSLPP_NO_CPP0X	
@@ -57,6 +60,36 @@ public:
 		// it's needed for finding the roots.
 	}
 #endif	// GSLPP_NO_CPP0X
+
+	/// Construct from std::vector, replaces any empty values with zeros
+	///
+	/// Can throw std::bad_alloc
+	template < typename T >
+	polynomial( const std::vector< T >& v ) : M_bRootsKnown(false), M_bOrderKnown(false)
+	{
+		M_vzCoeffs.resize(v.size());
+		std::replace_copy_if(v.begin(), v.end(), M_vzCoeffs.begin(), std::bind1st(std::equal_to< value_type >(), complexEmpty), complexZero );
+	}
+	
+	/// Construct from gsl::vector, replaces any empty values with zeros
+	///
+	/// Can throw std::bad_alloc
+	template < typename T >
+	polynomial( const gsl::vector< T >& v ) : M_bRootsKnown(false), M_bOrderKnown(false)
+	{
+		M_vzCoeffs.resize(v.size());
+		std::replace_copy_if(v.begin(), v.end(), M_vzCoeffs.begin(), std::bind1st(std::equal_to< value_type >(), complexEmpty), complexZero );
+	}
+	
+	/// Construct from an array, replaces any empty values with zeros
+	///
+	/// Can throw std::bad_alloc
+	template < typename T >
+	polynomial( const T* a, size_type N ) : M_bRootsKnown(false), M_bOrderKnown(false)
+	{
+		M_vzCoeffs.resize( N );
+		std::replace_copy_if(a, a + N, M_vzCoeffs.begin(), std::bind1st(std::equal_to< value_type >(), complexEmpty), complexZero );
+	}
 
 	~polynomial();
 	
@@ -192,18 +225,18 @@ private:
 #ifndef GSLPP_NO_CPP0X
 	template< typename T, typename... Args >
 	void M_add_coefficients( T v, Args... args ){
-		M_vzCoeffs.push_back( v );
+		M_vzCoeffs.push_back( is_empty( v ) ? complexZero : v );
 		M_add_coeff< T >( args... );
 	}
 	
 	template< typename T, typename... Args >
 	void M_add_coeff( T v, Args... args ){
-		M_vzCoeffs.push_back( v );
+		M_vzCoeffs.push_back( is_empty( v ) ? complexZero : v );
 		M_add_coeff< T >( args... );
 	}
 	
 	template< typename T >
-	void M_add_coeff( T v ){	M_vzCoeffs.push_back(v);	}
+	void M_add_coeff( T v ){	M_vzCoeffs.push_back( is_empty( v ) ? complexZero : v );	}
 #endif	// GSLPP_NO_CPP0X
 
 	void M_roots_complex_coeffs();
