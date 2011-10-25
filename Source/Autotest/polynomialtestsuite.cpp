@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iterator>
 #include <complex>
+#include <algorithm>
 
 #include "gslpp/Polynomial/polynomial.h"
 #include "gslpp/Vector/vector.h"
@@ -49,6 +50,29 @@ void PolynomialTestSuite::Instantiation()
 	std::fill(ar, ar + N, 4.5 );
 	gsl::polynomial p10( ar, N );
 	delete[] ar;
+}
+
+////////////////////////////////////////////////////////////
+
+void PolynomialTestSuite::Assignment()
+{
+	gsl::polynomial p1;
+	std::vector< real > std_v(4,1);
+	p1 = std_v;
+	CPPUNIT_ASSERT( p1.size() == 3 );
+	CPPUNIT_ASSERT( p1.order() == 3 );
+	CPPUNIT_ASSERT( std::equal( std_v.begin(), std_v.end(), p1.coeff_begin() ) );
+	
+	gsl::polynomial p2 = p1;
+	CPPUNIT_ASSERT( p2.size() == 3 );
+	CPPUNIT_ASSERT( p2.order() == 3 );
+	CPPUNIT_ASSERT( std::equal( p1.coeff_begin(), p1.coeff_end(), p2.coeff_begin() ) );
+	
+	gsl::vector< real > gsl_v( 5, 2);
+	p1 = gsl_v;
+	CPPUNIT_ASSERT( p1.size() == 4 );
+	CPPUNIT_ASSERT( p1.order() == 4 );
+	CPPUNIT_ASSERT( std::equal( gsl_v.begin(), gsl_v.end(), p1.coeff_begin() ) );
 }
 
 ////////////////////////////////////////////////////////////

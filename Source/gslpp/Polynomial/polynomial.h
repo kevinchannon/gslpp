@@ -93,6 +93,35 @@ public:
 
 	~polynomial();
 	
+	/// Copy-assignment operator
+	///
+	/// Can throw std::bad_alloc
+	gsl::polynomial &operator=( const gsl::polynomial &original );
+	
+	/// Assignment from std::vector
+	///
+	/// Can throw std::bad_alloc
+	template< typename T >
+	gsl::polynomial &operator=( const std::vector< T > &original )
+	{
+		polynomial temp( original );
+		this->swap( temp );
+		return *this;
+	}
+	
+	/// Assignment from gsl::vector
+	///
+	/// Can throw std::bad_alloc
+	template< typename T >
+	gsl::polynomial &operator=( const gsl::vector< T > &original )
+	{
+		polynomial temp( original );
+		this->swap( temp );
+		return *this;
+	}
+	
+	void swap( gsl::polynomial &other );
+	
 	/// Add a term to the polynomial
 	///
 	/// Can throw std::bad_alloc

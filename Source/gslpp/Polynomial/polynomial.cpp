@@ -23,7 +23,7 @@ polynomial::polynomial( size_type N) throw ( std::bad_alloc ) :	M_bRootsKnown(fa
 	M_vzRoots.resize( N > 0 ? N - 1 : 0);
 }
 
-//////////////////////////////////// ////////////////////////
+/////////////////////////////////////////////////////////////
 
 polynomial::polynomial( const gsl::polynomial& original )
 {
@@ -35,6 +35,27 @@ polynomial::polynomial( const gsl::polynomial& original )
 	
 	// Don't create a new GSL workspace for this polynomial, if it's needed it'll
 	// be created at the point of use
+}
+
+/////////////////////////////////////////////////////////////
+
+gsl::polynomial &gsl::polynomial::operator=( const gsl::polynomial &original )
+{
+	gsl::polynomial temp( original );
+	this->swap( temp );
+	return *this;
+}
+
+/////////////////////////////////////////////////////////////
+
+void polynomial::swap( gsl::polynomial &other )
+{
+	std::swap( this->M_pGSLData, other.M_pGSLData );
+	std::swap( this->M_vzCoeffs, other.M_vzCoeffs );
+	std::swap( this->M_vzRoots, other.M_vzRoots );
+	std::swap( this->M_bRootsKnown, other.M_bRootsKnown );
+	std::swap( this->M_bOrderKnown, other.M_bOrderKnown );
+	std::swap( this->M_iOrder, other.M_iOrder );
 }
 
 ////////////////////////////////////////////////////////////
@@ -179,7 +200,7 @@ void polynomial::M_roots_real_coeffs()
 		{
 		   size_type N = this->order() + 1;
 		 
-		   gsl_poly_complex_workspace* ws = gsl_poly_complex_workspace_alloc ( N );
+		   M_pGSLData = gsl_poly_complex_workspace_alloc ( N );
 		   
 		   real* a = new real[ N ];
 		   auto lambda_complexToRealCopier = []( const_reference z ){ return z.real(); };
@@ -188,7 +209,7 @@ void polynomial::M_roots_real_coeffs()
 		   real* z = new real[ 2*(N - 1 )];
 		   
 		   // Solve!
-		   gsl_poly_complex_solve (a, N, ws, z);
+		   gsl_poly_complex_solve (a, N, M_pGSLData, z);
 		   
 			M_vzRoots.resize(N - 1);
 		   for ( size_t i = 0; i < 2*(N - 1); i+=2 ){
@@ -196,7 +217,7 @@ void polynomial::M_roots_real_coeffs()
 			   M_vzRoots[i/2].imag(z[i + 1]);
 		   }
 		 
-		   gsl_poly_complex_workspace_free (ws);
+		   gsl_poly_complex_workspace_free ( M_pGSLData );
 		   delete[] a;
 		   delete[] z;
 		}

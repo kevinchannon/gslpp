@@ -10,6 +10,7 @@ class PolynomialTestSuite : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST_SUITE ( PolynomialTestSuite );
 	
 	CPPUNIT_TEST ( Instantiation );
+	CPPUNIT_TEST ( Assignment );
 	CPPUNIT_TEST ( Evaluation );
 	CPPUNIT_TEST ( Order );
 	CPPUNIT_TEST ( Resize );
@@ -27,6 +28,7 @@ public:
 
 protected:
 	void Instantiation();
+	void Assignment();
 	void Evaluation();
 	void Order();
 	void Resize();
