@@ -102,7 +102,7 @@ public:
 	///
 	/// Can throw std::bad_alloc
 	template< typename T >
-	gsl::polynomial &operator=( const std::vector< T > &original )
+	gsl::polynomial& operator=( const std::vector< T >& original )
 	{
 		polynomial temp( original );
 		this->swap( temp );
@@ -113,12 +113,46 @@ public:
 	///
 	/// Can throw std::bad_alloc
 	template< typename T >
-	gsl::polynomial &operator=( const gsl::vector< T > &original )
+	gsl::polynomial& operator=( const gsl::vector< T >& original )
 	{
 		polynomial temp( original );
 		this->swap( temp );
 		return *this;
 	}
+	
+	/// Unary addition operator: adds the coefficients of right to the corresponding
+	/// coefficients of this
+	///
+	/// will not throw
+	gsl::polynomial& operator+=( const gsl::polynomial& right );
+	
+	/// Unary subtraction operator: subtracts the coefficients of right from the corresponding
+	/// coefficients of this
+	///
+	/// will not throw
+	gsl::polynomial& operator-=( const gsl::polynomial& right );
+	
+	/// Unary multiplication operator: multiplies the coefficients of this by the corresponding
+	/// coefficients of right
+	///
+	/// will not throw
+	gsl::polynomial& operator*=( const gsl::polynomial& right );
+	
+	/// Unary multiplication operator: divides the coefficients of this by the corresponding
+	/// coefficients of right
+	///
+	/// will not throw
+	gsl::polynomial& operator/=( const gsl::polynomial& right );
+	
+	/// Boolean equals (compares coefficients up to the effective order
+	///
+	/// will not throw
+	bool operator==( const gsl::polynomial& right ) const;
+	
+	/// Boolean not equals (compares coefficients up to the effective order
+	///
+	/// will not throw
+	inline bool operator!=( const gsl::polynomial& right ) const {	return !( *this == right );	}
 	
 	void swap( gsl::polynomial &other );
 	

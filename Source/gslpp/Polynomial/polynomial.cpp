@@ -39,11 +39,97 @@ polynomial::polynomial( const gsl::polynomial& original )
 
 /////////////////////////////////////////////////////////////
 
-gsl::polynomial &gsl::polynomial::operator=( const gsl::polynomial &original )
+gsl::polynomial& gsl::polynomial::operator=( const gsl::polynomial& original )
 {
 	gsl::polynomial temp( original );
 	this->swap( temp );
 	return *this;
+}
+
+/////////////////////////////////////////////////////////////
+
+gsl::polynomial& gsl::polynomial::operator+=( const gsl::polynomial& right )
+{
+	// If right is filled with zeros, then there's nothing to do, just return immediately
+	if ( right.coeff_end() == std::find_if( right.coeff_begin(), right.coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
+		return *this;
+		
+	// We're going to change the coefficients (so the roots will probably change)
+	M_bRootsKnown = false;
+	
+	// If this is filled with zeros, then we can just set this = right and return
+	if ( this->coeff_end() == std::find_if( this->coeff_begin(), this->coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
+		return *this = -right;
+		
+	// Add the first N terms
+	size_type N = std::min( this->M_vzCoeffs.size(), right.M_vzCoeffs.size() );
+	std::transform(this->coeff_begin(), this->coeff_begin() + N, right.coeff_begin(),
+		this->coeff_begin(), std::plus< value_type >());
+	
+	// If right has more coefficients than this, we need subtract the extra terms from this
+	if (this->M_vzCoeffs.size() < right.M_vzCoeffs.size() ){
+		this->M_vzCoeffs.resize( right.M_vzCoeffs.size(), complexZero );
+		std::copy(right.coeff_begin() + N, right.coeff_end(), this->coeff_begin() + N);
+		
+		// We've added new coeffs, so we don't necessarily know the order now
+		M_bOrderKnown = false;
+	}
+		
+	return *this;
+}
+
+/////////////////////////////////////////////////////////////
+
+gsl::polynomial& gsl::polynomial::operator-=( const gsl::polynomial& right )
+{
+	// If right is filled with zeros, then there's nothing to do, just return immediately
+	if ( right.coeff_end() == std::find_if( right.coeff_begin(), right.coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
+		return *this;
+		
+	// We're going to change the coefficients (so the roots will probably change)
+	M_bRootsKnown = false;
+	
+	// If this is filled with zeros, then we can just set this = r-ight and return (need to implement unary - op first)
+//	if ( this->coeff_end() == std::find_if( this->coeff_begin(), this->coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
+//		return *this = right;
+		
+	// Add the first N terms
+	size_type N = std::min( this->M_vzCoeffs.size(), right.M_vzCoeffs.size() );
+	std::transform(this->coeff_begin(), this->coeff_begin() + N, right.coeff_begin(),
+		this->coeff_begin(), std::minus< value_type >());
+	
+	// If right has more coefficients than this, we need copy the extra terms to this
+	if (this->M_vzCoeffs.size() < right.M_vzCoeffs.size() ){
+		this->M_vzCoeffs.resize( right.M_vzCoeffs.size(), complexZero );
+		std::transform(this->coeff_begin() + N, this->coeff_end(), right.coeff_begin() + N,
+			this->coeff_begin() + N, std::minus< value_type >());
+		
+		// We've added new coeffs, so we don't necessarily know the order now
+		M_bOrderKnown = false;
+	}
+		
+	return *this;
+}
+
+/////////////////////////////////////////////////////////////
+
+gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
+{
+	
+}
+
+/////////////////////////////////////////////////////////////
+
+gsl::polynomial& gsl::polynomial::operator/=( const gsl::polynomial& right )
+{
+	
+}
+
+/////////////////////////////////////////////////////////////
+
+bool gsl::polynomial::operator==( const gsl::polynomial& right ) const
+{
+	
 }
 
 /////////////////////////////////////////////////////////////
