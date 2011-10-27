@@ -48,6 +48,15 @@ gsl::polynomial& gsl::polynomial::operator=( const gsl::polynomial& original )
 
 /////////////////////////////////////////////////////////////
 
+gsl::polynomial gsl::polynomial::operator-() const
+{
+	gsl::polynomial temp( *this );
+	std::transform(temp.coeff_begin(), temp.coeff_end(), temp.coeff_begin(), std::bind1st(std::multiplies< value_type >(), -1 ) );
+	return temp;
+}
+
+/////////////////////////////////////////////////////////////
+
 gsl::polynomial& gsl::polynomial::operator+=( const gsl::polynomial& right )
 {
 	// If right is filled with zeros, then there's nothing to do, just return immediately
@@ -59,7 +68,7 @@ gsl::polynomial& gsl::polynomial::operator+=( const gsl::polynomial& right )
 	
 	// If this is filled with zeros, then we can just set this = right and return
 	if ( this->coeff_end() == std::find_if( this->coeff_begin(), this->coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
-		return *this = -right;
+		return *this = right;
 		
 	// Add the first N terms
 	size_type N = std::min( this->M_vzCoeffs.size(), right.M_vzCoeffs.size() );
@@ -89,9 +98,11 @@ gsl::polynomial& gsl::polynomial::operator-=( const gsl::polynomial& right )
 	// We're going to change the coefficients (so the roots will probably change)
 	M_bRootsKnown = false;
 	
-	// If this is filled with zeros, then we can just set this = r-ight and return (need to implement unary - op first)
-//	if ( this->coeff_end() == std::find_if( this->coeff_begin(), this->coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
-//		return *this = right;
+	// If this is filled with zeros, then we can just set this = -right and return (need to implement unary - op first)
+	if ( this->coeff_end() == std::find_if( this->coeff_begin(), this->coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) ){
+		*this = -right;
+		return *this;
+	}
 		
 	// Add the first N terms
 	size_type N = std::min( this->M_vzCoeffs.size(), right.M_vzCoeffs.size() );
@@ -129,7 +140,13 @@ gsl::polynomial& gsl::polynomial::operator/=( const gsl::polynomial& right )
 
 bool gsl::polynomial::operator==( const gsl::polynomial& right ) const
 {
+	size_type iThisOrder = this->M_order_finder();
+	size_type iRightOrder = right.M_order_finder();
 	
+	if ( iThisOrder != iRightOrder )
+		return false;
+	
+	return std::equal( this->coeff_begin(), this->coeff_begin() + iThisOrder + 1, right.coeff_begin() );
 }
 
 /////////////////////////////////////////////////////////////
@@ -153,10 +170,7 @@ polynomial::size_type polynomial::order()
 	if ( M_bOrderKnown )
 		return M_iOrder;
 	
-	// Find the largest non-zero coefficient
-	auto lambda_goodCoeff = []( value_type z ){ return z != complexZero && z != complexEmpty; };
-	M_iOrder = std::distance( coeff_begin(), std::find_if( coeff_rbegin(), coeff_rend(), lambda_goodCoeff ).base()) - 1;
-	
+	M_iOrder = this->M_order_finder();
 	M_bOrderKnown = true;
 	return M_iOrder;
 }	

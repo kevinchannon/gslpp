@@ -14,6 +14,7 @@ class PolynomialTestSuite : public CPPUNIT_NS::TestFixture
 	CPPUNIT_TEST ( Evaluation );
 	CPPUNIT_TEST ( Order );
 	CPPUNIT_TEST ( Resize );
+	CPPUNIT_TEST ( OperatorOverloads );
 	CPPUNIT_TEST ( SolveConstant );
 	CPPUNIT_TEST ( SolveLinear );
 	CPPUNIT_TEST ( SolveQuadratic );
@@ -32,6 +33,7 @@ protected:
 	void Evaluation();
 	void Order();
 	void Resize();
+	void OperatorOverloads();
 	void SolveConstant();
 	void SolveLinear();
 	void SolveQuadratic();

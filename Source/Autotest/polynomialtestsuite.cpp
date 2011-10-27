@@ -150,6 +150,29 @@ void PolynomialTestSuite::Resize()
 
 ////////////////////////////////////////////////////////////
 
+void PolynomialTestSuite::OperatorOverloads()
+{
+	gsl::polynomial p1(1,2,3,4,5);
+	gsl::polynomial p2 = -p1;
+	
+	for ( size_t i = 0; i < 5; ++i ){
+		CPPUNIT_ASSERT( p1[i] == -p2[i] );
+	}
+	
+	gsl::polynomial p3( -1+2i, 3, 0, 1.2+3.1i );
+	gsl::polynomial p4( 2i, 5, 3, 5.2+3.1i, 5 );
+	
+	p3 += p1;
+	CPPUNIT_ASSERT( p3 == p4 );
+	
+	gsl::polynomial p5( 2i, 5, 3, 5.2+3.1i, 5 );
+	gsl::polynomial p6( 0, 0, 0, 0, 0 );
+	p4 -= p5;
+	CPPUNIT_ASSERT( p4 == p6 );
+}
+
+////////////////////////////////////////////////////////////
+
 void PolynomialTestSuite::SolveConstant()
 {
 	gsl::polynomial p1;

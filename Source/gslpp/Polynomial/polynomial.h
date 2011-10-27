@@ -120,6 +120,12 @@ public:
 		return *this;
 	}
 	
+	/// Unary minus operator: adds the coefficients of right to the corresponding
+	/// coefficients of this
+	///
+	/// will not throw
+	gsl::polynomial operator-() const;
+	
 	/// Unary addition operator: adds the coefficients of right to the corresponding
 	/// coefficients of this
 	///
@@ -144,7 +150,7 @@ public:
 	/// will not throw
 	gsl::polynomial& operator/=( const gsl::polynomial& right );
 	
-	/// Boolean equals (compares coefficients up to the effective order
+	/// Boolean equals (compares coefficients up to the effective order )
 	///
 	/// will not throw
 	bool operator==( const gsl::polynomial& right ) const;
@@ -304,6 +310,12 @@ private:
 
 	void M_roots_complex_coeffs();
 	void M_roots_real_coeffs();
+
+	INLINE size_type M_order_finder() const{
+		// Find the largest non-zero coefficient
+		auto lambda_goodCoeff = []( value_type z ){ return z != complexZero && z != complexEmpty; };
+		return std::distance( coeff_begin(), std::find_if( coeff_rbegin(), coeff_rend(), lambda_goodCoeff ).base()) - 1;
+	}
 	
 /// Variables
 	std::vector< std::complex< real > > M_vzCoeffs;
