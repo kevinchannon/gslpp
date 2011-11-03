@@ -128,12 +128,21 @@ gsl::polynomial& gsl::polynomial::operator-=( const gsl::polynomial& right )
 
 gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
 {
-	// Get the coefficients into matrices
-	gsl::matrix< gsl::polynomial::value_type > m1( this->M_vzCoeffs.size(), 1 );
-	gsl::matrix< gsl::polynomial::value_type > m2( 1, right.M_vzCoeffs.size() );
+	typedef gsl::matrix< gsl::polynomial::value_type >::value_type xy;
 	
-	std::copy( this->coeff_begin(), this->coeff_end(), m1.begin() );
-	std::copy( right.coeff_begin(), right.coeff_end(), m2.begin() );
+	// Get the coefficients into matrices
+	gsl::matrix< gsl::polynomial::value_type > m1( std::min(this->M_vzCoeffs.size(), right.M_vzCoeffs.size() ), 1 );
+	gsl::matrix< gsl::polynomial::value_type > m2( 1, std::max(this->M_vzCoeffs.size(), right.M_vzCoeffs.size() ) );
+	 
+	if ( this->M_vzCoeffs.size() < right.M_vzCoeffs.size() ){
+		std::copy( this->coeff_begin(), this->coeff_end(), m1.begin() );
+		std::copy( right.coeff_begin(), right.coeff_end(), m2.begin() );
+	}
+	else
+	{
+		std::copy( right.coeff_begin(), right.coeff_end(), m1.begin() );
+		std::copy( this->coeff_begin(), this->coeff_end(), m2.begin() );
+	}
 	
 	// Form the outer product of the two sets of coefficients
 	gsl::matrix< gsl::polynomial::value_type > m3 = m1 * m2;
@@ -141,25 +150,20 @@ gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
 	// The elements of this matrix are combined into the output coefficients in three
 	// stages:
 	//
-	//                        | 1 1 1 1 1 |
-	// | 1 1 1 1 1 2 2 2 |    | 1 1 1 1 2 |
-	// | 1 1 1 1 2 2 2 3 |    | 1 1 1 2 2 |
-	// | 1 1 1 2 2 2 3 3 | OR | 1 1 2 2 2 |
-	// | 1 1 2 2 2 3 3 3 |    | 1 2 2 2 3 |
-	// | 1 2 2 2 3 3 3 3 |    | 2 2 2 3 3 |
-	//                        | 2 2 3 3 3 |
-	//                        | 2 3 3 3 3 |
+	// | 1 1 1 1 1 2 2 2 |
+	// | 1 1 1 1 2 2 2 3 |
+	// | 1 1 1 2 2 2 3 3 |
+	// | 1 1 2 2 2 3 3 3 |
+	// | 1 2 2 2 3 3 3 3 |
 	//
-	// Stages 1 & 3 are the same for any matrix dimensions, but stage 2 is different in
-	// the above cases, and absent for a square matrix.
+	// Stages 1 & 3 are the same for any matrix dimensions, but stage 2 is absent for a square matrix.
 	
-	size_type N = std::min( m3.rows(), m3.cols() );
+	size_type N = m3.rows();
 	gsl::polynomial out( m3.rows() + m3.cols() - 2 );
 	
 	//
 	// Stage 1
 	//
-	typedef gsl::matrix< gsl::polynomial::value_type >::value_type xy;
 	for ( size_type i = 0; i < N; ++i ){
 		gsl::polynomial::value_type coeffSum = complexZero;
 		for ( size_type j = 0; j <= i; ++j )
@@ -171,48 +175,31 @@ gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
 	//
 	// Stage 2
 	//
-	if ( m3.cols() > m3.rows() )
-	{
-		size_type M = m3.cols();
-		for ( size_type i = N; i < M; ++i ){
-			gsl::polynomial::value_type coeffSum = complexZero;
-			for ( size_type j = 1; j <= N; ++j )
-				coeffSum += m3[ xy(j + i - N, N - j ) ];
-			
-			out[i] = coeffSum;
-		}
-	}
-	else if ( m3.rows() > m3.cols() )
-	{
-		size_type M = m3.rows();
-		for ( size_type i = N; i < M; ++i ){
-			gsl::polynomial::value_type coeffSum = complexZero;
-			for ( size_type j = 0; j < N; ++j )
-				coeffSum += m3[ xy( j, i - j) ];
-			
-			out[i] = coeffSum;
-		}
+	size_type M = m3.cols();
+	for ( size_type i = N; i < M; ++i ){
+		gsl::polynomial::value_type coeffSum = complexZero;
+		for ( size_type j = 1; j <= N; ++j )
+			coeffSum += m3[ xy(j + i - N, N - j ) ];
+		
+		out[i] = coeffSum;
 	}
 	
 	//
 	// Stage 3
 	//
-	if ( m3.cols() > m3.rows() )
-	{
-		size_type M = m3.cols();
-		for ( size_type i = M; i < N + M; ++i ){
-			gsl::polynomial::value_type coeffSum = complexZero;
-			size_type j_o = M + N;
-			for ( size_type j = i - j_o; j < M; ++j )
-				coeffSum += m3[ xy( j, N - i + M - 1 ) ];
-			
-			out[i] = coeffSum;
-		}
-	}
-	else
-	{
+	for ( size_type i = M; i < N + M; ++i ){
+		gsl::polynomial::value_type coeffSum = complexZero;
+		size_type j_o = M + N;
+		for ( size_type j = i - j_o; j < M; ++j )
+			coeffSum += m3[ xy( j, N - i + M - 1 ) ];
 		
+		out[i] = coeffSum;
 	}
+	
+	// Remove any high-order zero coefficients
+	out.resize( out.order() );
+	
+	*this = out;
 }
 
 /////////////////////////////////////////////////////////////

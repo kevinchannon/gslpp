@@ -14,6 +14,7 @@
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_complex.h>
 
 ////////////////////////////////////////////////////////////
 
@@ -121,11 +122,9 @@ struct gsl_matrix_type< unsigned long >
 ////////////////////////////////////////////////////////////
 
 template< typename T >
-class matrix : public from_STL_container< std::vector< T > >
+class matrix_base : public from_STL_container< std::vector< T > >
 {
 public:
-	typedef typename gsl_matrix_type< T >::type gsl_mat_t;
-	typedef typename gsl_block_type< T >::type gsl_block_t;
 	
 	typedef typename from_STL_container< std::vector< T > >::iterator 			iterator;
 	typedef typename from_STL_container< std::vector< T > >::const_iterator		const_iterator;
@@ -150,36 +149,26 @@ public:
 	typedef M_matrix_element_type element_type;
 	
 	/// Default constructor
-	matrix() : M_rows(0), M_cols(0) {}
+	matrix_base() : M_rows(0), M_cols(0) {}
 	
 	/// Construct an empty matrix of a given size
-	matrix( size_type r, size_type c ) : M_rows(r), M_cols(c)
+	matrix_base( size_type r, size_type c ) : M_rows(r), M_cols(c)
 	{
 		this->M_STLData.resize( r*c );
 	}
 	
 	/// Construct a matrix of a given size with each element set to the given value
-	matrix( size_type r, size_type c, const value_type& x ) : M_rows(r), M_cols(c)
+	matrix_base( size_type r, size_type c, const value_type& x ) : M_rows(r), M_cols(c)
 	{
 		this->M_STLData.assign( r*c, x );
 	}
 	
 	/// Copy constructor
-	matrix( const matrix< T >& m ) : M_rows(m.rows()), M_cols(m.cols())
+	matrix_base( const matrix< T >& m ) : M_rows(m.rows()), M_cols(m.cols())
 	{
 		this->M_STLData.resize( M_rows * M_cols );
 		std::copy( m.cbegin(), m.cend(), this->begin() );
 	}
-	
-	/// Construct from a gsl_matrix
-	matrix( const gsl_mat_t* m ) : M_rows(m->size1), M_cols(m->size2)
-	{
-		this->M_STLData.resize( M_rows * M_cols );
-		std::copy( m->data, m->data + m->block->size, this->begin() );
-	}
-	
-	/// Destructor
-	~matrix(){}
 	
 	/// Swap the contents of this matrix with another
 	///
@@ -447,33 +436,6 @@ public:
 		return m;
 	}
 	
-	INLINE const gsl_mat_t* as_gsl_matrix() const
-	{
-		gsl_block_t* b = (gsl_block_t*) malloc( sizeof( gsl_block_t ) );
-		b->data = const_cast< pointer >( this->M_STLData.data() );		
-		b->size = this->size();
-		
-		gsl_mat_t* m = (gsl_mat_t*) malloc( sizeof( gsl_mat_t ) );
-		m->owner = 0;	// The gsl_matrix doesn't own the underlying memory
-		m->block = b;
-		m->data = b->data;
-		m->size1 = this->rows();
-		m->size2 = this->cols();
-		m->tda = this->cols(); 
-		
-		return m;
-	}
-	
-	gsl_mat_t* to_gsl_matrix() const
-	{
-		gsl_mat_t* out = gsl_matrix_type< T >::alloc( this->rows(), this->cols() );
-		if ( out == NULL )
-			throw std::bad_alloc();
-		
-		std::copy( this->begin(), this->end(), out->data );
-		return out;
-	}
-	
 	/// Set the values of a given matrix row
 	void set_row( size_type r, const gsl::vector< T >& v ) throw ( std::out_of_range){
 		if ( r >= this->rows() )
@@ -649,12 +611,62 @@ public:
 	INLINE std::pair< element_type, element_type > min_max_element() const
 	{	return std::make_pair( this->min_element(), this->max_element() );	}
 	
-private:
+protected:
+	~matrix_base(){}
+	
 	size_type M_rows;
 	size_type M_cols;
 	
 	INLINE size_type M_row_index( size_type x ) const {	return x / M_cols;	}
 	INLINE size_type M_col_index( size_type x )const {	return x % M_cols;	}
+};
+
+template< typename T >
+class matrix : public matrix_base< T >
+{
+public:
+	typedef typename gsl_matrix_type< T >::type gsl_mat_t;
+	typedef typename gsl_block_type< T >::type gsl_block_t;
+	
+	/// Destructor
+	~matrix(){}
+	
+	INLINE const gsl_mat_t* as_gsl_matrix() const
+	{
+		gsl_block_t* b = (gsl_block_t*) malloc( sizeof( gsl_block_t ) );
+		b->data = const_cast< pointer >( this->M_STLData.data() );		
+		b->size = this->size();
+		
+		gsl_mat_t* m = (gsl_mat_t*) malloc( sizeof( gsl_mat_t ) );
+		m->owner = 0;	// The gsl_matrix doesn't own the underlying memory
+		m->block = b;
+		m->data = b->data;
+		m->size1 = this->rows();
+		m->size2 = this->cols();
+		m->tda = this->cols(); 
+		
+		return m;
+	}
+	
+	gsl_mat_t* to_gsl_matrix() const
+	{
+		gsl_mat_t* out = gsl_matrix_type< T >::alloc( this->rows(), this->cols() );
+		if ( out == NULL )
+			throw std::bad_alloc();
+		
+		std::copy( this->begin(), this->end(), out->data );
+		return out;
+	}
+};
+
+
+
+template< typename std::complex<T> >
+class matrix : public matrix_base< T >
+{
+public:	
+	/// Destructor
+	~matrix(){}
 };
 
 END_GSL_NAMESPACE
@@ -748,6 +760,41 @@ const gsl::matrix< T > operator*(const gsl::matrix< T >& left, const gsl::matrix
 	
 	gsl_blas_dgemm( CblasNoTrans, CblasNoTrans, 1.0, left.as_gsl_matrix(), right.as_gsl_matrix(), 0.0, out.as_gsl_matrix() );
 					
+	return out;
+}
+
+template< typename std::complex<T> >
+const gsl::matrix< std::complex<T> > operator*(const gsl::matrix< std::complex<T> >& left, const gsl::matrix< std::complex<T> >& right ) throw ( gsl::matrix_size_mismatch ){
+	if ( left.cols() != right.rows() )
+		throw gsl::matrix_size_mismatch();
+		
+	gsl_matrix_complex* gsl_left = gsl_matrix_complex_alloc( left.rows(), left.cols());
+	if ( gsl_left == NULL )
+		throw std::bad_alloc();
+		
+	gsl_matrix_complex* gsl_right = gsl_matrix_complex_alloc( right.rows(), right.cols());
+	if ( gsl_right == NULL )
+		throw std::bad_alloc();
+		
+	gsl_matrix_complex* gsl_out = gsl_matrix_complex_alloc( left.rows(), right.cols());
+	if ( gsl_out == NULL )
+		throw std::bad_alloc();
+	
+	typedef gsl::matrix< std::complex< T > >::element_type xy;
+	
+	size_type iLeftElementCount = left.rows() * left.cols();
+	for ( size_type i = 0; i < iLeftElementCount; ++i ){
+		gsl_left->data[ 2*i ] = left.as_array()[ i ].real();
+		gsl_left->data[ 2*i + 1 ] = left.as_array()[ i ].imag();
+	}
+	
+	gsl_complex z0, z1;
+	GSL_SET_COMPLEX(&z0, 1.0, 0.0);
+	GSL_SET_COMPLEX(&z1, 0.0, 0.0);
+	
+	gsl_blas_zgemm( CblasNoTrans, CblasNoTrans, z0, gsl_left, gsl_right, z1, gsl_out );
+					
+	gsl::matrix< std::complex<T> > out( left.rows(), right.cols() );
 	return out;
 }
 
