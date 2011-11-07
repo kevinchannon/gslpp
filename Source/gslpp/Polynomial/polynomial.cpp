@@ -128,7 +128,7 @@ gsl::polynomial& gsl::polynomial::operator-=( const gsl::polynomial& right )
 
 gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
 {
-	typedef gsl::matrix< gsl::polynomial::value_type >::value_type xy;
+	typedef gsl::matrix< gsl::polynomial::value_type >::element_type xy;
 	
 	// Get the coefficients into matrices
 	gsl::matrix< gsl::polynomial::value_type > m1( std::min(this->M_vzCoeffs.size(), right.M_vzCoeffs.size() ), 1 );
