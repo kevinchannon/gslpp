@@ -148,7 +148,7 @@ public:
 	/// coefficients of right
 	///
 	/// will not throw
-	gsl::polynomial& operator/=( const gsl::polynomial& right );
+//	gsl::polynomial& operator/=( const gsl::polynomial& right );
 	
 	/// Boolean equals (compares coefficients up to the effective order )
 	///
@@ -328,5 +328,11 @@ private:
 ////////////////////////////////////////////////////////////
 
 END_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
+
+const gsl::polynomial operator+( const gsl::polynomial& p1, const gsl::polynomial& p2 );
+const gsl::polynomial operator-( const gsl::polynomial& p1, const gsl::polynomial& p2 );
+const gsl::polynomial operator*( const gsl::polynomial& p1, const gsl::polynomial& p2 );
 
 ////////////////////////////////////////////////////////////

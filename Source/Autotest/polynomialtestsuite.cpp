@@ -169,6 +169,13 @@ void PolynomialTestSuite::OperatorOverloads()
 	gsl::polynomial p6( 0, 0, 0, 0, 0 );
 	p4 -= p5;
 	CPPUNIT_ASSERT( p4 == p6 );
+	
+	gsl::polynomial p7( 2, 3i, 1 + 1i );
+	gsl::polynomial p8( 1, 4i );
+	p7 *= p8;
+	
+	gsl::polynomial p9( 2, 11i, -11 + 1i, -4 + 4i);
+	CPPUNIT_ASSERT( p7 == p9 );
 }
 
 ////////////////////////////////////////////////////////////

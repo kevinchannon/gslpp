@@ -41,7 +41,7 @@ polynomial::polynomial( const gsl::polynomial& original )
 
 /////////////////////////////////////////////////////////////
 
-gsl::polynomial& gsl::polynomial::operator=( const gsl::polynomial& original )
+gsl::polynomial& polynomial::operator=( const gsl::polynomial& original )
 {
 	gsl::polynomial temp( original );
 	this->swap( temp );
@@ -50,7 +50,7 @@ gsl::polynomial& gsl::polynomial::operator=( const gsl::polynomial& original )
 
 /////////////////////////////////////////////////////////////
 
-gsl::polynomial gsl::polynomial::operator-() const
+gsl::polynomial polynomial::operator-() const
 {
 	gsl::polynomial temp( *this );
 	std::transform(temp.coeff_begin(), temp.coeff_end(), temp.coeff_begin(), std::bind1st(std::multiplies< value_type >(), -1 ) );
@@ -59,7 +59,7 @@ gsl::polynomial gsl::polynomial::operator-() const
 
 /////////////////////////////////////////////////////////////
 
-gsl::polynomial& gsl::polynomial::operator+=( const gsl::polynomial& right )
+gsl::polynomial& polynomial::operator+=( const gsl::polynomial& right )
 {
 	// If right is filled with zeros, then there's nothing to do, just return immediately
 	if ( right.coeff_end() == std::find_if( right.coeff_begin(), right.coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
@@ -91,7 +91,7 @@ gsl::polynomial& gsl::polynomial::operator+=( const gsl::polynomial& right )
 
 /////////////////////////////////////////////////////////////
 
-gsl::polynomial& gsl::polynomial::operator-=( const gsl::polynomial& right )
+gsl::polynomial& polynomial::operator-=( const gsl::polynomial& right )
 {
 	// If right is filled with zeros, then there's nothing to do, just return immediately
 	if ( right.coeff_end() == std::find_if( right.coeff_begin(), right.coeff_end(), std::bind2nd(std::not_equal_to< value_type>(), complexZero ) ) )
@@ -126,7 +126,7 @@ gsl::polynomial& gsl::polynomial::operator-=( const gsl::polynomial& right )
 
 /////////////////////////////////////////////////////////////
 
-gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
+gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 {
 	typedef gsl::matrix< gsl::polynomial::value_type >::element_type xy;
 	
@@ -146,6 +146,8 @@ gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
 	
 	// Form the outer product of the two sets of coefficients
 	gsl::matrix< gsl::polynomial::value_type > m3 = m1 * m2;
+	
+	std::cout << m3 << std::endl;
 	
 	// The elements of this matrix are combined into the output coefficients in three
 	// stages:
@@ -200,18 +202,20 @@ gsl::polynomial& gsl::polynomial::operator*=( const gsl::polynomial& right )
 	out.resize( out.order() );
 	
 	*this = out;
-}
-
-/////////////////////////////////////////////////////////////
-
-gsl::polynomial& gsl::polynomial::operator/=( const gsl::polynomial& right )
-{
 	
+	return *this;
 }
 
 /////////////////////////////////////////////////////////////
 
-bool gsl::polynomial::operator==( const gsl::polynomial& right ) const
+// gsl::polynomial& gsl::polynomial::operator/=( const gsl::polynomial& right )
+// {
+	
+// }
+
+/////////////////////////////////////////////////////////////
+
+bool polynomial::operator==( const gsl::polynomial& right ) const
 {
 	size_type iThisOrder = this->M_order_finder();
 	size_type iRightOrder = right.M_order_finder();
@@ -400,5 +404,34 @@ void polynomial::M_roots_real_coeffs()
 ////////////////////////////////////////////////////////////
 
 END_GSL_NAMESPACE
+
+////////////////////////////////////////////////////////////
+
+const gsl::polynomial operator+( const gsl::polynomial& p1, const gsl::polynomial& p2 )
+{
+	gsl::polynomial out( p1 );
+	out += p2;
+	return out;
+}
+
+////////////////////////////////////////////////////////////
+
+const gsl::polynomial operator-( const gsl::polynomial& p1, const gsl::polynomial& p2 )
+{
+	
+	gsl::polynomial out( p1 );
+	out -= p2;
+	return out;
+}
+
+////////////////////////////////////////////////////////////
+
+const gsl::polynomial operator*( const gsl::polynomial& p1, const gsl::polynomial& p2 )
+{
+	
+	gsl::polynomial out( p1 );
+	out *= p2;
+	return out;
+}
 
 ////////////////////////////////////////////////////////////

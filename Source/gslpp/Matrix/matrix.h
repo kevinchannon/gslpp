@@ -172,6 +172,14 @@ public:
 		this->M_STLData.assign( r*c, x );
 	}
 	
+	/// Construct from a pointer to a gsl_matrix
+	matrix( const gsl_mat_t* pcGSL_matrix ) : M_rows(pcGSL_matrix->size1), M_cols( pcGSL_matrix->size2)
+	{
+		size_type iDataLength = M_rows * M_cols;
+		this->M_STLData.resize( iDataLength );
+		std::copy( pcGSL_matrix->data, pcGSL_matrix->data + iDataLength, this->M_STLData.begin() );
+	}
+	
 	/// Copy constructor
 	matrix( const matrix< T >& m ) : M_rows(m.rows()), M_cols(m.cols())
 	{
