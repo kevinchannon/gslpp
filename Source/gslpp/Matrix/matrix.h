@@ -780,10 +780,22 @@ const gsl::matrix< std::complex< real > > operator*(const gsl::matrix< std::comp
 	typedef gsl::matrix< std::complex< real > >::element_type xy;
 	typedef gsl::matrix< std::complex< real > >::size_type size_type;
 	
-	size_type iLeftElementCount = left.rows() * left.cols();
-	for ( size_type i = 0; i < iLeftElementCount; ++i ){
-		gsl_left->data[ 2*i ] = left.as_array()[ i ].real();
-		gsl_left->data[ 2*i + 1 ] = left.as_array()[ i ].imag();
+	for ( size_type i = 0; i < left.rows(); ++i ){
+		for ( size_type j = 0; j < left.cols(); ++j ){
+			gsl_complex z = { {left[ xy(i, j) ].real(), left[ xy(i, j) ].imag()} };
+			gsl_matrix_complex_set( gsl_left, i, j, z );
+			std::cout << GSL_REAL(z) << " + " << GSL_IMAG(z) << "i, ";
+		}
+		std::cout << std::endl;
+	}
+	
+	for ( size_type i = 0; i < right.rows(); ++i ){
+		for ( size_type j = 0; j < right.cols(); ++j ){
+			gsl_complex z = { {right[ xy(i, j) ].real(), right[ xy(i, j) ].imag()} };
+			gsl_matrix_complex_set( gsl_right, i, j, z );
+			std::cout << GSL_REAL(z) << " + " << GSL_IMAG(z) << "i, ";
+		}
+		std::cout << std::endl;
 	}
 	
 	gsl_complex z0, z1;
@@ -791,12 +803,20 @@ const gsl::matrix< std::complex< real > > operator*(const gsl::matrix< std::comp
 	GSL_SET_COMPLEX(&z1, 0.0, 0.0);
 	
 	gsl_blas_zgemm( CblasNoTrans, CblasNoTrans, z0, gsl_left, gsl_right, z1, gsl_out );
-					
+	
 	gsl::matrix< std::complex<real> > out( left.rows(), right.cols() );
-	gsl::matrix< std::complex<real> >::iterator it = out.begin();
-	for ( size_type i = 0; i < iLeftElementCount; ++i, ++it ){
-		*it = std::complex< real >( gsl_out->data[ 2*i ], gsl_out->data[ 2*i + 1 ] );
+	for ( size_type i = 0; i < right.rows(); ++i ){
+		for ( size_type j = 0; j < right.cols(); ++j ){
+			gsl_complex gsl_z = gsl_matrix_complex_get( gsl_out, i, j );
+			std::complex< real > std_z( GSL_REAL(gsl_z), GSL_IMAG(gsl_z) );
+			out[ xy(i, j) ] = std_z;
+		}
 	}
+	
+	// Release memory for gsl_matrices
+	gsl_matrix_complex_free(gsl_left);
+	gsl_matrix_complex_free(gsl_right);
+	gsl_matrix_complex_free(gsl_out);
 	
 	return out;
 }

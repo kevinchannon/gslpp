@@ -21,8 +21,8 @@ polynomial::polynomial() : gsl_base_ptr(0), M_bRootsKnown(false), M_bOrderKnown(
 
 polynomial::polynomial( size_type N) throw ( std::bad_alloc ) :	M_bRootsKnown(false), M_bOrderKnown(true), M_iOrder(0)
 {
-	M_vzCoeffs.resize( N , complexZero );
-	M_vzRoots.resize( N > 0 ? N - 1 : 0);
+	M_vzCoeffs.resize( N > 0 ? N : 0, complexZero );
+	M_vzRoots.resize( N > 1 ? N - 1 : 0);
 }
 
 /////////////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ gsl::polynomial& polynomial::operator+=( const gsl::polynomial& right )
 	std::transform(this->coeff_begin(), this->coeff_begin() + N, right.coeff_begin(),
 		this->coeff_begin(), std::plus< value_type >());
 	
-	// If right has more coefficients than this, we need subtract the extra terms from this
+	// If right has more coefficients than this, we need to add the extra terms to this
 	if (this->M_vzCoeffs.size() < right.M_vzCoeffs.size() ){
-		this->M_vzCoeffs.resize( right.M_vzCoeffs.size(), complexZero );
+		this->resize( right.order() );
 		std::copy(right.coeff_begin() + N, right.coeff_end(), this->coeff_begin() + N);
 		
 		// We've added new coeffs, so we don't necessarily know the order now
@@ -143,6 +143,9 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 		std::copy( right.coeff_begin(), right.coeff_end(), m1.begin() );
 		std::copy( this->coeff_begin(), this->coeff_end(), m2.begin() );
 	}
+	
+	std::cout << "\nm1 = " << m1 << std::endl;
+	std::cout << "m2 = " << m2 << std::endl;	
 	
 	// Form the outer product of the two sets of coefficients
 	gsl::matrix< gsl::polynomial::value_type > m3 = m1 * m2;
@@ -242,7 +245,7 @@ void polynomial::swap( gsl::polynomial &other )
 
 polynomial::~polynomial(){}
 
-polynomial::size_type polynomial::order()
+polynomial::size_type polynomial::order() const
 {
 	if ( M_bOrderKnown )
 		return M_iOrder;
@@ -270,8 +273,12 @@ void polynomial::add_term( polynomial::const_reference zNewCoeff )
 
 void polynomial::resize( polynomial::size_type iNewOrder )
 {
-	M_vzCoeffs.resize( iNewOrder + 1, complexZero );
-	M_vzRoots.resize( iNewOrder + 1, complexEmpty );
+	std::cerr << "  Resizing polynomial..." << std::endl;
+	std::cerr << "     Current size: coeffs = " << M_vzCoeffs.size() << " roots = " << M_vzRoots.size() << std::endl;
+	std::cerr << "     New size: " << iNewOrder + 1 << std::endl;
+	
+	M_vzCoeffs.resize( iNewOrder > 0 ? iNewOrder + 1 : 0, complexZero );
+	M_vzRoots.resize( iNewOrder, complexEmpty );
 	
 	M_bOrderKnown = false;
 	M_bRootsKnown = false;

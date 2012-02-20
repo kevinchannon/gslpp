@@ -269,7 +269,7 @@ public:
 	/// coefficient. If there are no non-zero coefficients, polynomial::empty is returned
 	///
 	/// Will not throw
-	size_type order();
+	size_type order() const;
 	
 	/// Get the current capacity of the polynomial (i.e. the highest order component accessible, without
 	/// adding new terms, returns polynomial::empty if there are no coefficients
@@ -321,8 +321,8 @@ private:
 	std::vector< std::complex< real > > M_vzCoeffs;
 	std::vector< std::complex< real > > M_vzRoots;
 	bool M_bRootsKnown;
-	bool M_bOrderKnown;
-	size_type M_iOrder;
+	mutable bool M_bOrderKnown;
+	mutable size_type M_iOrder;
 };
 
 ////////////////////////////////////////////////////////////
