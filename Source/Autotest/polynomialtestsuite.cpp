@@ -120,7 +120,7 @@ void PolynomialTestSuite::Order()
 void PolynomialTestSuite::Resize()
 {
 	gsl::polynomial p1;
-	CPPUNIT_ASSERT( p1.order() == 0 );
+	CPPUNIT_ASSERT( p1.order() == gsl::polynomial::empty );
 	CPPUNIT_ASSERT( p1.size() == gsl::polynomial::empty );
 	
 	p1.add_term( 0.1 );
@@ -172,7 +172,7 @@ void PolynomialTestSuite::OperatorOverloads()
 	
 	gsl::polynomial p7( 2, 3i, 1 + 1i );
 	gsl::polynomial p8( 1, 4i );
-//	p7 *= p8;
+	p7 *= p8;
 	
 //	gsl::polynomial p9( 2, 11i, -11 + 1i, -4 + 4i);
 //	CPPUNIT_ASSERT( p7 == p9 );

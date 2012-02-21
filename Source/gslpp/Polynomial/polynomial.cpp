@@ -14,7 +14,7 @@ BEGIN_GSL_NAMESPACE
 
 ////////////////////////////////////////////////////////////
 
-polynomial::polynomial() : gsl_base_ptr(0), M_bRootsKnown(false), M_bOrderKnown(true), M_iOrder(0)
+polynomial::polynomial() : gsl_base_ptr(0), M_bRootsKnown(false), M_bOrderKnown(true), M_iOrder(polynomial::empty)
 {}
 
 ////////////////////////////////////////////////////////////
@@ -29,21 +29,30 @@ polynomial::polynomial( size_type N) throw ( std::bad_alloc ) :	M_bRootsKnown(fa
 
 polynomial::polynomial( const gsl::polynomial& original )
 {
+	std::cout << "In constructor" << std::endl;
 	M_vzCoeffs = original.M_vzCoeffs;
+	std::cout << __LINE__ << std::endl;
 	M_vzRoots = original.M_vzRoots;
+	std::cout << __LINE__ << std::endl;
 	M_bRootsKnown = original.M_bRootsKnown;
+	std::cout << __LINE__ << std::endl;
 	M_bOrderKnown = original.M_bOrderKnown;
+	std::cout << __LINE__ << std::endl;
 	M_iOrder = original.M_iOrder;
+	std::cout << __LINE__ << std::endl;
 	
 	// Don't create a new GSL workspace for this polynomial, if it's needed it'll
 	// be created at the point of use
+	
 }
 
 /////////////////////////////////////////////////////////////
 
 gsl::polynomial& polynomial::operator=( const gsl::polynomial& original )
 {
+	std::cout << "In operator=()" << std::endl;
 	gsl::polynomial temp( original );
+	
 	this->swap( temp );
 	return *this;
 }
@@ -117,7 +126,7 @@ gsl::polynomial& polynomial::operator-=( const gsl::polynomial& right )
 		std::transform(this->coeff_begin() + N, this->coeff_end(), right.coeff_begin() + N,
 			this->coeff_begin() + N, std::minus< value_type >());
 		
-		// We've added new coeffs, so we don't necessarily know the order now
+		// We've changed the coeffs, so we don't necessarily know the order now
 		M_bOrderKnown = false;
 	}
 		
@@ -150,7 +159,7 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	// Form the outer product of the two sets of coefficients
 	gsl::matrix< gsl::polynomial::value_type > m3 = m1 * m2;
 	
-	std::cout << m3 << std::endl;
+	std::cout << "m3 = " << m3 << std::endl;
 	
 	// The elements of this matrix are combined into the output coefficients in three
 	// stages:
@@ -165,7 +174,6 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	
 	size_type N = m3.rows();
 	gsl::polynomial out( m3.rows() + m3.cols() - 2 );
-	
 	//
 	// Stage 1
 	//
@@ -205,6 +213,8 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	out.resize( out.order() );
 	
 	*this = out;
+	
+	std::cout << __LINE__ << std::endl;
 	
 	return *this;
 }
@@ -260,7 +270,10 @@ polynomial::size_type polynomial::order() const
 void polynomial::add_term( polynomial::const_reference zNewCoeff )
 {
 	M_vzCoeffs.push_back( zNewCoeff );
-	M_vzRoots.push_back( complexEmpty );
+	
+	// If this is the first term, then we're just adding the constant term, so there's still no root
+	if ( M_vzCoeffs.size() > 1 )
+		M_vzRoots.push_back( complexEmpty );
 	
 	if ( zNewCoeff != complexZero && zNewCoeff != complexEmpty )
 	{
