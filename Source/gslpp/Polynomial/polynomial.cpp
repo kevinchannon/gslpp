@@ -161,7 +161,7 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	// Stages 1 & 3 are the same for any matrix dimensions, but stage 2 is absent for a square matrix.
 	
 	size_type iRows = m3.rows();
-	gsl::polynomial out( m3.rows() + m3.cols() - 2 );
+	gsl::polynomial out( m3.rows() + m3.cols() - 1 );
 	//
 	// Stage 1
 	//
@@ -190,9 +190,9 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	for ( size_type i = iRows - 1; i > 0; --i ){
 		gsl::polynomial::value_type coeffSum = complexZero;
 		for ( size_type j = iRows; j < iCols; ++j )
-			coeffSum += m3[ xy( i - j - iRows, j ) ];
+			coeffSum += m3[ xy( i, j ) ];
 		
-		out[ iCols - i ] = coeffSum;
+		out[ iRows + iCols - i - 1 ] = coeffSum;
 	}
 	
 	// Remove any high-order zero coefficients

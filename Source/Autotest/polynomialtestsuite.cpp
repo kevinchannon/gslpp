@@ -176,8 +176,6 @@ void PolynomialTestSuite::OperatorOverloads()
 	gsl::polynomial p8( 1, 4i );
 	p7 *= p8;
 	
-	std::cout << std::endl << p7 << std::endl;
-	
 	gsl::polynomial p9( 2, 11i, -11 + 1i, -4 + 4i);
 	CPPUNIT_ASSERT( p7 == p9 );
 }
