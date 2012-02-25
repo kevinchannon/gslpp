@@ -27,9 +27,6 @@
     <File Name="polynomialtestsuite.h"/>
     <File Name="polynomialtestsuite.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug">
-    <Project Name="gslpp"/>
-  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="">
@@ -95,6 +92,7 @@
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -124,4 +122,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>

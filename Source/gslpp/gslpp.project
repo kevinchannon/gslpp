@@ -119,6 +119,7 @@
       
       
       
+      
       ]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
@@ -148,4 +149,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="FFT">
+    <File Name="FFT/fft.h"/>
+    <File Name="FFT/fft.cpp"/>
+  </VirtualDirectory>
 </CodeLite_Project>

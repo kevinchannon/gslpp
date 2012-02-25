@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Workspace Name="gsl++" Database="./gsl++.tags">
-  <Project Name="gslpp" Path="gslpp/gslpp.project" Active="No"/>
   <Project Name="Autotest" Path="Autotest/Autotest.project" Active="Yes"/>
+  <Project Name="gslpp" Path="gslpp/gslpp.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
-      <Project Name="gslpp" ConfigName="Debug"/>
       <Project Name="Autotest" ConfigName="Debug"/>
+      <Project Name="gslpp" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
-      <Project Name="gslpp" ConfigName="Release"/>
       <Project Name="Autotest" ConfigName="Release"/>
+      <Project Name="gslpp" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>
