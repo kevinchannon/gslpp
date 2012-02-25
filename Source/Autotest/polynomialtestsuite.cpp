@@ -50,6 +50,8 @@ void PolynomialTestSuite::Instantiation()
 	std::fill(ar, ar + N, 4.5 );
 	gsl::polynomial p10( ar, N );
 	delete[] ar;
+	
+	gsl::polynomial p11( p9 );
 }
 
 ////////////////////////////////////////////////////////////
@@ -174,8 +176,10 @@ void PolynomialTestSuite::OperatorOverloads()
 	gsl::polynomial p8( 1, 4i );
 	p7 *= p8;
 	
-//	gsl::polynomial p9( 2, 11i, -11 + 1i, -4 + 4i);
-//	CPPUNIT_ASSERT( p7 == p9 );
+	std::cout << std::endl << p7 << std::endl;
+	
+	gsl::polynomial p9( 2, 11i, -11 + 1i, -4 + 4i);
+	CPPUNIT_ASSERT( p7 == p9 );
 }
 
 ////////////////////////////////////////////////////////////

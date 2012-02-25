@@ -29,17 +29,11 @@ polynomial::polynomial( size_type N) throw ( std::bad_alloc ) :	M_bRootsKnown(fa
 
 polynomial::polynomial( const gsl::polynomial& original )
 {
-	std::cout << "In constructor" << std::endl;
 	M_vzCoeffs = original.M_vzCoeffs;
-	std::cout << __LINE__ << std::endl;
 	M_vzRoots = original.M_vzRoots;
-	std::cout << __LINE__ << std::endl;
 	M_bRootsKnown = original.M_bRootsKnown;
-	std::cout << __LINE__ << std::endl;
 	M_bOrderKnown = original.M_bOrderKnown;
-	std::cout << __LINE__ << std::endl;
 	M_iOrder = original.M_iOrder;
-	std::cout << __LINE__ << std::endl;
 	
 	// Don't create a new GSL workspace for this polynomial, if it's needed it'll
 	// be created at the point of use
@@ -50,7 +44,6 @@ polynomial::polynomial( const gsl::polynomial& original )
 
 gsl::polynomial& polynomial::operator=( const gsl::polynomial& original )
 {
-	std::cout << "In operator=()" << std::endl;
 	gsl::polynomial temp( original );
 	
 	this->swap( temp );
@@ -153,13 +146,8 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 		std::copy( this->coeff_begin(), this->coeff_end(), m2.begin() );
 	}
 	
-	std::cout << "\nm1 = " << m1 << std::endl;
-	std::cout << "m2 = " << m2 << std::endl;	
-	
 	// Form the outer product of the two sets of coefficients
 	gsl::matrix< gsl::polynomial::value_type > m3 = m1 * m2;
-	
-	std::cout << "m3 = " << m3 << std::endl;
 	
 	// The elements of this matrix are combined into the output coefficients in three
 	// stages:
@@ -172,27 +160,26 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	//
 	// Stages 1 & 3 are the same for any matrix dimensions, but stage 2 is absent for a square matrix.
 	
-	size_type N = m3.rows();
+	size_type iRows = m3.rows();
 	gsl::polynomial out( m3.rows() + m3.cols() - 2 );
 	//
 	// Stage 1
 	//
-	for ( size_type i = 0; i < N; ++i ){
+	for ( size_type i = 0; i < iRows; ++i ){
 		gsl::polynomial::value_type coeffSum = complexZero;
 		for ( size_type j = 0; j <= i; ++j )
 			coeffSum += m3[ xy(j, i - j) ];
-		
 		out[i] = coeffSum;
 	}
 	
 	//
 	// Stage 2
 	//
-	size_type M = m3.cols();
-	for ( size_type i = N; i < M; ++i ){
+	size_type iCols = m3.cols();
+	for ( size_type i = iRows; i < iCols; ++i ){
 		gsl::polynomial::value_type coeffSum = complexZero;
-		for ( size_type j = 1; j <= N; ++j )
-			coeffSum += m3[ xy(j + i - N, N - j ) ];
+		for ( size_type j = 1; j <= iRows; ++j )
+			coeffSum += m3[ xy( iRows - j, j + i - iRows ) ];
 		
 		out[i] = coeffSum;
 	}
@@ -200,21 +187,18 @@ gsl::polynomial& polynomial::operator*=( const gsl::polynomial& right )
 	//
 	// Stage 3
 	//
-	for ( size_type i = M; i < N + M; ++i ){
+	for ( size_type i = iRows - 1; i > 0; --i ){
 		gsl::polynomial::value_type coeffSum = complexZero;
-		size_type j_o = M + N;
-		for ( size_type j = i - j_o; j < M; ++j )
-			coeffSum += m3[ xy( j, N - i + M - 1 ) ];
+		for ( size_type j = iRows; j < iCols; ++j )
+			coeffSum += m3[ xy( i - j - iRows, j ) ];
 		
-		out[i] = coeffSum;
+		out[ iCols - i ] = coeffSum;
 	}
 	
 	// Remove any high-order zero coefficients
 	out.resize( out.order() );
 	
 	*this = out;
-	
-	std::cout << __LINE__ << std::endl;
 	
 	return *this;
 }
@@ -286,15 +270,14 @@ void polynomial::add_term( polynomial::const_reference zNewCoeff )
 
 void polynomial::resize( polynomial::size_type iNewOrder )
 {
-	std::cerr << "  Resizing polynomial..." << std::endl;
-	std::cerr << "     Current size: coeffs = " << M_vzCoeffs.size() << " roots = " << M_vzRoots.size() << std::endl;
-	std::cerr << "     New size: " << iNewOrder + 1 << std::endl;
-	
-	M_vzCoeffs.resize( iNewOrder > 0 ? iNewOrder + 1 : 0, complexZero );
-	M_vzRoots.resize( iNewOrder, complexEmpty );
-	
-	M_bOrderKnown = false;
-	M_bRootsKnown = false;
+	if ( iNewOrder + 1 != M_vzCoeffs.size() )
+	{
+		M_vzCoeffs.resize( iNewOrder > 0 ? iNewOrder + 1 : 0, complexZero );
+		M_vzRoots.resize( iNewOrder, complexEmpty );
+		
+		M_bOrderKnown = false;
+		M_bRootsKnown = false;
+	}
 }
 
 ////////////////////////////////////////////////////////////
@@ -451,6 +434,14 @@ const gsl::polynomial operator*( const gsl::polynomial& p1, const gsl::polynomia
 	
 	gsl::polynomial out( p1 );
 	out *= p2;
+	return out;
+}
+
+////////////////////////////////////////////////////////////
+
+std::ostream& operator<<( std::ostream& out, const gsl::polynomial& p )
+{
+	std::copy( p.coeff_begin(), p.coeff_end(), std::ostream_iterator< gsl::polynomial::value_type >( out, " " ) );
 	return out;
 }
 

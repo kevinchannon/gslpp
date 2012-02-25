@@ -335,4 +335,6 @@ const gsl::polynomial operator+( const gsl::polynomial& p1, const gsl::polynomia
 const gsl::polynomial operator-( const gsl::polynomial& p1, const gsl::polynomial& p2 );
 const gsl::polynomial operator*( const gsl::polynomial& p1, const gsl::polynomial& p2 );
 
+std::ostream& operator<<( std::ostream& out, const gsl::polynomial& p );
+
 ////////////////////////////////////////////////////////////

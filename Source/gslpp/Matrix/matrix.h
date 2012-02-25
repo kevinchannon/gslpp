@@ -784,18 +784,14 @@ const gsl::matrix< std::complex< real > > operator*(const gsl::matrix< std::comp
 		for ( size_type j = 0; j < left.cols(); ++j ){
 			gsl_complex z = { {left[ xy(i, j) ].real(), left[ xy(i, j) ].imag()} };
 			gsl_matrix_complex_set( gsl_left, i, j, z );
-			std::cout << GSL_REAL(z) << " + " << GSL_IMAG(z) << "i, ";
 		}
-		std::cout << std::endl;
 	}
 	
 	for ( size_type i = 0; i < right.rows(); ++i ){
 		for ( size_type j = 0; j < right.cols(); ++j ){
 			gsl_complex z = { {right[ xy(i, j) ].real(), right[ xy(i, j) ].imag()} };
 			gsl_matrix_complex_set( gsl_right, i, j, z );
-			std::cout << GSL_REAL(z) << " + " << GSL_IMAG(z) << "i, ";
 		}
-		std::cout << std::endl;
 	}
 	
 	gsl_complex z0, z1;
@@ -805,8 +801,8 @@ const gsl::matrix< std::complex< real > > operator*(const gsl::matrix< std::comp
 	gsl_blas_zgemm( CblasNoTrans, CblasNoTrans, z0, gsl_left, gsl_right, z1, gsl_out );
 	
 	gsl::matrix< std::complex<real> > out( left.rows(), right.cols() );
-	for ( size_type i = 0; i < right.rows(); ++i ){
-		for ( size_type j = 0; j < right.cols(); ++j ){
+	for ( size_type i = 0; i < out.rows(); ++i ){
+		for ( size_type j = 0; j < out.cols(); ++j ){
 			gsl_complex gsl_z = gsl_matrix_complex_get( gsl_out, i, j );
 			std::complex< real > std_z( GSL_REAL(gsl_z), GSL_IMAG(gsl_z) );
 			out[ xy(i, j) ] = std_z;
