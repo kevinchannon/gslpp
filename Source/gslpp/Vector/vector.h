@@ -9,6 +9,7 @@
 #include <string>
 #include <limits>
 #include <numeric>
+#include <complex>
 
 #include <gsl/gsl_vector.h>
 
@@ -121,6 +122,13 @@ struct gsl_vector_type< unsigned long >
 {
 	typedef gsl_vector_ulong type;
 	INLINE static type* alloc( size_t n ){	return gsl_vector_ulong_alloc(n);	}
+};
+
+template<>
+struct gsl_vector_type< std::complex< real > >
+{
+	typedef gsl_vector_complex type;
+	INLINE static type* alloc( size_t n ){	return gsl_vector_complex_alloc(n);	}
 };
 
 ////////////////////////////////////////////////////////////
@@ -578,6 +586,11 @@ INLINE void swap( gsl::vector< T >& a, gsl::vector< T >& b)
 {
 	a.swap( b );
 }
+
+////////////////////////////////////////////////////////////
+
+typedef gsl::vector< real >    r_vec;
+typedef gsl::vector< std::complex< real > > c_vec;
 
 ////////////////////////////////////////////////////////////
 

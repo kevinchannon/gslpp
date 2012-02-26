@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=25/02/12
+Date                   :=26/02/12
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -52,7 +52,7 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/Permutation_permutation$(ObjectSuffix) $(IntermediateDirectory)/Permutation_permute$(ObjectSuffix) $(IntermediateDirectory)/Sort_sort$(ObjectSuffix) $(IntermediateDirectory)/Combination_combination$(ObjectSuffix) $(IntermediateDirectory)/blas_blas1$(ObjectSuffix) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix) $(IntermediateDirectory)/FFT_fft$(ObjectSuffix) 
 
 ##
 ## Main Build Targets 
@@ -125,6 +125,14 @@ $(IntermediateDirectory)/Polynomial_polynomial$(DependSuffix): Polynomial/polyno
 $(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix): Polynomial/polynomial.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/Polynomial/polynomial.cpp"
 
+$(IntermediateDirectory)/FFT_fft$(ObjectSuffix): FFT/fft.cpp $(IntermediateDirectory)/FFT_fft$(DependSuffix)
+	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/FFT/fft.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/FFT_fft$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/FFT_fft$(DependSuffix): FFT/fft.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/FFT_fft$(ObjectSuffix) -MF$(IntermediateDirectory)/FFT_fft$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/FFT/fft.cpp"
+
+$(IntermediateDirectory)/FFT_fft$(PreprocessSuffix): FFT/fft.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/FFT_fft$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/gslpp/FFT/fft.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -149,6 +157,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/Polynomial_polynomial$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/Polynomial_polynomial$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/Polynomial_polynomial$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/FFT_fft$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/FFT_fft$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/FFT_fft$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) "/home/kevin/.codelite/Solutions/gsl++/Source/.build-debug/gslpp"
 
