@@ -12,5 +12,8 @@
 #define BEGIN_BLAS_NAMESPACE namespace blas{
 #define END_BLAS_NAMESPACE }
 
+#define BEGIN_FFT_NAMESPACE namespace fft{
+#define END_FFT_NAMESPACE }
+
 #define continue_if( condition ) if ( (condition) ) continue
 #define break_if( condition ) if ( (condition) ) break

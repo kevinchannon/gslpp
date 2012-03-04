@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Kevin Channon
-Date                   :=28/02/12
+Date                   :=04/03/12
 CodeLitePath           :="/home/kevin/.codelite"
 LinkerName             :=g++
 ArchiveTool            :=ar rcus
@@ -52,7 +52,8 @@ LibPath                := $(LibraryPathSwitch).
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) $(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) 
+Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/permutationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/sorttestsuite$(ObjectSuffix) $(IntermediateDirectory)/vectortestsuite$(ObjectSuffix) $(IntermediateDirectory)/matrixtestsuite$(ObjectSuffix) $(IntermediateDirectory)/combinationtestsuite$(ObjectSuffix) $(IntermediateDirectory)/mathfunctionstestsuite$(ObjectSuffix) $(IntermediateDirectory)/blocktestsuite$(ObjectSuffix) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix) $(IntermediateDirectory)/ffttestsuite$(ObjectSuffix) \
+	
 
 ##
 ## Main Build Targets 
@@ -147,6 +148,14 @@ $(IntermediateDirectory)/polynomialtestsuite$(DependSuffix): polynomialtestsuite
 $(IntermediateDirectory)/polynomialtestsuite$(PreprocessSuffix): polynomialtestsuite.cpp
 	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/polynomialtestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/polynomialtestsuite.cpp"
 
+$(IntermediateDirectory)/ffttestsuite$(ObjectSuffix): ffttestsuite.cpp $(IntermediateDirectory)/ffttestsuite$(DependSuffix)
+	$(CompilerName) $(IncludePCH) $(SourceSwitch) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/ffttestsuite.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/ffttestsuite$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/ffttestsuite$(DependSuffix): ffttestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/ffttestsuite$(ObjectSuffix) -MF$(IntermediateDirectory)/ffttestsuite$(DependSuffix) -MM "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/ffttestsuite.cpp"
+
+$(IntermediateDirectory)/ffttestsuite$(PreprocessSuffix): ffttestsuite.cpp
+	@$(CompilerName) $(CmpOptions) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/ffttestsuite$(PreprocessSuffix) "/home/kevin/.codelite/Solutions/gsl++/Source/Autotest/ffttestsuite.cpp"
+
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
 ##
@@ -180,6 +189,9 @@ clean:
 	$(RM) $(IntermediateDirectory)/polynomialtestsuite$(ObjectSuffix)
 	$(RM) $(IntermediateDirectory)/polynomialtestsuite$(DependSuffix)
 	$(RM) $(IntermediateDirectory)/polynomialtestsuite$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/ffttestsuite$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/ffttestsuite$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/ffttestsuite$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) "/home/kevin/.codelite/Solutions/gsl++/Source/.build-debug/Autotest"
 
